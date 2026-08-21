@@ -120,7 +120,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
 .login-card{width:min(430px,94vw);background:white;border-radius:16px;padding:28px;box-shadow:0 24px 70px rgba(0,0,0,.24)}
 .login-card h1{margin:0;color:var(--navy);font-size:24px}.login-card p{color:var(--muted);font-size:13px;line-height:1.5}
 .login-card form{display:grid;gap:12px;margin-top:20px}.login-card label{font-size:12px;font-weight:700;color:#4b5563}
-.login-card input{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px}.login-error{color:#a51d2d;font-size:12px;min-height:16px}
+.login-card input{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px}.login-error{color:#a51d2d;font-size:12px;min-height:16px}.login-error.success{color:#2f6a24}.login-link{border:0;background:transparent;color:var(--blue);font-weight:700;font-size:12px;text-decoration:underline;padding:2px;justify-self:center}.login-link:hover{color:var(--navy)}
 .session-name{font-weight:800;margin-top:7px}.session-role{font-size:11px;opacity:.7;margin-top:2px}.logout-btn{margin-top:9px;width:100%;border:1px solid rgba(255,255,255,.25);background:transparent;color:white;border-radius:7px;padding:7px}
 .online-pill{display:inline-block;background:#dff0d8;color:#285b2b;border-radius:99px;padding:3px 7px;font-size:10px;font-weight:800;margin-top:5px}
 
@@ -164,7 +164,16 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
       <div><label>Email</label><input id="loginEmail" type="email" autocomplete="username" required></div>
       <div><label>Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
       <button class="btn primary" type="submit">Entrar</button>
+      <button class="login-link" id="forgotPasswordBtn" type="button">He olvidado mi contraseña</button>
       <div class="login-error" id="loginError"></div>
+    </form>
+    <form id="recoveryForm" hidden>
+      <p><strong>Recuperar contraseña</strong></p>
+      <p>Introduce el correo de tu cuenta. Recibirás un enlace para crear una contraseña nueva.</p>
+      <div><label>Email</label><input id="recoveryEmail" type="email" autocomplete="email" required></div>
+      <button class="btn primary" id="recoverySubmitBtn" type="submit">Enviar enlace de recuperación</button>
+      <button class="login-link" id="backToLoginBtn" type="button">Volver al acceso</button>
+      <div class="login-error" id="recoveryStatus"></div>
     </form>
     <form id="invitePasswordForm" hidden>
       <p><strong>Crear o restablecer contraseña</strong></p>
@@ -1747,6 +1756,38 @@ document.getElementById("loginForm").onsubmit=async e=>{
  const {data,error}=await sb.auth.signInWithPassword({email,password});
  if(error){console.warn("Login rechazado",error?.status||"");err.textContent="No se ha podido iniciar sesión. Revisa el email y la contraseña.";return}
  try{await startAuthenticatedApp(data.session)}catch(ex){console.error(ex);err.textContent="Tu cuenta no está habilitada para acceder al CRM.";await sb.auth.signOut()}
+};
+
+const RECOVERY_REDIRECT_URL="https://crm.viajesdegruposescolares.com/";
+document.getElementById("forgotPasswordBtn").onclick=()=>{
+ const loginEmail=document.getElementById("loginEmail").value.trim();
+ document.getElementById("recoveryEmail").value=loginEmail;
+ document.getElementById("recoveryStatus").textContent="";
+ document.getElementById("recoveryStatus").classList.remove("success");
+ document.getElementById("loginForm").hidden=true;
+ document.getElementById("recoveryForm").hidden=false;
+ document.getElementById("recoveryEmail").focus();
+};
+document.getElementById("backToLoginBtn").onclick=()=>{
+ document.getElementById("recoveryForm").hidden=true;
+ document.getElementById("loginForm").hidden=false;
+ document.getElementById("loginEmail").focus();
+};
+document.getElementById("recoveryForm").onsubmit=async e=>{
+ e.preventDefault();
+ const status=document.getElementById("recoveryStatus"),button=document.getElementById("recoverySubmitBtn");
+ const email=document.getElementById("recoveryEmail").value.trim();
+ status.classList.remove("success");status.textContent="Enviando enlace…";button.disabled=true;
+ try{
+   if(!sb)throw new Error("AUTH_NOT_READY");
+   const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:RECOVERY_REDIRECT_URL});
+   if(error)throw error;
+   status.classList.add("success");
+   status.textContent="Si el correo corresponde a una cuenta del CRM, recibirás un enlace de recuperación. Revisa también el correo no deseado.";
+ }catch(error){
+   console.warn("No se pudo solicitar la recuperación",error?.status||"");
+   status.textContent=error?.status===429?"Espera unos minutos antes de solicitar otro enlace.":"No se ha podido enviar el enlace. Inténtalo de nuevo más tarde o contacta con administración.";
+ }finally{button.disabled=false}
 };
 
 document.getElementById("invitePasswordForm").onsubmit=async e=>{
