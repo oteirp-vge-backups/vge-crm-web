@@ -1583,6 +1583,15 @@ async function refreshOpenCenter(message,feedback=null){
  const refreshedBody=dlg?.querySelector(".modal-body");if(refreshedBody)refreshedBody.scrollTop=previousScroll;
 }
 async function saveContactRecord(contactId){const c=centers.find(x=>x.id===currentCenterId),contact=(c?.workspace?.contacts||[]).find(x=>Number(x.contact_id)===Number(contactId)),card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`);if(!c||!contact||!card)return;const patch={full_name:cardValue(card,"full_name"),role:cardValue(card,"role")||null,mobile:cardValue(card,"mobile")||null,email:cardValue(card,"email")||null,is_primary:String(document.querySelector('input[name="primaryContact"]:checked')?.value||"")===String(contactId),do_not_contact:cardValue(card,"do_not_contact"),do_not_contact_reason:cardValue(card,"do_not_contact_reason")||null};try{const {error}=await sb.rpc("update_center_contact_v1",{p_contact_id:Number(contactId),p_patch:patch,p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona de contacto guardada correctamente")}catch(e){console.error(e);alert(friendlyError(e,"No se ha podido guardar la persona de contacto."))}}
+async function archiveContactRecord(contactId){
+ const c=centers.find(x=>x.id===currentCenterId),contact=(c?.workspace?.contacts||[]).find(x=>Number(x.contact_id)===Number(contactId));if(!c||!contact||!contact.active)return;
+ const linkedActiveTrip=(c.workspace?.opportunities||[]).find(x=>x.active&&Number(x.contact_id)===Number(contactId));
+ if(linkedActiveTrip){alert(`No se puede eliminar esta persona porque está vinculada al viaje activo ${linkedActiveTrip.opportunity_id}. Cambia primero la persona responsable del viaje o déjalo sin persona vinculada.`);return}
+ if(!confirm(`Se retirará a «${contact.full_name}» de las personas activas de este centro. El historial se conservará y no se modificará ningún viaje ni contacto comercial. ¿Continuar?`))return;
+ const card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`),btn=card?.querySelector("[data-archive-contact]");if(btn){btn.disabled=true;btn.textContent="Eliminando…"}
+ try{const {error}=await sb.rpc("archive_center_contact_v1",{p_contact_id:Number(contactId),p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona eliminada de los contactos activos")}
+ catch(e){console.error(e);const message=String(e?.message||"").includes("CONTACT_LINKED_TO_ACTIVE_TRIP")?"No se puede eliminar esta persona porque está vinculada a un viaje activo. Cambia primero la persona responsable del viaje.":friendlyError(e,"No se ha podido eliminar la persona de contacto.");alert(message);if(btn?.isConnected){btn.disabled=false;btn.textContent="Eliminar persona"}}
+}
 async function createCenterContact(){
  const c=centers.find(x=>x.id===currentCenterId),btn=document.getElementById("createContactBtn");if(!c)return;
  if(createContactInFlight){showDialogActionStatus("La persona se está registrando. Espera un momento…","info");return}
@@ -1625,6 +1634,7 @@ function bindCenterDialog(c){
  dlg.querySelectorAll(".opportunity-record").forEach(card=>bindTravelDatePair(card.querySelector('[data-field="travel_start_on"]'),card.querySelector('[data-field="travel_end_on"]')));
  dlg.querySelectorAll("[data-opportunity-source]").forEach(select=>{toggleOpportunitySourceDetail(select,false);select.onchange=()=>toggleOpportunitySourceDetail(select,true)});
  dlg.querySelectorAll("[data-save-contact]").forEach(b=>b.onclick=()=>saveContactRecord(Number(b.dataset.saveContact)));
+ dlg.querySelectorAll(".contact-record").forEach(card=>{const actions=card.querySelector(".entity-actions"),contactId=Number(card.dataset.contactId);if(!actions||actions.querySelector("[data-archive-contact]"))return;const button=document.createElement("button");button.className="btn danger";button.type="button";button.dataset.archiveContact=String(contactId);button.textContent="Eliminar persona";button.onclick=()=>archiveContactRecord(contactId);actions.appendChild(button)});
  dlg.querySelectorAll("[data-save-opportunity]").forEach(b=>b.onclick=()=>saveOpportunity(b.dataset.saveOpportunity));
  dlg.querySelectorAll("[data-archive-opportunity]").forEach(b=>b.onclick=()=>changeOpportunityLifecycle(b.dataset.archiveOpportunity,false));
  dlg.querySelectorAll("[data-restore-opportunity]").forEach(b=>b.onclick=()=>changeOpportunityLifecycle(b.dataset.restoreOpportunity,true));
