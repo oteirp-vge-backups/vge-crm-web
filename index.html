@@ -1812,4 +1812,81 @@ document.getElementById("recoveryForm").onsubmit=async e=>{
  status.classList.remove("success");status.textContent="Enviando enlace…";button.disabled=true;
  try{
    if(!sb)throw new Error("AUTH_NOT_READY");
-   const {error}=await sb.auth.resetPas[Truncated]
+   const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:RECOVERY_REDIRECT_URL});
+   if(error)throw error;
+   status.classList.add("success");
+   status.textContent="Si el correo corresponde a una cuenta del CRM, recibirás un enlace de recuperación. Revisa también el correo no deseado.";
+ }catch(error){
+   console.warn("No se pudo solicitar la recuperación",error?.status||"");
+   status.textContent=error?.status===429?"Espera unos minutos antes de solicitar otro enlace.":"No se ha podido enviar el enlace. Inténtalo de nuevo más tarde o contacta con administración.";
+ }finally{button.disabled=false}
+};
+
+document.getElementById("invitePasswordForm").onsubmit=async e=>{
+ e.preventDefault();
+ const err=document.getElementById("invitePasswordError");
+ const password=document.getElementById("invitePassword").value;
+ const repeated=document.getElementById("invitePasswordRepeat").value;
+ if(password.length<12){err.textContent="La contraseña debe tener al menos 12 caracteres.";return}
+ if(!/[a-z]/.test(password)||!/[A-Z]/.test(password)||!/[0-9]/.test(password)||!/[^A-Za-z0-9]/.test(password)){err.textContent="La contraseña debe incluir una mayúscula, una minúscula, un número y un símbolo.";return}
+ if(password!==repeated){err.textContent="Las dos contraseñas no coinciden.";return}
+ err.textContent="Guardando contraseña…";
+ const {data,error}=await sb.auth.updateUser({password});
+ if(error){console.warn("No se pudo guardar la contraseña",error?.status||"");err.textContent=error?.status===422?"La contraseña no cumple los requisitos: 12 caracteres como mínimo, con mayúscula, minúscula, número y símbolo.":"El enlace ya no es válido o ha caducado. Solicita un nuevo correo de recuperación.";return}
+ history.replaceState(null,"",location.pathname+location.search);
+ document.getElementById("invitePasswordForm").hidden=true;
+ document.getElementById("loginForm").hidden=false;
+ try{await startAuthenticatedApp((await sb.auth.getSession()).data.session)}catch(ex){console.error(ex);err.textContent="La cuenta se activó, pero todavía no está habilitada en el CRM."}
+};
+
+document.getElementById("logoutBtn").onclick=signOut;
+document.getElementById("newCenterBtn").onclick=openNewCenterDialog;
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
+ capturePermissionRoleDrafts();
+ if(b.dataset.statusNav){currentView="status";activeStatus=b.dataset.statusNav;filters={search:"",status:"",community:"",seller:"",quick:"all"};}
+ else{currentView=b.dataset.view;activeStatus="";filters={search:"",status:"",community:"",seller:"",quick:"all"};}
+ render();
+});
+document.getElementById("enableAlertsBtn").onclick=enableAlerts;
+document.getElementById("excelBtn").onclick=exportExcel;
+document.getElementById("viewDueBtn").onclick=()=>{currentView="overdue";activeStatus="";filters={search:"",status:"",community:"",seller:"",quick:"all"};render()};
+document.getElementById("dismissReminderBtn").onclick=()=>{setReminderMutedUntil(Date.now()+15*60*1000);updateReminderStrip();toast("Aviso pospuesto durante 15 minutos")};
+document.getElementById("backupBtn").onclick=exportJSON;
+document.getElementById("settingsBtn").onclick=e=>{e.stopPropagation();document.getElementById("settingsMenu").classList.toggle("open")};
+document.addEventListener("click",e=>{if(!e.target.closest("#settingsMenu")&&!e.target.closest("#settingsBtn"))document.getElementById("settingsMenu").classList.remove("open")});
+document.getElementById("exportBtn").onclick=exportJSON;
+document.getElementById("exportCsvBtn").onclick=exportCSV;
+["pointerdown","keydown","touchstart"].forEach(ev=>window.addEventListener(ev,()=>{lastActivityAt=Date.now();touchPresence({interaction:true})},{passive:true}));
+setInterval(()=>{if(!document.getElementById("app").hidden&&currentUser)touchPresence({interaction:false})},PRESENCE_HEARTBEAT_MS);
+setInterval(()=>{if(currentView==="team"&&isAdmin&&!document.getElementById("app").hidden)renderTeamPresence()},30000);
+setInterval(()=>{if(!document.getElementById("app").hidden&&Date.now()-lastActivityAt>CLIENT_INACTIVITY_MS)signOut()},60000);
+
+(async()=>{
+ try{
+   if(!window.supabase)throw new Error("No se ha cargado la librería Supabase.");
+   if(!VGE_CONFIG.supabaseUrl||!VGE_CONFIG.supabasePublishableKey||VGE_CONFIG.supabaseUrl.includes("REEMPLAZAR"))throw new Error("Falta configurar config.js con la URL y la Publishable Key de Supabase.");
+   // Supabase puede devolver invitaciones/recuperaciones en flujo implícito
+   // (type=invite|recovery) o PKCE (?code=...). Ambos deben pedir contraseña.
+   const inviteFlow=/[?#&]type=(?:invite|recovery)(?:&|$)/.test(location.href)||/[?&]code=[^&]+/.test(location.href)||/[?&]set-password=1(?:&|$)/.test(location.href);
+   sb=window.supabase.createClient(VGE_CONFIG.supabaseUrl,VGE_CONFIG.supabasePublishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+   const {data:{session}}=await sb.auth.getSession();
+   if(session&&inviteFlow){
+     document.getElementById("loginForm").hidden=true;
+     document.getElementById("invitePasswordForm").hidden=false;
+   }else if(session)await startAuthenticatedApp(session);
+   sb.auth.onAuthStateChange((event)=>{
+     if(event==="SIGNED_OUT")clearSensitiveUi();
+     if(event==="PASSWORD_RECOVERY"){
+       document.getElementById("app").hidden=true;
+       document.getElementById("loginScreen").hidden=false;
+       document.getElementById("loginForm").hidden=true;
+       document.getElementById("invitePasswordForm").hidden=false;
+     }
+   });
+   setInterval(()=>{if(!document.getElementById("app").hidden)checkReminders()},30000);
+ }catch(e){console.error(e);document.getElementById("loginError").textContent="No se ha podido iniciar el CRM. Revisa la configuración o contacta con administración."}
+})();
+
+</script>
+</body>
+</html>
