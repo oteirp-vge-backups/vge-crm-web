@@ -167,8 +167,8 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
       <div class="login-error" id="loginError"></div>
     </form>
     <form id="invitePasswordForm" hidden>
-      <p><strong>Activar cuenta invitada</strong></p>
-      <p>Elige una contraseña personal para terminar de activar tu acceso.</p>
+      <p><strong>Crear o restablecer contraseña</strong></p>
+      <p>Elige una contraseña personal para completar el acceso.</p>
       <div><label>Nueva contraseña</label><input id="invitePassword" type="password" autocomplete="new-password" minlength="12" required></div>
       <div><label>Repetir contraseña</label><input id="invitePasswordRepeat" type="password" autocomplete="new-password" minlength="12" required></div>
       <button class="btn primary" type="submit">Guardar contraseña y entrar</button>
@@ -1755,10 +1755,11 @@ document.getElementById("invitePasswordForm").onsubmit=async e=>{
  const password=document.getElementById("invitePassword").value;
  const repeated=document.getElementById("invitePasswordRepeat").value;
  if(password.length<12){err.textContent="La contraseña debe tener al menos 12 caracteres.";return}
+ if(!/[a-z]/.test(password)||!/[A-Z]/.test(password)||!/[0-9]/.test(password)||!/[^A-Za-z0-9]/.test(password)){err.textContent="La contraseña debe incluir una mayúscula, una minúscula, un número y un símbolo.";return}
  if(password!==repeated){err.textContent="Las dos contraseñas no coinciden.";return}
  err.textContent="Guardando contraseña…";
  const {data,error}=await sb.auth.updateUser({password});
- if(error){console.warn("No se pudo guardar la contraseña",error?.status||"");err.textContent="No se ha podido guardar la contraseña. Solicita una nueva invitación.";return}
+ if(error){console.warn("No se pudo guardar la contraseña",error?.status||"");err.textContent=error?.status===422?"La contraseña no cumple los requisitos: 12 caracteres como mínimo, con mayúscula, minúscula, número y símbolo.":"El enlace ya no es válido o ha caducado. Solicita un nuevo correo de recuperación.";return}
  history.replaceState(null,"",location.pathname+location.search);
  document.getElementById("invitePasswordForm").hidden=true;
  document.getElementById("loginForm").hidden=false;
