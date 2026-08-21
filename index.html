@@ -325,6 +325,7 @@ function setReminderMutedUntil(value){
 function isReminderSnoozed(){return Date.now()<getReminderMutedUntil()}
 let filters={search:"",status:"",community:"",seller:"",quick:"all"};
 let currentCenterId=null, searchTimer=null, accessFingerprint="", lastActivityAt=Date.now();
+let createContactInFlight=false, createOpportunityInFlight=false;
 let newCenterDuplicateCandidates=[], newCenterDuplicateKey="", newCenterDuplicateRequest=0, newCenterForceConfirmation=false, newCenterSearchTimer=null;
 const BULK_STATE_KEY="vgeBulkUiStateV1";
 const BULK_LAST_RESULT_KEY="vgeBulkLastResultV1";
@@ -1582,7 +1583,14 @@ async function refreshOpenCenter(message,feedback=null){
  const refreshedBody=dlg?.querySelector(".modal-body");if(refreshedBody)refreshedBody.scrollTop=previousScroll;
 }
 async function saveContactRecord(contactId){const c=centers.find(x=>x.id===currentCenterId),contact=(c?.workspace?.contacts||[]).find(x=>Number(x.contact_id)===Number(contactId)),card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`);if(!c||!contact||!card)return;const patch={full_name:cardValue(card,"full_name"),role:cardValue(card,"role")||null,mobile:cardValue(card,"mobile")||null,email:cardValue(card,"email")||null,is_primary:String(document.querySelector('input[name="primaryContact"]:checked')?.value||"")===String(contactId),do_not_contact:cardValue(card,"do_not_contact"),do_not_contact_reason:cardValue(card,"do_not_contact_reason")||null};try{const {error}=await sb.rpc("update_center_contact_v1",{p_contact_id:Number(contactId),p_patch:patch,p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona de contacto guardada correctamente")}catch(e){console.error(e);alert(friendlyError(e,"No se ha podido guardar la persona de contacto."))}}
-async function createCenterContact(){const c=centers.find(x=>x.id===currentCenterId);if(!c)return;try{const {error}=await sb.rpc("create_center_contact_v1",{p_center_id:c.id,p_full_name:document.getElementById("newContactName")?.value.trim()||"",p_role:document.getElementById("newContactRole")?.value||null,p_mobile:document.getElementById("newContactMobile")?.value.trim()||null,p_email:document.getElementById("newContactEmail")?.value.trim()||null,p_is_primary:!!document.getElementById("newContactPrimary")?.checked,p_do_not_contact:!!document.getElementById("newContactBlocked")?.checked,p_do_not_contact_reason:document.getElementById("newContactBlockedReason")?.value.trim()||null});if(error)throw error;await refreshOpenCenter("Persona añadida correctamente") }catch(e){console.error(e);alert(friendlyError(e,"No se ha podido añadir la persona de contacto."))}}
+async function createCenterContact(){
+ const c=centers.find(x=>x.id===currentCenterId),btn=document.getElementById("createContactBtn");if(!c)return;
+ if(createContactInFlight){showDialogActionStatus("La persona se está registrando. Espera un momento…","info");return}
+ createContactInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando persona…"}showDialogActionStatus("Registrando la persona de contacto. Espera un momento…","info");
+ try{const {error}=await sb.rpc("create_center_contact_v1",{p_center_id:c.id,p_full_name:document.getElementById("newContactName")?.value.trim()||"",p_role:document.getElementById("newContactRole")?.value||null,p_mobile:document.getElementById("newContactMobile")?.value.trim()||null,p_email:document.getElementById("newContactEmail")?.value.trim()||null,p_is_primary:!!document.getElementById("newContactPrimary")?.checked,p_do_not_contact:!!document.getElementById("newContactBlocked")?.checked,p_do_not_contact_reason:document.getElementById("newContactBlockedReason")?.value.trim()||null});if(error)throw error;await refreshOpenCenter("Persona añadida correctamente")}
+ catch(e){console.error(e);alert(friendlyError(e,"No se ha podido añadir la persona de contacto."))}
+ finally{createContactInFlight=false;if(btn?.isConnected){btn.disabled=false;btn.textContent="Añadir persona"}}
+}
 function opportunityPatch(c,card){const status=cardValue(card,"status"),date=cardValue(card,"next_date"),time=cardValue(card,"next_time")||"09:00",sourceChoice=cardValue(card,"lead_source_choice"),sourceDetail=cardValue(card,"lead_source_detail");return {cycle:cardValue(card,"cycle"),group_description:cardValue(card,"group_description")||null,students_count:nullableNumber(cardValue(card,"students_count")),teachers_count:nullableNumber(cardValue(card,"teachers_count")),destination:cardValue(card,"destination")||null,travel_start_on:cardValue(card,"travel_start_on")||null,travel_end_on:cardValue(card,"travel_end_on")||null,contact_id:nullableNumber(cardValue(card,"contact_id")),status,next_contact_at:date?localDateTimeToISO(date,time):null,lead_source:resolvedOpportunitySource(c,sourceChoice),lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)}}
 async function saveOpportunity(opportunityId){
  const c=centers.find(x=>x.id===currentCenterId),o=(c?.workspace?.opportunities||[]).find(x=>x.opportunity_id===opportunityId),card=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId);if(!c||!o||!card)return;
@@ -1594,7 +1602,15 @@ async function saveOpportunity(opportunityId){
   console.error(e);const msg=friendlyError(e,"No se ha podido guardar el viaje.");if(btn){btn.disabled=false;btn.textContent="Guardar viaje"}showOpportunitySaveStatus(opportunityId,`✕ ${msg}`,"error");alert(msg)
  }
 }
-async function createOpportunity(){const c=centers.find(x=>x.id===currentCenterId);if(!c)return;const date=document.getElementById("newOppNext")?.value||"",time=document.getElementById("newOppNextTime")?.value||"09:00",sourceChoice=document.getElementById("newOppSourceChoice")?.value||CENTER_SOURCE_OPTION,sourceDetail=document.getElementById("newOppSourceDetail")?.value||"";try{const {error}=await sb.rpc("create_travel_opportunity_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null,p_cycle:document.getElementById("newOppCycle")?.value||null,p_group_description:document.getElementById("newOppGroup")?.value.trim()||null,p_students_count:nullableNumber(document.getElementById("newOppStudents")?.value||""),p_teachers_count:nullableNumber(document.getElementById("newOppTeachers")?.value||""),p_destination:document.getElementById("newOppDestination")?.value.trim()||null,p_travel_start_on:document.getElementById("newOppStart")?.value||null,p_travel_end_on:document.getElementById("newOppEnd")?.value||null,p_contact_id:nullableNumber(document.getElementById("newOppContact")?.value||""),p_status:document.getElementById("newOppStatus")?.value||"Pendiente",p_next_contact_at:date?localDateTimeToISO(date,time):null,p_lead_source:resolvedOpportunitySource(c,sourceChoice),p_lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)});if(error)throw error;await refreshOpenCenter("Viaje creado correctamente") }catch(e){console.error(e);alert(friendlyError(e,"No se ha podido crear el viaje."))}}
+async function createOpportunity(){
+ const c=centers.find(x=>x.id===currentCenterId),btn=document.getElementById("createOpportunityBtn");if(!c)return;
+ if(createOpportunityInFlight){showDialogActionStatus("El viaje se está registrando. Espera un momento…","info");return}
+ createOpportunityInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando viaje…"}showDialogActionStatus("Registrando el viaje. Espera un momento…","info");
+ const date=document.getElementById("newOppNext")?.value||"",time=document.getElementById("newOppNextTime")?.value||"09:00",sourceChoice=document.getElementById("newOppSourceChoice")?.value||CENTER_SOURCE_OPTION,sourceDetail=document.getElementById("newOppSourceDetail")?.value||"";
+ try{const {error}=await sb.rpc("create_travel_opportunity_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null,p_cycle:document.getElementById("newOppCycle")?.value||null,p_group_description:document.getElementById("newOppGroup")?.value.trim()||null,p_students_count:nullableNumber(document.getElementById("newOppStudents")?.value||""),p_teachers_count:nullableNumber(document.getElementById("newOppTeachers")?.value||""),p_destination:document.getElementById("newOppDestination")?.value.trim()||null,p_travel_start_on:document.getElementById("newOppStart")?.value||null,p_travel_end_on:document.getElementById("newOppEnd")?.value||null,p_contact_id:nullableNumber(document.getElementById("newOppContact")?.value||""),p_status:document.getElementById("newOppStatus")?.value||"Pendiente",p_next_contact_at:date?localDateTimeToISO(date,time):null,p_lead_source:resolvedOpportunitySource(c,sourceChoice),p_lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)});if(error)throw error;await refreshOpenCenter("Viaje creado correctamente")}
+ catch(e){console.error(e);alert(friendlyError(e,"No se ha podido crear el viaje."))}
+ finally{createOpportunityInFlight=false;if(btn?.isConnected){btn.disabled=false;btn.textContent="Crear viaje"}}
+}
 async function changeOpportunityLifecycle(opportunityId,restore=false){const c=centers.find(x=>x.id===currentCenterId),o=(c?.workspace?.opportunities||[]).find(x=>x.opportunity_id===opportunityId);if(!o)return;const action=restore?"restaurar":"archivar",reason=prompt(`Motivo obligatorio para ${action} ${o.cycle} (${opportunityId}):`);if(reason===null)return;if(reason.trim().length<8){alert("Indica un motivo de al menos 8 caracteres.");return}if(!confirm(`Se va a ${action} este viaje. La ficha del colegio y sus demás viajes no se modificarán. ¿Continuar?`))return;try{const {error}=await sb.rpc(restore?"restore_travel_opportunity_v1":"archive_travel_opportunity_v1",{p_opportunity_id:opportunityId,p_reason:reason.trim(),p_expected_version:Number(o.opportunity_version||1)});if(error)throw error;await refreshOpenCenter(restore?"Viaje restaurado correctamente":"Viaje archivado correctamente") }catch(e){console.error(e);alert(friendlyError(e,`No se ha podido ${action} el viaje.`))}}
 function bindCenterDialog(c){
  const dlg=document.getElementById("centerDialog");
@@ -1603,8 +1619,8 @@ function bindCenterDialog(c){
  dlg.querySelector("#contactForm").onsubmit=e=>{e.preventDefault();addContact()};
  const province=dlg.querySelector("#fProvince");if(province)province.onchange=()=>{const community=dlg.querySelector("#fCommunity");if(community)community.value=communityForProvince(province.value)};
  const archiveBtn=dlg.querySelector("#archiveCenterBtn");if(archiveBtn)archiveBtn.onclick=archiveCurrentCenter;
- const createContact=dlg.querySelector("#createContactBtn");if(createContact)createContact.onclick=createCenterContact;
- const createOpp=dlg.querySelector("#createOpportunityBtn");if(createOpp)createOpp.onclick=createOpportunity;
+ const createContact=dlg.querySelector("#createContactBtn");if(createContact){createContact.onclick=createCenterContact;if(createContactInFlight){createContact.disabled=true;createContact.textContent="Registrando persona…"}}
+ const createOpp=dlg.querySelector("#createOpportunityBtn");if(createOpp){createOpp.onclick=createOpportunity;if(createOpportunityInFlight){createOpp.disabled=true;createOpp.textContent="Registrando viaje…"}}
  bindTravelDatePair(dlg.querySelector("#newOppStart"),dlg.querySelector("#newOppEnd"));
  dlg.querySelectorAll(".opportunity-record").forEach(card=>bindTravelDatePair(card.querySelector('[data-field="travel_start_on"]'),card.querySelector('[data-field="travel_end_on"]')));
  dlg.querySelectorAll("[data-opportunity-source]").forEach(select=>{toggleOpportunitySourceDetail(select,false);select.onchange=()=>toggleOpportunitySourceDetail(select,true)});
@@ -1796,18 +1812,4 @@ document.getElementById("recoveryForm").onsubmit=async e=>{
  status.classList.remove("success");status.textContent="Enviando enlace…";button.disabled=true;
  try{
    if(!sb)throw new Error("AUTH_NOT_READY");
-   const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:RECOVERY_REDIRECT_URL});
-   if(error)throw error;
-   status.classList.add("success");
-   status.textContent="Si el correo corresponde a una cuenta del CRM, recibirás un enlace de recuperación. Revisa también el correo no deseado.";
- }catch(error){
-   console.warn("No se pudo solicitar la recuperación",error?.status||"");
-   status.textContent=error?.status===429?"Espera unos minutos antes de solicitar otro enlace.":"No se ha podido enviar el enlace. Inténtalo de nuevo más tarde o contacta con administración.";
- }finally{button.disabled=false}
-};
-
-document.getElementById("invitePasswordForm").onsubmit=async e=>{
- e.preventDefault();
- const err=document.getElementById("invitePasswordError");
- const password=document.getElementById("invitePassword").value;
- const repeated=[Truncated]
+   const {error}=await sb.auth.resetPas[Truncated]
