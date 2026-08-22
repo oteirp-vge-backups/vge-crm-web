@@ -190,7 +190,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
   <aside class="sidebar">
     <div class="brand"><div class="logo">VGE</div><div><strong>Viajes de Grupos Escolares</strong><small>CRM de prospección</small></div></div>
     <div class="userbox"><label>Sesión iniciada</label><div class="session-name" id="sessionUser">—</div><div class="session-role" id="sessionRole"></div><span class="online-pill">● ONLINE</span><button class="logout-btn" id="logoutBtn">Cerrar sesión</button></div>
-    <div class="build-badge">VERSIÓN V15 · R9</div>
+    <div class="build-badge">VERSIÓN V15 · R9.1</div>
     <nav class="nav" id="nav">
       <button data-view="dashboard" class="active"><span>▦ Panel</span></button>
       <button data-view="stats"><span>▥ Estadísticas</span></button>
@@ -1678,7 +1678,11 @@ async function saveContactRecord(contactId){
  const btn=card.querySelector("[data-save-contact]");contactSaveInFlight.add(contactId);if(btn){btn.disabled=true;btn.textContent="Guardando…"}
  try{const {error}=await sb.rpc("update_center_contact_v1",{p_contact_id:Number(contactId),p_patch:patch,p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona de contacto guardada correctamente",null,`contact:${contactId}`)}
  catch(e){console.error(e);alert(friendlyError(e,"No se ha podido guardar la persona de contacto."));if(btn?.isConnected){btn.disabled=false;btn.textContent="Guardar persona"}}
- finally{contactSaveInFlight.delete(contactId)}
+ finally{
+  contactSaveInFlight.delete(contactId);
+  const currentCard=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`),currentBtn=currentCard?.querySelector("[data-save-contact]");
+  if(currentBtn){currentBtn.disabled=false;currentBtn.textContent="Guardar persona"}
+ }
 }
 async function archiveContactRecord(contactId){
  const c=centers.find(x=>x.id===currentCenterId),contact=(c?.workspace?.contacts||[]).find(x=>Number(x.contact_id)===Number(contactId));if(!c||!contact||!contact.active)return;
@@ -1699,7 +1703,11 @@ async function createCenterContact(){
  createContactInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando persona…"}showDialogActionStatus("Registrando la persona de contacto. Espera un momento…","info");
  try{const {error}=await sb.rpc("create_center_contact_v1",{p_center_id:c.id,p_full_name:payload.full_name,p_role:payload.role,p_mobile:payload.mobile,p_email:payload.email,p_is_primary:payload.is_primary,p_do_not_contact:payload.do_not_contact,p_do_not_contact_reason:payload.do_not_contact_reason});if(error)throw error;await refreshOpenCenter("Persona añadida correctamente",null,"new-contact")}
  catch(e){console.error(e);alert(friendlyError(e,"No se ha podido añadir la persona de contacto."))}
- finally{createContactInFlight=false;if(btn?.isConnected){btn.disabled=false;btn.textContent="Añadir persona"}}
+ finally{
+  createContactInFlight=false;
+  const currentBtn=document.getElementById("createContactBtn");
+  if(currentBtn){currentBtn.disabled=false;currentBtn.textContent="Añadir persona"}
+ }
 }
 function opportunityPatch(c,card){const status=cardValue(card,"status"),date=cardValue(card,"next_date"),time=cardValue(card,"next_time")||"09:00",sourceChoice=cardValue(card,"lead_source_choice"),sourceDetail=cardValue(card,"lead_source_detail");return {cycle:cardValue(card,"cycle"),group_description:cardValue(card,"group_description")||null,students_count:nullableNumber(cardValue(card,"students_count")),teachers_count:nullableNumber(cardValue(card,"teachers_count")),destination:cardValue(card,"destination")||null,travel_start_on:cardValue(card,"travel_start_on")||null,travel_end_on:cardValue(card,"travel_end_on")||null,contact_id:nullableNumber(cardValue(card,"contact_id")),status,next_contact_at:date?localDateTimeToISO(date,time):null,lead_source:resolvedOpportunitySource(c,sourceChoice),lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)}}
 async function saveOpportunity(opportunityId){
@@ -1711,7 +1719,11 @@ async function saveOpportunity(opportunityId){
   await refreshOpenCenter(null,{opportunityId,message:`✓ Viaje guardado correctamente · ${localTime()}`,type:"success"},`opportunity:${opportunityId}`)
  }catch(e){
   console.error(e);const msg=friendlyError(e,"No se ha podido guardar el viaje.");if(btn){btn.disabled=false;btn.textContent="Guardar viaje"}showOpportunitySaveStatus(opportunityId,`✕ ${msg}`,"error");alert(msg)
- }finally{opportunitySaveInFlight.delete(opportunityId)}
+ }finally{
+  opportunitySaveInFlight.delete(opportunityId);
+  const currentCard=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId),currentBtn=currentCard?.querySelector("[data-save-opportunity]");
+  if(currentBtn){currentBtn.disabled=false;currentBtn.textContent="Guardar viaje"}
+ }
 }
 async function createOpportunity(){
  const c=centers.find(x=>x.id===currentCenterId),btn=document.getElementById("createOpportunityBtn");if(!c)return;
@@ -1720,7 +1732,11 @@ async function createOpportunity(){
  const date=document.getElementById("newOppNext")?.value||"",time=document.getElementById("newOppNextTime")?.value||"09:00",sourceChoice=document.getElementById("newOppSourceChoice")?.value||CENTER_SOURCE_OPTION,sourceDetail=document.getElementById("newOppSourceDetail")?.value||"";
  try{const {error}=await sb.rpc("create_travel_opportunity_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null,p_cycle:document.getElementById("newOppCycle")?.value||null,p_group_description:document.getElementById("newOppGroup")?.value.trim()||null,p_students_count:nullableNumber(document.getElementById("newOppStudents")?.value||""),p_teachers_count:nullableNumber(document.getElementById("newOppTeachers")?.value||""),p_destination:document.getElementById("newOppDestination")?.value.trim()||null,p_travel_start_on:document.getElementById("newOppStart")?.value||null,p_travel_end_on:document.getElementById("newOppEnd")?.value||null,p_contact_id:nullableNumber(document.getElementById("newOppContact")?.value||""),p_status:document.getElementById("newOppStatus")?.value||"Pendiente",p_next_contact_at:date?localDateTimeToISO(date,time):null,p_lead_source:resolvedOpportunitySource(c,sourceChoice),p_lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)});if(error)throw error;await refreshOpenCenter("Viaje creado correctamente",null,"new-opportunity")}
  catch(e){console.error(e);alert(friendlyError(e,"No se ha podido crear el viaje."))}
- finally{createOpportunityInFlight=false;if(btn?.isConnected){btn.disabled=false;btn.textContent="Crear viaje"}}
+ finally{
+  createOpportunityInFlight=false;
+  const currentBtn=document.getElementById("createOpportunityBtn");
+  if(currentBtn){currentBtn.disabled=false;currentBtn.textContent="Crear viaje"}
+ }
 }
 async function changeOpportunityLifecycle(opportunityId,restore=false){
  const c=centers.find(x=>x.id===currentCenterId),o=(c?.workspace?.opportunities||[]).find(x=>x.opportunity_id===opportunityId);if(!o)return;
@@ -1731,7 +1747,11 @@ async function changeOpportunityLifecycle(opportunityId,restore=false){
  const card=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId),btn=card?.querySelector(restore?"[data-restore-opportunity]":"[data-archive-opportunity]");lifecycleInFlight.add(lockKey);if(btn){btn.disabled=true;btn.textContent=restore?"Restaurando…":"Archivando…"}
  try{const {error}=await sb.rpc(restore?"restore_travel_opportunity_v1":"archive_travel_opportunity_v1",{p_opportunity_id:opportunityId,p_reason:reason.trim(),p_expected_version:Number(o.opportunity_version||1)});if(error)throw error;await refreshOpenCenter(restore?"Viaje restaurado correctamente":"Viaje archivado correctamente",null,scope)}
  catch(e){console.error(e);alert(friendlyError(e,`No se ha podido ${action} el viaje.`));if(btn?.isConnected){btn.disabled=false;btn.textContent=restore?"Restaurar viaje":"Archivar viaje"}}
- finally{lifecycleInFlight.delete(lockKey)}
+ finally{
+  lifecycleInFlight.delete(lockKey);
+  const currentCard=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId),currentBtn=currentCard?.querySelector("[data-restore-opportunity], [data-archive-opportunity]");
+  if(currentBtn){currentBtn.disabled=false;currentBtn.textContent=currentBtn.dataset.restoreOpportunity?"Restaurar viaje":"Archivar viaje"}
+ }
 }
 function bindCenterDialog(c){
  const dlg=document.getElementById("centerDialog");
