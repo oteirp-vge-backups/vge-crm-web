@@ -190,7 +190,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
   <aside class="sidebar">
     <div class="brand"><div class="logo">VGE</div><div><strong>Viajes de Grupos Escolares</strong><small>CRM de prospección</small></div></div>
     <div class="userbox"><label>Sesión iniciada</label><div class="session-name" id="sessionUser">—</div><div class="session-role" id="sessionRole"></div><span class="online-pill">● ONLINE</span><button class="logout-btn" id="logoutBtn">Cerrar sesión</button></div>
-    <div class="build-badge">VERSIÓN V15 · R9.5</div>
+    <div class="build-badge">VERSIÓN V15 · R9.6</div>
     <nav class="nav" id="nav">
       <button data-view="dashboard" class="active"><span>▦ Panel</span></button>
       <button data-view="stats"><span>▥ Estadísticas</span></button>
@@ -241,8 +241,9 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
 <dialog id="passwordDialog">
   <div class="modal-head"><div><h2>Cambiar contraseña</h2><p>La nueva contraseña sustituirá inmediatamente a la actual</p></div><button class="close" id="closePasswordDialog" type="button">✕</button></div>
   <div class="modal-body">
-    <div class="notice">Utiliza al menos 12 caracteres e incluye una mayúscula, una minúscula, un número y un símbolo. No compartas la contraseña con ninguna otra persona.</div>
+    <div class="notice">Escribe primero tu contraseña actual. La nueva debe tener al menos 12 caracteres e incluir una mayúscula, una minúscula, un número y un símbolo.</div>
     <form id="changePasswordForm" class="form-grid">
+      <div class="field span4"><label>Contraseña actual</label><input id="currentSessionPassword" type="password" autocomplete="current-password" required></div>
       <div class="field span4"><label>Nueva contraseña</label><input id="newSessionPassword" type="password" autocomplete="new-password" minlength="12" required></div>
       <div class="field span4"><label>Repetir nueva contraseña</label><input id="newSessionPasswordRepeat" type="password" autocomplete="new-password" minlength="12" required></div>
       <div class="field span4"><button class="btn primary" id="changePasswordSubmitBtn" type="submit">Guardar nueva contraseña</button><div class="save-feedback" id="changePasswordStatus"></div></div>
@@ -2061,25 +2062,34 @@ function closePasswordDialog(){
 }
 document.getElementById("changePasswordBtn").onclick=()=>{
  document.getElementById("settingsMenu").classList.remove("open");
- const dlg=document.getElementById("passwordDialog");dlg.showModal();document.getElementById("newSessionPassword").focus();
+ const dlg=document.getElementById("passwordDialog");dlg.showModal();document.getElementById("currentSessionPassword").focus();
 };
 document.getElementById("closePasswordDialog").onclick=closePasswordDialog;
 document.getElementById("passwordDialog").addEventListener("cancel",e=>{e.preventDefault();closePasswordDialog()});
 document.getElementById("changePasswordForm").onsubmit=async e=>{
  e.preventDefault();
- const password=document.getElementById("newSessionPassword").value,repeated=document.getElementById("newSessionPasswordRepeat").value;
+ const currentPassword=document.getElementById("currentSessionPassword").value,password=document.getElementById("newSessionPassword").value,repeated=document.getElementById("newSessionPasswordRepeat").value;
  const status=document.getElementById("changePasswordStatus"),button=document.getElementById("changePasswordSubmitBtn");
  status.className="save-feedback show error";
+ if(!currentPassword){status.textContent="Introduce tu contraseña actual.";return}
  if(password.length<12){status.textContent="La contraseña debe tener al menos 12 caracteres.";return}
  if(!/[a-z]/.test(password)||!/[A-Z]/.test(password)||!/[0-9]/.test(password)||!/[^A-Za-z0-9]/.test(password)){status.textContent="Incluye una mayúscula, una minúscula, un número y un símbolo.";return}
  if(password!==repeated){status.textContent="Las dos contraseñas no coinciden.";return}
  button.disabled=true;status.className="save-feedback show info";status.textContent="Guardando la nueva contraseña…";
  try{
-   const {error}=await sb.auth.updateUser({password});if(error)throw error;
+   const {error}=await sb.auth.updateUser({password,current_password:currentPassword});if(error)throw error;
    status.className="save-feedback show success";status.textContent="Contraseña actualizada correctamente.";
-   document.getElementById("newSessionPassword").value="";document.getElementById("newSessionPasswordRepeat").value="";
+   document.getElementById("currentSessionPassword").value="";document.getElementById("newSessionPassword").value="";document.getElementById("newSessionPasswordRepeat").value="";
    setTimeout(()=>{closePasswordDialog();toast("Contraseña actualizada correctamente")},900);
- }catch(error){console.warn("No se pudo cambiar la contraseña",error?.status||"");status.className="save-feedback show error";status.textContent=error?.status===422?"La contraseña no cumple los requisitos de seguridad.":"No se ha podido cambiar la contraseña. Vuelve a iniciar sesión e inténtalo de nuevo."}
+ }catch(error){
+   console.warn("No se pudo cambiar la contraseña",error?.status||"");status.className="save-feedback show error";
+   if(error?.code==="bad_password"||error?.code==="invalid_credentials")status.textContent="La contraseña actual no es correcta.";
+   else if(error?.code==="same_password")status.textContent="La nueva contraseña debe ser distinta de la actual.";
+   else if(error?.code==="weak_password")status.textContent="La nueva contraseña es demasiado fácil o aparece en filtraciones. Elige otra menos predecible.";
+   else if(error?.code==="current_password_required")status.textContent="Introduce tu contraseña actual.";
+   else if(error?.status===422)status.textContent="La contraseña no cumple los requisitos de seguridad.";
+   else status.textContent="No se ha podido cambiar la contraseña. Inténtalo de nuevo.";
+ }
  finally{button.disabled=false}
 };
 document.getElementById("exportBtn").onclick=exportJSON;
