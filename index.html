@@ -146,9 +146,11 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
 .workspace-summary{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.workspace-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid #c8dbea;background:#f0f6fb;color:#244a70;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:700}.workspace-pill strong{color:var(--navy)}
 .entity-list{display:grid;gap:10px}.entity-card{border:1px solid var(--line);border-radius:10px;background:#fbfdff;padding:12px}.entity-card.archived{background:#f8fafc;opacity:.82}.entity-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}.entity-head h4{margin:0;color:var(--navy);font-size:13px}.entity-head p{margin:3px 0 0;color:var(--muted);font-size:10px}.entity-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.entity-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.entity-form .field.span2{grid-column:span 2}.entity-form .field.span4{grid-column:span 4}.entity-form .btn{align-self:end}.entity-create{margin-top:12px;padding:12px;border:1px dashed #a8bfd8;border-radius:10px;background:#f7fbff}.entity-create h4{margin:0 0 10px;color:var(--navy);font-size:13px}.opportunity-selector{grid-column:1/-1;border:1px solid var(--line);border-radius:9px;padding:10px;background:#f8fafc}.opportunity-selector>label{font-size:11px;font-weight:800;color:var(--navy)}.opportunity-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}.opportunity-check{display:flex;gap:7px;align-items:flex-start;border:1px solid var(--line);border-radius:7px;padding:8px;background:#fff;font-size:11px}.opportunity-check input{margin-top:2px}.opportunity-check small{display:block;color:var(--muted);margin-top:2px}.travel-summary{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}.travel-summary .event-tag{margin-left:0}.task-kind{display:inline-flex;border-radius:5px;padding:2px 5px;margin-bottom:4px;font-size:10px;font-weight:800;background:#e8f3ff;color:#174b7a}.task-kind.general{background:#f1f5f9;color:#475569}.section-note{font-size:11px;color:var(--muted);line-height:1.45;margin:-5px 0 12px}.event-links{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
 .opportunity-with-history{border:1px solid var(--line);border-radius:10px;background:#fbfdff;overflow:hidden}.opportunity-with-history>.opportunity-record{border:0;border-radius:0}.opportunity-history{border-top:1px solid var(--line);background:#f7f9fc}.opportunity-history summary{cursor:pointer;padding:9px 12px;color:var(--navy);font-size:11px;font-weight:800;list-style-position:inside}.opportunity-history[open] summary{border-bottom:1px solid var(--line)}.opportunity-history-list{display:grid;gap:7px;padding:10px 12px}.opportunity-history-item{border-left:3px solid var(--blue2);padding:2px 0 2px 9px;font-size:11px}.opportunity-history-item strong{color:var(--navy)}.opportunity-history-meta{color:var(--muted);margin-top:3px}.opportunity-history-empty{padding:10px 12px;color:var(--muted);font-size:11px}
+.quality-panel{margin-top:16px;padding:18px}.quality-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}.quality-head h2{font-size:15px;color:var(--navy);margin:0}.quality-head p{font-size:11px;color:var(--muted);margin:4px 0 0;line-height:1.4}.quality-scope{font-size:10px;font-weight:800;color:#315a7d;background:#eef5fb;border:1px solid #bfd3e6;border-radius:99px;padding:5px 9px;white-space:nowrap}.quality-grid{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:9px}.quality-item{border:1px solid var(--line);border-radius:10px;background:#fbfdff;padding:12px;text-align:left;color:var(--text)}.quality-item:hover{background:#f0f6fb;border-color:#a8bfd8}.quality-item strong{display:block;font-size:22px;color:var(--navy);margin-bottom:3px}.quality-item span{display:block;font-size:11px;font-weight:800}.quality-item small{display:block;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.3}.quality-item.clear{background:#f2fbf5;border-color:#b9dfc5}.quality-item.attention strong{color:#a15c00}.unsaved-indicator{display:none;align-items:center;gap:6px;margin-top:9px;border:1px solid #e4bd55;background:#fff8df;color:#735c10;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:800}.unsaved-indicator.show{display:flex}.history-note{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:-4px 0 10px;padding:8px 10px;border-radius:8px;background:#f7f9fc;color:var(--muted);font-size:10px}.history-sequence{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:99px;background:#eef4fa;color:#24557c;font-weight:800;margin-right:6px}.duplicate-contact-warning{margin:0 0 10px;padding:9px 11px;border:1px solid #e4bd55;background:#fff8df;color:#735c10;border-radius:8px;font-size:11px;font-weight:700}.operation-busy{pointer-events:none;opacity:.72}
 @media(max-width:1000px){.permission-editor{grid-template-columns:1fr 1fr}.permission-editor .btn{width:100%}}
 @media(max-width:1100px){.stats-kpis{grid-template-columns:repeat(3,1fr)}.stats-filters{grid-template-columns:repeat(2,minmax(160px,1fr))}}
-@media(max-width:760px){.permission-matrix{grid-template-columns:1fr}.permission-editor,.archive-form{grid-template-columns:1fr}.permission-user-head{flex-direction:column}.permission-editor .btn,.archive-form .btn{width:100%}.stats-kpis{grid-template-columns:repeat(2,1fr)}.stats-grid,.stats-filters{grid-template-columns:1fr}.stats-panel.full{grid-column:auto}.stats-filters .btn{width:100%}.stats-bar-row{grid-template-columns:100px 1fr 36px}}
+@media(max-width:1100px){.quality-grid{grid-template-columns:repeat(3,minmax(120px,1fr))}}
+@media(max-width:760px){.permission-matrix{grid-template-columns:1fr}.permission-editor,.archive-form{grid-template-columns:1fr}.permission-user-head{flex-direction:column}.permission-editor .btn,.archive-form .btn{width:100%}.stats-kpis{grid-template-columns:repeat(2,1fr)}.stats-grid,.stats-filters{grid-template-columns:1fr}.stats-panel.full{grid-column:auto}.stats-filters .btn{width:100%}.stats-bar-row{grid-template-columns:100px 1fr 36px}.quality-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.quality-head{flex-direction:column}.history-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:900px){.entity-form{grid-template-columns:repeat(2,minmax(0,1fr))}.entity-form .field.span4{grid-column:span 2}.opportunity-checks{grid-template-columns:1fr}}
 @media(max-width:560px){.entity-form{grid-template-columns:1fr}.entity-form .field.span2,.entity-form .field.span4{grid-column:span 1}.entity-head{flex-direction:column}}
 
@@ -188,7 +190,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
   <aside class="sidebar">
     <div class="brand"><div class="logo">VGE</div><div><strong>Viajes de Grupos Escolares</strong><small>CRM de prospección</small></div></div>
     <div class="userbox"><label>Sesión iniciada</label><div class="session-name" id="sessionUser">—</div><div class="session-role" id="sessionRole"></div><span class="online-pill">● ONLINE</span><button class="logout-btn" id="logoutBtn">Cerrar sesión</button></div>
-    <div class="build-badge">VERSIÓN V15 · R8 ESTABLE</div>
+    <div class="build-badge">VERSIÓN V15 · R9</div>
     <nav class="nav" id="nav">
       <button data-view="dashboard" class="active"><span>▦ Panel</span></button>
       <button data-view="stats"><span>▥ Estadísticas</span></button>
@@ -249,7 +251,7 @@ window.VGE_CONFIG = {
 </script>
 <script>
 const INITIAL_CENTERS = []; // La base ya no viaja dentro del HTML.
-const CRM_BUILD = "2026-08-20-staging-v15-uat-invitations-r8";
+const CRM_BUILD = "2026-08-22-production-v15-protection-quality-history-r9";
 let OPERATORS = [];
 let USERS = [];
 const STATUSES = ["Pendiente","Interesado","Trasladado a cotización","No interesado"];
@@ -325,6 +327,9 @@ function isReminderSnoozed(){return Date.now()<getReminderMutedUntil()}
 let filters={search:"",status:"",community:"",seller:"",quick:"all"};
 let currentCenterId=null, searchTimer=null, accessFingerprint="", lastActivityAt=Date.now();
 let createContactInFlight=false, createOpportunityInFlight=false;
+let profileSaveInFlight=false, contactEventInFlight=false;
+const contactSaveInFlight=new Set(), opportunitySaveInFlight=new Set(), lifecycleInFlight=new Set();
+let centerDialogDirtyScopes=new Set(), centerDialogHydrating=false;
 let newCenterDuplicateCandidates=[], newCenterDuplicateKey="", newCenterDuplicateRequest=0, newCenterForceConfirmation=false, newCenterSearchTimer=null;
 const BULK_STATE_KEY="vgeBulkUiStateV1";
 const BULK_LAST_RESULT_KEY="vgeBulkLastResultV1";
@@ -358,6 +363,54 @@ function isDueNow(c){return !!(nextKey(c)&&!isClosedStatus(c)&&nextKey(c)<=nowKe
 function dueType(c){const n=nextParts(c);if(!n.date)return "";const today=localISO();if(n.date<today)return "due";if(n.date>today)return "future";return nextKey(c)<=nowKey()?"due":"today"}
 function fmtNext(c){const n=nextParts(c);if(!n.date)return "—";return `${fmtDate(n.date)}${n.time?` · ${n.time}`:""}`}
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800)}
+function updateUnsavedIndicator(){const box=document.getElementById("unsavedIndicator"),dirty=centerDialogDirtyScopes.size>0;if(box)box.classList.toggle("show",dirty)}
+function markCenterScopeDirty(scope){if(centerDialogHydrating||!scope)return;centerDialogDirtyScopes.add(scope);updateUnsavedIndicator()}
+function clearCenterScopeDirty(scope){if(scope)centerDialogDirtyScopes.delete(scope);else centerDialogDirtyScopes.clear();updateUnsavedIndicator()}
+function centerOperationBusy(){return profileSaveInFlight||contactEventInFlight||createContactInFlight||createOpportunityInFlight||contactSaveInFlight.size>0||opportunitySaveInFlight.size>0||lifecycleInFlight.size>0}
+function requestCloseCenterDialog(){
+ const dlg=document.getElementById("centerDialog");if(!dlg?.open)return true;
+ if(centerOperationBusy()){alert("Hay una operación en curso. Espera a que termine antes de cerrar la ficha.");return false}
+ if(centerDialogDirtyScopes.size&&!confirm("Hay cambios sin guardar en esta ficha. Si cierras ahora se perderán.\n\n¿Cerrar la ficha sin guardar?"))return false;
+ clearCenterScopeDirty();dlg.close();return true
+}
+function dirtyControlDescriptor(scope,el,index){return {scope,id:el.id||"",field:el.dataset?.field||"",name:el.name||"",attributeValue:el.getAttribute("value")||"",index,type:el.type||el.tagName.toLowerCase(),value:el.value,checked:!!el.checked}}
+function captureDirtyDrafts(exceptScopes=[]){
+ const except=new Set(exceptScopes.filter(Boolean)),drafts=[];
+ centerDialogDirtyScopes.forEach(scope=>{
+  if(except.has(scope))return;const wrap=[...document.querySelectorAll("[data-dirty-scope]")].find(x=>x.dataset.dirtyScope===scope);if(!wrap)return;
+  [...wrap.querySelectorAll("input,select,textarea")].forEach((el,index)=>drafts.push(dirtyControlDescriptor(scope,el,index)))
+ });return drafts
+}
+function restoreDirtyDrafts(drafts=[]){
+ if(!drafts.length)return;centerDialogHydrating=true;
+ const restored=new Set();
+ drafts.forEach(d=>{
+  const wrap=[...document.querySelectorAll("[data-dirty-scope]")].find(x=>x.dataset.dirtyScope===d.scope);if(!wrap)return;
+  const controls=[...wrap.querySelectorAll("input,select,textarea")];let el=d.id?document.getElementById(d.id):null;
+  if(!el&&d.field)el=controls.find(x=>x.dataset?.field===d.field);
+  if(!el&&d.name)el=controls.find(x=>x.name===d.name&&(!d.attributeValue||x.getAttribute("value")===d.attributeValue));
+  if(!el)el=controls[d.index];if(!el)return;
+  if(["checkbox","radio"].includes(d.type))el.checked=d.checked;else el.value=d.value;restored.add(d.scope)
+ });
+ centerDialogHydrating=false;restored.forEach(scope=>centerDialogDirtyScopes.add(scope));updateUnsavedIndicator()
+}
+function bindCenterDirtyTracking(dlg){
+ clearCenterScopeDirty();
+ const mark=e=>{const scope=e.target.closest?.("[data-dirty-scope]")?.dataset.dirtyScope;markCenterScopeDirty(scope)};
+ dlg.oninput=mark;dlg.onchange=mark;
+ dlg.oncancel=e=>{e.preventDefault();requestCloseCenterDialog()};
+}
+function duplicateContactCheck(c,payload,excludeId=null){
+ const email=String(payload.email||"").trim().toLowerCase(),phone=String(payload.mobile||"").replace(/\D/g,""),name=norm(payload.full_name).replace(/\s+/g," ").trim();
+ const matches=(c.workspace?.contacts||[]).filter(x=>x.active&&Number(x.contact_id)!==Number(excludeId)).map(x=>({contact:x,email:email&&String(x.email||"").trim().toLowerCase()===email,phone:phone&&String(x.mobile||"").replace(/\D/g,"")===phone,name:name&&norm(x.full_name).replace(/\s+/g," ").trim()===name})).filter(x=>x.email||x.phone||x.name);
+ const hard=matches.find(x=>x.email||x.phone);return {matches,hard}
+}
+function confirmContactIsDistinct(c,payload,excludeId=null){
+ const {matches,hard}=duplicateContactCheck(c,payload,excludeId);if(!matches.length)return true;
+ const names=[...new Set(matches.map(x=>x.contact.full_name))].join(", ");
+ if(hard){alert(`Ya existe una persona de contacto con el mismo ${hard.email&&hard.phone?"email y teléfono":hard.email?"email":"teléfono"}: ${names}.\n\nNo se ha guardado para evitar un duplicado.`);return false}
+ return confirm(`Ya existe una persona con el mismo nombre: ${names}.\n\n¿Confirmas que se trata de otra persona distinta?`)
+}
 function options(arr,val){return arr.map(x=>`<option ${x===val?"selected":""}>${esc(x)}</option>`).join("")}
 function statusBadge(s){return `<span class="badge ${STATUS_CLASS[s]||"st-pending"}">${esc(s)}</span>`}
 function lastEvent(c){
@@ -455,7 +508,7 @@ async function loadAll(){
 }
 async function loadHistory(c){
  const data=await rpcJson("get_center_history_v2",{p_center_id:c.id});
- c.history=(data||[]).map(r=>{const n=splitISO(r.next_contact_at);return {id:r.id,date:localISO(new Date(r.contacted_at)),channel:r.channel,result:r.result,note:r.notes||"",nextContact:n.date,nextContactTime:n.time,author:r.operator_name||r.operator_code,createdAt:r.created_at,contactName:r.contact_name||"",contactRole:r.contact_role||"",opportunities:r.opportunities||[]}});
+ c.history=(data||[]).map(r=>{const n=splitISO(r.next_contact_at);return {id:r.id,date:localISO(new Date(r.contacted_at)),contactedAt:r.contacted_at,channel:r.channel,result:r.result,note:r.notes||"",nextContact:n.date,nextContactTime:n.time,author:r.operator_name||r.operator_code,createdAt:r.created_at,contactName:r.contact_name||"",contactRole:r.contact_role||"",opportunities:r.opportunities||[]}});
 }
 async function loadWorkspace(c){c.workspace=await rpcJson("get_center_workspace_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null});return c.workspace}
 async function saveCenter(c){
@@ -512,6 +565,28 @@ function render(){
 }
 function setTitle(title,sub=""){document.getElementById("pageTitle").textContent=title;document.getElementById("pageSubtitle").textContent=sub}
 
+function qualityScopeCenters(){return isAdmin?centers.slice():centers.filter(c=>c.assignedTo===currentUser)}
+function hasFutureFollowup(c){return !!(c.nextTaskAt||c.opportunityNextContactAt||(nextKey(c)&&nextKey(c)>nowKey()))}
+function qualityIssueCount(rows,key){return rows.filter(c=>{
+ if(key==="quality-phone")return !String(c.mobile||c.schoolPhone||"").trim();
+ if(key==="quality-email")return !String(c.directEmail||c.schoolEmail||"").trim();
+ if(key==="quality-contact")return !String(c.contactName||"").trim();
+ if(key==="quality-travel")return Number(c.opportunityTotal||0)===0;
+ if(key==="quality-followup")return ["Interesado","Trasladado a cotización"].includes(portfolioStatus(c))&&!hasFutureFollowup(c);
+ return false
+ }).length}
+function qualityPanelHtml(){
+ const rows=qualityScopeCenters(),items=[
+  ["quality-phone","Sin teléfono","No hay teléfono general ni directo"],
+  ["quality-email","Sin email","No hay email general ni directo"],
+  ["quality-contact","Sin persona","Falta un interlocutor identificado"],
+  ["quality-travel","Sin viaje","No hay grupo creado en la campaña"],
+  ["quality-followup","Sin seguimiento","Interesados o cotización sin fecha futura"]
+ ];
+ return `<div class="card quality-panel"><div class="quality-head"><div><h2>Calidad de datos</h2><p>Revisión automática en el navegador. No modifica ninguna ficha: pulsa un bloque para ver los centros que conviene completar.</p></div><span class="quality-scope">${isAdmin?"TODO EL CRM":"MI CARTERA"} · ${rows.length.toLocaleString("es-ES")} centros</span></div><div class="quality-grid">${items.map(([key,label,hint])=>{const count=qualityIssueCount(rows,key);return `<button class="quality-item ${count?"attention":"clear"}" type="button" data-quality-filter="${key}"><strong>${count.toLocaleString("es-ES")}</strong><span>${esc(label)}</span><small>${esc(count?hint:"Sin incidencias detectadas")}</small></button>`}).join("")}</div></div>`
+}
+function bindQualityPanel(){document.querySelectorAll("[data-quality-filter]").forEach(button=>button.onclick=()=>{currentView=isAdmin?"all":"mine";activeStatus="";filters={search:"",status:"",community:"",seller:"",quick:button.dataset.qualityFilter};render()})}
+
 function renderDashboard(){
  setTitle("Panel de trabajo",`${currentUserLabel()} · seguimiento de prospección escolar`);
  const mine=centers.filter(c=>c.assignedTo===currentUser), t=localISO();
@@ -534,6 +609,7 @@ function renderDashboard(){
   ${kpi("Vencidos",overdue,"requieren atención")}
   ${kpi("A cotización",quote,"trasladados")}
  </div>
+ ${qualityPanelHtml()}
  <div class="grid2">
   <div class="card panel"><h2>Mi cartera por zona</h2>
    ${Object.entries(byCommunity).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="bar-row"><span>${esc(k)}</span><div class="bar"><progress max="100" value="${Math.max(0,Math.min(100,v/maxComm*100))}"></progress></div><b>${v}</b></div>`).join("")||'<div class="empty">Sin centros asignados</div>'}
@@ -544,6 +620,7 @@ function renderDashboard(){
    ${activities.length?activities.map(a=>`<div class="activity"><strong>${esc(a.school)}</strong><div>${esc(a.author)} · ${fmtDateTime(a.createdAt)} · ${esc(a.channel)} · ${esc(a.result)}</div></div>`).join(""):'<div class="empty">Todavía no hay contactos registrados.</div>'}
   </div><h3>Interesados</h3><div class="bar-row"><span>Centros interesados</span><div class="bar"><progress max="100" value="${Math.max(0,Math.min(100,mine.length?interested/mine.length*100:0))}"></progress></div><b>${interested}</b></div></div>
  </div>`;
+ bindQualityPanel();
 }
 function kpi(label,value,hint){return `<div class="card kpi"><div class="label">${esc(label)}</div><div class="value">${Number(value).toLocaleString("es-ES")}</div><div class="hint">${esc(hint)}</div></div>`}
 
@@ -910,6 +987,11 @@ function filtered(){
  if(filters.quick==="overdue")arr=arr.filter(c=>isDueNow(c));
  if(filters.quick==="info")arr=arr.filter(c=>portfolioStatus(c)==="Interesado");
  if(filters.quick==="quote")arr=arr.filter(c=>portfolioStatus(c)==="Trasladado a cotización");
+ if(filters.quick==="quality-phone")arr=arr.filter(c=>!String(c.mobile||c.schoolPhone||"").trim());
+ if(filters.quick==="quality-email")arr=arr.filter(c=>!String(c.directEmail||c.schoolEmail||"").trim());
+ if(filters.quick==="quality-contact")arr=arr.filter(c=>!String(c.contactName||"").trim());
+ if(filters.quick==="quality-travel")arr=arr.filter(c=>Number(c.opportunityTotal||0)===0);
+ if(filters.quick==="quality-followup")arr=arr.filter(c=>["Interesado","Trasladado a cotización"].includes(portfolioStatus(c))&&!hasFutureFollowup(c));
  arr.sort((a,b)=>{
   const ad=nextKey(a)||"9999-12-31T99:99",bd=nextKey(b)||"9999-12-31T99:99";
   if(ad!==bd)return ad.localeCompare(bd);
@@ -938,7 +1020,7 @@ function renderList(){
    ${showSeller?`<select id="sellerFilter"><option value="">Todo el equipo</option>${operatorOptions(filters.seller,false)}</select>`:""}
  </div>
  ${!["status","overdue"].includes(currentView)?`<div class="chips">
-  ${chip("all","Todos")}${chip("pending","Pendientes")}${chip("today","Hoy")}${chip("overdue","Vencidos ahora")}${chip("info","Interesados")}${chip("quote","A cotización")}
+  ${chip("all","Todos")}${chip("pending","Pendientes")}${chip("today","Hoy")}${chip("overdue","Vencidos ahora")}${chip("info","Interesados")}${chip("quote","A cotización")}${filters.quick.startsWith("quality-")?chip(filters.quick,({"quality-phone":"Sin teléfono","quality-email":"Sin email","quality-contact":"Sin persona","quality-travel":"Sin viaje","quality-followup":"Sin seguimiento"})[filters.quick]):""}
  </div>`:""}
  <div class="table-card">
   ${page.length?`<table><thead><tr><th>Estado</th><th>Próximo</th><th>Centro</th><th>Contacto</th><th>Ubicación</th>${showSeller?'<th>Responsable</th>':''}<th>Contacto rápido</th><th>Última actividad</th><th></th></tr></thead>
@@ -1396,6 +1478,8 @@ function openNewCenterDialog(){
 }
 
 async function openCenter(id){
+ const existing=document.getElementById("centerDialog");
+ if(existing?.open&&currentCenterId!==id&&!requestCloseCenterDialog())return;
  currentCenterId=id;const c=centers.find(x=>x.id===id);if(!c)return;
  try{await Promise.all([loadHistory(c),loadWorkspace(c)])}catch(e){console.error(e);toast("No se ha podido cargar toda la ficha")}
  const dlg=document.getElementById("centerDialog");
@@ -1404,10 +1488,10 @@ async function openCenter(id){
 }
 function centerContactOptions(c,selected="",blankLabel="Sin vincular"){const contacts=(c.workspace?.contacts||[]).filter(x=>x.active);return `<option value="">${esc(blankLabel)}</option>`+contacts.map(x=>`<option value="${x.contact_id}" ${String(x.contact_id)===String(selected||"")?"selected":""} ${x.do_not_contact?"disabled":""}>${esc(x.full_name)}${x.role?` · ${esc(x.role)}`:""}${x.do_not_contact?" · NO CONTACTAR":""}</option>`).join("")}
 function workspaceSummaryHtml(c){const active=(c.workspace?.opportunities||[]).filter(o=>o.active),contacts=(c.workspace?.contacts||[]).filter(x=>x.active);return `<div class="workspace-summary"><span class="workspace-pill"><strong>${active.length}</strong> viaje${active.length===1?"":"s"} · campaña ${esc(c.workspace?.campaign?.label||currentCampaign?.label||"")}</span><span class="workspace-pill"><strong>${contacts.length}</strong> persona${contacts.length===1?"":"s"} de contacto</span>${active.filter(o=>o.status==="Interesado").length?`<span class="workspace-pill"><strong>${active.filter(o=>o.status==="Interesado").length}</strong> interesado${active.filter(o=>o.status==="Interesado").length===1?"":"s"}</span>`:""}${active.filter(o=>o.status==="Trasladado a cotización").length?`<span class="workspace-pill"><strong>${active.filter(o=>o.status==="Trasladado a cotización").length}</strong> a cotización</span>`:""}</div>`}
-function contactsHtml(c){const contacts=(c.workspace?.contacts||[]).filter(x=>x.active);return `<div class="entity-list">${contacts.length?contacts.map(x=>`<div class="entity-card contact-record" data-contact-id="${x.contact_id}"><div class="entity-head"><div><h4>${esc(x.full_name)} ${x.is_primary?'<span class="event-tag">Principal</span>':""}${x.do_not_contact?'<span class="event-tag">NO CONTACTAR</span>':""}</h4><p>Versión ${Number(x.contact_version||1)}</p></div><div class="entity-actions">${!x.do_not_contact&&x.mobile?`<a class="icon-btn" href="tel:${esc(String(x.mobile).replace(/\s/g,""))}">☎</a>`:""}${!x.do_not_contact&&x.email?`<a class="icon-btn" href="mailto:${encodeURIComponent(x.email)}">✉</a>`:""}<button class="btn" type="button" data-save-contact="${x.contact_id}">Guardar persona</button></div></div><div class="entity-form"><div class="field"><label>Nombre y apellidos</label><input data-field="full_name" value="${esc(x.full_name)}"></div><div class="field"><label>Cargo</label><select data-field="role"><option value=""></option>${options(ROLES,x.role||"")}</select></div><div class="field"><label>Móvil / directo</label><input data-field="mobile" value="${esc(x.mobile||"")}"></div><div class="field"><label>Email directo</label><input data-field="email" type="email" value="${esc(x.email||"")}"></div><div class="field span2"><label><input type="radio" name="primaryContact" value="${x.contact_id}" ${x.is_primary?"checked":""}> Contacto principal del centro</label><span class="field-help">Se usa por defecto en la ficha y los accesos rápidos.</span></div><div class="field"><label><input data-field="do_not_contact" type="checkbox" ${x.do_not_contact?"checked":""}> No contactar con esta persona</label></div><div class="field"><label>Motivo</label><input data-field="do_not_contact_reason" value="${esc(x.do_not_contact_reason||"")}" placeholder="Obligatorio si se bloquea"></div></div></div>`).join(""):'<div class="empty">Todavía no hay personas de contacto.</div>'}</div><div class="entity-create"><h4>Añadir persona de contacto</h4><div class="entity-form"><div class="field"><label>Nombre y apellidos *</label><input id="newContactName"></div><div class="field"><label>Cargo</label><select id="newContactRole"><option value=""></option>${options(ROLES,"")}</select></div><div class="field"><label>Móvil / directo</label><input id="newContactMobile"></div><div class="field"><label>Email directo</label><input id="newContactEmail" type="email"></div><div class="field span2"><label><input id="newContactPrimary" type="checkbox" ${contacts.length?"":"checked"}> Convertir en contacto principal</label></div><div class="field"><label><input id="newContactBlocked" type="checkbox"> No contactar</label></div><div class="field"><label>Motivo</label><input id="newContactBlockedReason" placeholder="Obligatorio si se bloquea"></div><div class="field span4"><button class="btn primary" type="button" id="createContactBtn">Añadir persona</button></div></div></div>`}
+function contactsHtml(c){const contacts=(c.workspace?.contacts||[]).filter(x=>x.active);return `<div class="entity-list">${contacts.length?contacts.map(x=>`<div class="entity-card contact-record" data-contact-id="${x.contact_id}" data-dirty-scope="contact:${x.contact_id}"><div class="entity-head"><div><h4>${esc(x.full_name)} ${x.is_primary?'<span class="event-tag">Principal</span>':""}${x.do_not_contact?'<span class="event-tag">NO CONTACTAR</span>':""}</h4><p>Versión ${Number(x.contact_version||1)}</p></div><div class="entity-actions">${!x.do_not_contact&&x.mobile?`<a class="icon-btn" href="tel:${esc(String(x.mobile).replace(/\s/g,""))}">☎</a>`:""}${!x.do_not_contact&&x.email?`<a class="icon-btn" href="mailto:${encodeURIComponent(x.email)}">✉</a>`:""}<button class="btn" type="button" data-save-contact="${x.contact_id}">Guardar persona</button></div></div><div class="entity-form"><div class="field"><label>Nombre y apellidos</label><input data-field="full_name" value="${esc(x.full_name)}"></div><div class="field"><label>Cargo</label><select data-field="role"><option value=""></option>${options(ROLES,x.role||"")}</select></div><div class="field"><label>Móvil / directo</label><input data-field="mobile" value="${esc(x.mobile||"")}"></div><div class="field"><label>Email directo</label><input data-field="email" type="email" value="${esc(x.email||"")}"></div><div class="field span2"><label><input type="radio" name="primaryContact" value="${x.contact_id}" ${x.is_primary?"checked":""}> Contacto principal del centro</label><span class="field-help">Se usa por defecto en la ficha y los accesos rápidos.</span></div><div class="field"><label><input data-field="do_not_contact" type="checkbox" ${x.do_not_contact?"checked":""}> No contactar con esta persona</label></div><div class="field"><label>Motivo</label><input data-field="do_not_contact_reason" value="${esc(x.do_not_contact_reason||"")}" placeholder="Obligatorio si se bloquea"></div></div></div>`).join(""):'<div class="empty">Todavía no hay personas de contacto.</div>'}</div><div class="entity-create" data-dirty-scope="new-contact"><h4>Añadir persona de contacto</h4><div class="entity-form"><div class="field"><label>Nombre y apellidos *</label><input id="newContactName"></div><div class="field"><label>Cargo</label><select id="newContactRole"><option value=""></option>${options(ROLES,"")}</select></div><div class="field"><label>Móvil / directo</label><input id="newContactMobile"></div><div class="field"><label>Email directo</label><input id="newContactEmail" type="email"></div><div class="field span2"><label><input id="newContactPrimary" type="checkbox" ${contacts.length?"":"checked"}> Convertir en contacto principal</label></div><div class="field"><label><input id="newContactBlocked" type="checkbox"> No contactar</label></div><div class="field"><label>Motivo</label><input id="newContactBlockedReason" placeholder="Obligatorio si se bloquea"></div><div class="field span4"><button class="btn primary" type="button" id="createContactBtn">Añadir persona</button></div></div></div>`}
 function opportunityCardHtml(c,o){
  const next=splitISO(o.next_contact_at),archived=!o.active,sourceChoice=opportunitySourceChoice(c,o.lead_source),sourceDetail=opportunitySourceDetail(c,o),showSourceDetail=opportunitySourceNeedsDetail(sourceChoice)||!!sourceDetail;
- return `<div class="entity-card opportunity-record ${archived?"archived":""}" data-opportunity-id="${esc(o.opportunity_id)}"><div class="entity-head"><div><h4>${esc(o.cycle)}${o.destination?` · ${esc(o.destination)}`:""} ${statusBadge(o.status)} ${archived?'<span class="event-tag">Archivado</span>':""}</h4><p>${esc(o.opportunity_id)} · ${Number(o.contact_count||0)} contacto${Number(o.contact_count||0)===1?"":"s"} · versión ${Number(o.opportunity_version||1)}</p></div><div class="entity-actions">${archived?`<button class="btn" type="button" data-restore-opportunity="${esc(o.opportunity_id)}">Restaurar viaje</button>`:`<button class="btn" type="button" data-save-opportunity="${esc(o.opportunity_id)}">Guardar viaje</button><button class="btn danger" type="button" data-archive-opportunity="${esc(o.opportunity_id)}">Archivar viaje</button>`}</div></div><div class="entity-form"><div class="field"><label>Ciclo *</label><select data-field="cycle" ${archived?"disabled":""}>${options(CYCLES,o.cycle)}</select></div><div class="field"><label>Estado del viaje</label><select data-field="status" ${archived?"disabled":""}>${options(STATUSES,o.status)}</select></div><div class="field"><label>Alumnos</label><input data-field="students_count" type="number" min="1" max="2000" value="${esc(o.students_count??"")}" ${archived?"disabled":""}></div><div class="field"><label>Profesores</label><input data-field="teachers_count" type="number" min="0" max="250" value="${esc(o.teachers_count??"")}" ${archived?"disabled":""}></div><div class="field span2"><label>Grupo / descripción</label><input data-field="group_description" value="${esc(o.group_description||"")}" placeholder="Ej.: dos clases de 4.º ESO" ${archived?"disabled":""}></div><div class="field span2"><label>Destino o idea de viaje</label><input data-field="destination" value="${esc(o.destination||"")}" placeholder="Ej.: Italia, París, por decidir…" ${archived?"disabled":""}></div><div class="field"><label>Salida prevista</label><input data-field="travel_start_on" type="date" value="${esc(o.travel_start_on||"")}" ${archived?"disabled":""}></div><div class="field"><label>Regreso previsto</label><input data-field="travel_end_on" type="date" value="${esc(o.travel_end_on||"")}" ${archived?"disabled":""}></div><div class="field span2"><label>Persona responsable del viaje</label><select data-field="contact_id" ${archived?"disabled":""}>${centerContactOptions(c,o.contact_id,"Sin persona vinculada")}</select></div><div class="field"><label>Próximo seguimiento</label><input data-field="next_date" type="date" value="${esc(next.date)}" ${archived?"disabled":""}></div><div class="field"><label>Hora</label><input data-field="next_time" type="time" value="${esc(next.time)}" ${archived?"disabled":""}></div><div class="field span2"><label>Cómo ha surgido este viaje</label><select data-field="lead_source_choice" data-opportunity-source ${archived?"disabled":""}>${opportunitySourceOptions(c,o.lead_source)}</select><span class="field-help">No cambia el origen de alta del centro; identifica este viaje concreto.</span></div><div class="field span2" data-source-detail-container ${showSourceDetail?"":"hidden"}><label>Detalle adicional (opcional)</label><input data-field="lead_source_detail" value="${esc(sourceDetail)}" placeholder="Ej.: campaña, persona que recomienda o contexto" ${archived?"disabled":""}></div>${archived&&o.archive_reason?`<div class="field span4"><span class="field-help"><b>Motivo del archivo:</b> ${esc(o.archive_reason)}</span></div>`:""}</div></div>`
+ return `<div class="entity-card opportunity-record ${archived?"archived":""}" data-opportunity-id="${esc(o.opportunity_id)}" data-dirty-scope="opportunity:${esc(o.opportunity_id)}"><div class="entity-head"><div><h4>${esc(o.cycle)}${o.destination?` · ${esc(o.destination)}`:""} ${statusBadge(o.status)} ${archived?'<span class="event-tag">Archivado</span>':""}</h4><p>${esc(o.opportunity_id)} · ${Number(o.contact_count||0)} contacto${Number(o.contact_count||0)===1?"":"s"} · versión ${Number(o.opportunity_version||1)}</p></div><div class="entity-actions">${archived?`<button class="btn" type="button" data-restore-opportunity="${esc(o.opportunity_id)}">Restaurar viaje</button>`:`<button class="btn" type="button" data-save-opportunity="${esc(o.opportunity_id)}">Guardar viaje</button><button class="btn danger" type="button" data-archive-opportunity="${esc(o.opportunity_id)}">Archivar viaje</button>`}</div></div><div class="entity-form"><div class="field"><label>Ciclo *</label><select data-field="cycle" ${archived?"disabled":""}>${options(CYCLES,o.cycle)}</select></div><div class="field"><label>Estado del viaje</label><select data-field="status" ${archived?"disabled":""}>${options(STATUSES,o.status)}</select></div><div class="field"><label>Alumnos</label><input data-field="students_count" type="number" min="1" max="2000" value="${esc(o.students_count??"")}" ${archived?"disabled":""}></div><div class="field"><label>Profesores</label><input data-field="teachers_count" type="number" min="0" max="250" value="${esc(o.teachers_count??"")}" ${archived?"disabled":""}></div><div class="field span2"><label>Grupo / descripción</label><input data-field="group_description" value="${esc(o.group_description||"")}" placeholder="Ej.: dos clases de 4.º ESO" ${archived?"disabled":""}></div><div class="field span2"><label>Destino o idea de viaje</label><input data-field="destination" value="${esc(o.destination||"")}" placeholder="Ej.: Italia, París, por decidir…" ${archived?"disabled":""}></div><div class="field"><label>Salida prevista</label><input data-field="travel_start_on" type="date" value="${esc(o.travel_start_on||"")}" ${archived?"disabled":""}></div><div class="field"><label>Regreso previsto</label><input data-field="travel_end_on" type="date" value="${esc(o.travel_end_on||"")}" ${archived?"disabled":""}></div><div class="field span2"><label>Persona responsable del viaje</label><select data-field="contact_id" ${archived?"disabled":""}>${centerContactOptions(c,o.contact_id,"Sin persona vinculada")}</select></div><div class="field"><label>Próximo seguimiento</label><input data-field="next_date" type="date" value="${esc(next.date)}" ${archived?"disabled":""}></div><div class="field"><label>Hora</label><input data-field="next_time" type="time" value="${esc(next.time)}" ${archived?"disabled":""}></div><div class="field span2"><label>Cómo ha surgido este viaje</label><select data-field="lead_source_choice" data-opportunity-source ${archived?"disabled":""}>${opportunitySourceOptions(c,o.lead_source)}</select><span class="field-help">No cambia el origen de alta del centro; identifica este viaje concreto.</span></div><div class="field span2" data-source-detail-container ${showSourceDetail?"":"hidden"}><label>Detalle adicional (opcional)</label><input data-field="lead_source_detail" value="${esc(sourceDetail)}" placeholder="Ej.: campaña, persona que recomienda o contexto" ${archived?"disabled":""}></div>${archived&&o.archive_reason?`<div class="field span4"><span class="field-help"><b>Motivo del archivo:</b> ${esc(o.archive_reason)}</span></div>`:""}</div></div>`
 }
 function opportunityAuditLabel(action){return ({insert:"Creación",update:"Actualización",archive:"Archivo",restore:"Restauración"})[action]||action||"Cambio"}
 function opportunityAuditValue(c,key,value){
@@ -1428,12 +1512,12 @@ function opportunityAuditDetail(c,a){
  return changes.join(" · ")||"Guardado sin cambios funcionales"
 }
 function opportunityHistoryHtml(c,o){
- const rows=(c.workspace?.opportunity_audit||[]).filter(a=>a.opportunity_id===o.opportunity_id);
- return `<details class="opportunity-history"><summary>Historial del viaje (${rows.length})</summary>${rows.length?`<div class="opportunity-history-list">${rows.map(a=>`<div class="opportunity-history-item"><strong>${esc(opportunityAuditLabel(a.action))}</strong> · ${esc(opportunityAuditDetail(c,a))}<div class="opportunity-history-meta">${esc(a.acted_by_name||operatorLabel(a.acted_by_operator)||a.acted_by_operator||"Usuario")} · ${esc(fmtDateTime(a.acted_at))}</div></div>`).join("")}</div>`:'<div class="opportunity-history-empty">Todavía no hay movimientos auditados para este viaje.</div>'}</details>`
+ const rows=(c.workspace?.opportunity_audit||[]).filter(a=>a.opportunity_id===o.opportunity_id).sort((a,b)=>String(b.acted_at||"").localeCompare(String(a.acted_at||"")));
+ return `<details class="opportunity-history"><summary>Historial del viaje (${rows.length}) · más reciente primero</summary>${rows.length?`<div class="opportunity-history-list">${rows.map(a=>`<div class="opportunity-history-item"><strong>${esc(opportunityAuditLabel(a.action))}</strong> · ${esc(opportunityAuditDetail(c,a))}<div class="opportunity-history-meta">Realizado por ${esc(a.acted_by_name||operatorLabel(a.acted_by_operator)||a.acted_by_operator||"Usuario")} · ${esc(fmtDateTime(a.acted_at))}</div></div>`).join("")}</div>`:'<div class="opportunity-history-empty">Todavía no hay movimientos auditados para este viaje.</div>'}</details>`
 }
 function opportunitiesHtml(c){
  const opportunities=c.workspace?.opportunities||[];
- return `<div class="entity-list">${opportunities.length?opportunities.map(o=>`<div class="opportunity-with-history">${opportunityCardHtml(c,o)}${opportunityHistoryHtml(c,o)}</div>`).join(""):'<div class="empty">Todavía no hay viajes creados para esta campaña.</div>'}</div><div class="entity-create"><h4>Añadir viaje / grupo</h4><div class="entity-form"><div class="field"><label>Ciclo *</label><select id="newOppCycle"><option value="">Selecciona…</option>${options(CYCLES,"")}</select></div><div class="field"><label>Estado</label><select id="newOppStatus">${options(STATUSES,"Pendiente")}</select></div><div class="field"><label>Alumnos</label><input id="newOppStudents" type="number" min="1" max="2000"></div><div class="field"><label>Profesores</label><input id="newOppTeachers" type="number" min="0" max="250"></div><div class="field span2"><label>Grupo / descripción</label><input id="newOppGroup" placeholder="Ej.: dos clases de 3.º ESO"></div><div class="field span2"><label>Destino o idea de viaje</label><input id="newOppDestination" placeholder="Ej.: Roma, multiaventura, por decidir…"></div><div class="field"><label>Salida prevista</label><input id="newOppStart" type="date"></div><div class="field"><label>Regreso previsto</label><input id="newOppEnd" type="date"></div><div class="field span2"><label>Persona responsable del viaje</label><select id="newOppContact">${centerContactOptions(c,"","Sin persona vinculada")}</select></div><div class="field"><label>Próximo seguimiento</label><input id="newOppNext" type="date"></div><div class="field"><label>Hora</label><input id="newOppNextTime" type="time"></div><div class="field span2"><label>Cómo ha surgido este viaje</label><select id="newOppSourceChoice" data-opportunity-source>${opportunitySourceOptions(c,"")}</select><span class="field-help">Por defecto utiliza el mismo origen con el que entró el centro.</span></div><div class="field span2" data-source-detail-container hidden><label>Detalle adicional (opcional)</label><input id="newOppSourceDetail" placeholder="Ej.: campaña, persona que recomienda o contexto"></div><div class="field span4"><button class="btn primary" type="button" id="createOpportunityBtn">Crear viaje</button></div></div></div>`
+ return `<div class="entity-list">${opportunities.length?opportunities.map(o=>`<div class="opportunity-with-history">${opportunityCardHtml(c,o)}${opportunityHistoryHtml(c,o)}</div>`).join(""):'<div class="empty">Todavía no hay viajes creados para esta campaña.</div>'}</div><div class="entity-create" data-dirty-scope="new-opportunity"><h4>Añadir viaje / grupo</h4><div class="entity-form"><div class="field"><label>Ciclo *</label><select id="newOppCycle"><option value="">Selecciona…</option>${options(CYCLES,"")}</select></div><div class="field"><label>Estado</label><select id="newOppStatus">${options(STATUSES,"Pendiente")}</select></div><div class="field"><label>Alumnos</label><input id="newOppStudents" type="number" min="1" max="2000"></div><div class="field"><label>Profesores</label><input id="newOppTeachers" type="number" min="0" max="250"></div><div class="field span2"><label>Grupo / descripción</label><input id="newOppGroup" placeholder="Ej.: dos clases de 3.º ESO"></div><div class="field span2"><label>Destino o idea de viaje</label><input id="newOppDestination" placeholder="Ej.: Roma, multiaventura, por decidir…"></div><div class="field"><label>Salida prevista</label><input id="newOppStart" type="date"></div><div class="field"><label>Regreso previsto</label><input id="newOppEnd" type="date"></div><div class="field span2"><label>Persona responsable del viaje</label><select id="newOppContact">${centerContactOptions(c,"","Sin persona vinculada")}</select></div><div class="field"><label>Próximo seguimiento</label><input id="newOppNext" type="date"></div><div class="field"><label>Hora</label><input id="newOppNextTime" type="time"></div><div class="field span2"><label>Cómo ha surgido este viaje</label><select id="newOppSourceChoice" data-opportunity-source>${opportunitySourceOptions(c,"")}</select><span class="field-help">Por defecto utiliza el mismo origen con el que entró el centro.</span></div><div class="field span2" data-source-detail-container hidden><label>Detalle adicional (opcional)</label><input id="newOppSourceDetail" placeholder="Ej.: campaña, persona que recomienda o contexto"></div><div class="field span4"><button class="btn primary" type="button" id="createOpportunityBtn">Crear viaje</button></div></div></div>`
 }
 function dialogHtml(c){
  const canAssign=isAdmin,canEditLocation=isAdmin;
@@ -1444,8 +1528,9 @@ function dialogHtml(c){
  return `<div class="modal-head"><div><h2>${esc(c.school)}</h2><p>${esc(c.id)} · ${esc(c.city)} · ${esc(c.province)} · ${esc(c.community)} · Asignado a ${esc(operatorLabel(c.assignedTo))}</p></div><button class="close">✕</button></div>
  <div class="modal-body">
   <div id="dialogActionStatus" class="save-feedback dialog-action-status" role="status" aria-live="polite"></div>
+  <div id="unsavedIndicator" class="unsaved-indicator" role="status">● Hay cambios sin guardar en esta ficha.</div>
   ${workspaceSummaryHtml(c)}<div class="quick">${phone?`<a class="btn" href="tel:${esc(phone.replace(/\s/g,""))}">☎ Llamar</a>`:""}${email?`<button class="btn" type="button" data-email-center="${esc(c.id)}">✉ Enviar email</button>`:""}</div>${c.contactBlocked?`<div class="notice"><strong>NO CONTACTAR.</strong> ${esc(c.contactBlockReason||"Este contacto ha solicitado no recibir nuevas comunicaciones.")}</div>`:""}${nextKey(c)?`<div class="agenda-summary"><b>Próximo seguimiento de la ficha:</b> ${fmtNext(c)}. Cada viaje puede tener además su propia fecha y hora.</div>`:""}${manualOrigin}
-  <div class="form-grid">
+  <div class="form-grid" data-dirty-scope="profile">
    <div class="field"><label>Estado general</label><select id="fStatus">${options(STATUSES,c.status)}</select><span class="field-help">Mantiene la compatibilidad de la ficha; cada viaje tiene su propio estado.</span></div>
    <div class="field"><label>Responsable VGE</label><select id="fAssigned" ${canAssign?"":"disabled"}>${operatorOptions(c.assignedTo,true)}</select></div>
    <div class="field"><label>Centro</label><input class="readonly" value="${esc(c.school)}" readonly></div>
@@ -1462,11 +1547,11 @@ function dialogHtml(c){
    <div class="field span2"><label>Motivo del bloqueo</label><input id="fBlockReason" value="${esc(c.contactBlockReason||"")}" placeholder="Ej.: solicita no recibir más comunicaciones"></div>
   </div>
   <div class="mt10"><button class="btn primary" id="saveProfile">Guardar ficha</button><div id="profileSaveStatus" class="save-feedback" role="status" aria-live="polite"></div></div>
-  ${permissions.can_archive_centers?`<div class="lifecycle-danger"><h3>Archivar esta ficha</h3><p>El centro desaparecerá de carteras, agenda y accesos comerciales. No se borrará ningún dato: podrás restaurarlo desde «Archivados».</p><div class="archive-form"><label>Motivo obligatorio<input id="fArchiveReason" maxlength="500" placeholder="Ej.: ficha duplicada pendiente de revisión"></label><button class="btn danger" type="button" id="archiveCenterBtn">Archivar centro</button></div></div>`:""}
+  ${permissions.can_archive_centers?`<div class="lifecycle-danger"><h3>Archivar esta ficha</h3><p>El centro desaparecerá de carteras, agenda y accesos comerciales. No se borrará ningún dato: podrás restaurarlo desde «Archivados».</p><div class="archive-form" data-dirty-scope="archive-center"><label>Motivo obligatorio<input id="fArchiveReason" maxlength="500" placeholder="Ej.: ficha duplicada pendiente de revisión"></label><button class="btn danger" type="button" id="archiveCenterBtn">Archivar centro</button></div></div>`:""}
   <div class="modal-section"><h3>Personas de contacto</h3><p class="section-note">Un mismo colegio puede tener responsables distintos para Primaria, ESO o Bachillerato. Marca una persona principal para los accesos rápidos.</p>${contactsHtml(c)}</div>
   <div class="modal-section"><h3>Viajes / grupos · ${esc(c.workspace?.campaign?.label||currentCampaign?.label||"")}</h3><p class="section-note">Cada viaje conserva su ciclo, volumen, destino, estado y seguimiento independiente. El colegio continúa contando una sola vez en la cartera.</p>${opportunitiesHtml(c)}</div>
   <div class="modal-section"><h3>Registrar contacto</h3>
-   <form id="contactForm" class="form-grid">
+   <form id="contactForm" class="form-grid" data-dirty-scope="contact-event">
     <div class="field"><label>Fecha del contacto</label><input type="date" id="cDate" value="${localISO()}" required></div>
     <div class="field"><label>Persona contactada</label><select id="cContactId">${centerContactOptions(c,"","Sin persona concreta")}</select></div>
     <div class="field"><label>Canal</label><select id="cChannel" required><option value=""></option>${CHANNELS.map(x=>`<option>${x}</option>`).join("")}</select></div>
@@ -1478,8 +1563,8 @@ function dialogHtml(c){
     <div class="field span4"><button class="btn primary" type="submit">Registrar contacto</button></div>
    </form>
   </div>
-  <div class="modal-section"><h3>Historial (${events.length})</h3><div class="timeline">
-   ${events.length?events.map(e=>`<div class="event"><div class="event-head"><span><strong>${esc(e.author)}</strong> · ${fmtDate(e.date)} <span class="event-tag">${esc(e.channel)}</span><span class="event-tag">${esc(e.result)}</span></span><span>Registrado ${fmtDateTime(e.createdAt)}</span></div>${e.contactName?`<div class="muted mt6">Persona: ${esc(e.contactName)}${e.contactRole?` · ${esc(e.contactRole)}`:""}</div>`:""}${e.opportunities?.length?`<div class="event-links">${e.opportunities.map(o=>`<span class="event-tag">${esc(o.cycle)}${o.destination?` · ${esc(o.destination)}`:""} · ${esc(o.opportunity_id)}</span>`).join("")}</div>`:""}<div class="event-note">${esc(e.note)}${e.nextContact?`<div class="muted mt6">Próximo contacto: ${fmtDate(e.nextContact)}${e.nextContactTime?` · ${esc(e.nextContactTime)}`:""}</div>`:""}</div></div>`).join(""):'<div class="empty">Aún no hay contactos registrados con este centro.</div>'}
+  <div class="modal-section"><h3>Historial de contactos (${events.length})</h3><div class="history-note"><span>Ordenado del más reciente al más antiguo. Cada registro muestra cuándo se contactó, quién lo registró y a qué viaje se vinculó.</span><b>Historial acumulativo</b></div><div class="timeline">
+   ${events.length?events.map((e,index)=>`<div class="event"><div class="event-head"><span><span class="history-sequence">${events.length-index}</span><strong>${esc(e.author)}</strong> · Contacto ${esc(fmtDateTime(e.contactedAt)||fmtDate(e.date))} <span class="event-tag">${esc(e.channel)}</span><span class="event-tag">${esc(e.result)}</span></span><span>Registrado ${fmtDateTime(e.createdAt)}</span></div>${e.contactName?`<div class="muted mt6">Persona: ${esc(e.contactName)}${e.contactRole?` · ${esc(e.contactRole)}`:""}</div>`:""}${e.opportunities?.length?`<div class="event-links">${e.opportunities.map(o=>`<span class="event-tag">${esc(o.cycle)}${o.destination?` · ${esc(o.destination)}`:""} · ${esc(o.opportunity_id)}</span>`).join("")}</div>`:'<div class="muted mt6">Seguimiento general del centro</div>'}<div class="event-note">${esc(e.note)}${e.nextContact?`<div class="muted mt6">Próximo contacto: ${fmtDate(e.nextContact)}${e.nextContactTime?` · ${esc(e.nextContactTime)}`:""}</div>`:""}</div></div>`).join(""):'<div class="empty">Aún no hay contactos registrados con este centro.</div>'}
   </div></div>
  </div>`;
 }
@@ -1492,12 +1577,13 @@ async function archiveCurrentCenter(){
  const btn=document.getElementById("archiveCenterBtn");if(btn){btn.disabled=true;btn.textContent="Archivando…"}
  try{
    const {error}=await sb.rpc("archive_center",{p_center_id:c.id,p_reason:reason});if(error)throw error;
-   const dlg=document.getElementById("centerDialog");if(dlg?.open)dlg.close();currentCenterId=null;
+   const dlg=document.getElementById("centerDialog");clearCenterScopeDirty();if(dlg?.open)dlg.close();currentCenterId=null;
    await loadAll();await loadLifecycleAudit(100);accessFingerprint=await getFingerprint();currentView="archived";activeStatus="";filters={search:"",status:"",community:"",seller:"",quick:"all"};render();toast(`Centro archivado · ${c.id}`);
  }catch(e){console.error(e);alert(friendlyError(e,"No se ha podido archivar el centro."));if(btn){btn.disabled=false;btn.textContent="Archivar centro"}}
 }
 async function saveProfile(){
  const c=centers.find(x=>x.id===currentCenterId);if(!c)return;
+ if(profileSaveInFlight){showDialogActionStatus("La ficha se está guardando. Espera un momento…","info");return}
  const btn=document.getElementById("saveProfile"),statusBox=document.getElementById("profileSaveStatus");
  const showSaveStatus=(msg,type="info")=>{if(!statusBox)return;statusBox.textContent=msg;statusBox.className=`save-feedback show ${type}`};
  if(isAdmin){
@@ -1513,20 +1599,21 @@ async function saveProfile(){
  c.mobile=document.getElementById("fMobile").value.trim();c.directEmail=document.getElementById("fDirectEmail").value.trim();
  c.contactBlocked=!!document.getElementById("fContactBlocked")?.checked;
  c.contactBlockReason=document.getElementById("fBlockReason")?.value.trim()||"";
- if(btn){btn.disabled=true;btn.textContent="Guardando…"}showSaveStatus("Guardando cambios…","info");
+ profileSaveInFlight=true;if(btn){btn.disabled=true;btn.textContent="Guardando…"}showSaveStatus("Guardando cambios…","info");
  try{
    await saveCenter(c);
-   await refreshOpenCenter("Ficha guardada correctamente");
+   await refreshOpenCenter("Ficha guardada correctamente",null,"profile");
  }catch(e){
    console.error(e);
    const msg=friendlyError(e,"No se ha podido guardar la ficha.");
    if(btn){btn.disabled=false;btn.textContent="Guardar ficha"}
    showSaveStatus(`✕ ${msg}`,"error");
    await refreshAccessSnapshot(true)
- }
+ }finally{profileSaveInFlight=false}
 }
 async function addContact(){
  const c=centers.find(x=>x.id===currentCenterId);if(!c)return;
+ if(contactEventInFlight){showDialogActionStatus("El contacto se está registrando. Espera un momento…","info");return}
  const btn=document.getElementById("contactForm")?.querySelector('button[type="submit"]');
  const date=document.getElementById("cDate").value,channel=document.getElementById("cChannel").value,result=document.getElementById("cResult").value,note=document.getElementById("cNote").value.trim(),next=document.getElementById("cNext").value,nextInput=document.getElementById("cNextTime").value,nextTime=next?(nextInput||"09:00"):"";
  if(result==="Volver a contactar"&&!next){alert("Indica la fecha del próximo contacto para no perder este seguimiento.");document.getElementById("cNext")?.focus();return}
@@ -1535,17 +1622,17 @@ async function addContact(){
  const opportunityIds=[...document.querySelectorAll('input[name="cOpportunity"]:checked')].map(x=>x.value),versions={};
  (c.workspace?.opportunities||[]).forEach(o=>{if(opportunityIds.includes(o.opportunity_id))versions[o.opportunity_id]=Number(o.opportunity_version||1)});
  const contactId=Number(document.getElementById("cContactId")?.value||0)||null;
- if(btn){btn.disabled=true;btn.textContent="Registrando…"}showDialogActionStatus("Registrando contacto…","info");
+ contactEventInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando…"}showDialogActionStatus("Registrando contacto…","info");
  try{
   const {error}=await sb.rpc("register_contact_multi_v1",{p_center_id:c.id,p_contacted_at:contactedAt,p_channel:channel,p_result:result,p_notes:note,p_next_contact_at:nextAt,p_expected_state_version:Number(c.stateVersion||1),p_contact_id:contactId,p_opportunity_ids:opportunityIds,p_expected_opportunity_versions:versions});
   if(error)throw error;
   c.status=RESULT_STATUS[result]||c.status;
   if(isClosedStatus(c)){c.nextContact="";c.nextContactTime=""}else if(next){c.nextContact=next;c.nextContactTime=nextTime}else{c.nextContact="";c.nextContactTime=""}
   c.lastContactAt=contactedAt;c.lastResult=result;c.lastOperator=currentUser;c.contactCount=(c.contactCount||0)+1;
-  await refreshOpenCenter(`Contacto registrado correctamente${opportunityIds.length?` · vinculado a ${opportunityIds.length} viaje${opportunityIds.length===1?"":"s"}`:" · seguimiento general"}`);
+  await refreshOpenCenter(`Contacto registrado correctamente${opportunityIds.length?` · vinculado a ${opportunityIds.length} viaje${opportunityIds.length===1?"":"s"}`:" · seguimiento general"}`,null,"contact-event");
  }catch(error){
   console.error(error);const msg=friendlyError(error,"No se ha podido registrar el contacto.");if(btn){btn.disabled=false;btn.textContent="Registrar contacto"}showDialogActionStatus(`✕ ${msg}`,"error");alert(msg)
- }
+ }finally{contactEventInFlight=false}
 }
 function cardValue(card,name){const el=card?.querySelector(`[data-field="${name}"]`);return el?.type==="checkbox"?!!el.checked:(el?.value?.trim()||"")}
 function nullableNumber(v){return v===""?null:Number(v)}
@@ -1573,56 +1660,83 @@ function showOpportunitySaveStatus(opportunityId,message,type="info"){
  if(!box){box=document.createElement("div");box.setAttribute("role","status");box.setAttribute("aria-live","polite");const form=card.querySelector(".entity-form");if(form)card.insertBefore(box,form);else card.appendChild(box)}
  box.textContent=message;box.className=`save-feedback opportunity-save-status show ${type}`;
 }
-async function refreshOpenCenter(message,feedback=null){
+async function refreshOpenCenter(message,feedback=null,savedScope=""){
  const id=currentCenterId,dlg=document.getElementById("centerDialog"),previousScroll=dlg?.querySelector(".modal-body")?.scrollTop||0;
+ const drafts=captureDirtyDrafts(savedScope?[savedScope]:[]);
  await loadAll();const fresh=centers.find(x=>x.id===id);if(!fresh){dlg?.close();return}
  await Promise.all([loadHistory(fresh),loadWorkspace(fresh)]);updateNavCounts();checkReminders();openCenterRefresh(fresh);
+ restoreDirtyDrafts(drafts);
  if(feedback?.opportunityId)showOpportunitySaveStatus(feedback.opportunityId,feedback.message,feedback.type||"success");
  if(message)showDialogActionStatus(`✓ ${message} · ${localTime()}`,feedback?.type||"success");
  const refreshedBody=dlg?.querySelector(".modal-body");if(refreshedBody)refreshedBody.scrollTop=previousScroll;
 }
-async function saveContactRecord(contactId){const c=centers.find(x=>x.id===currentCenterId),contact=(c?.workspace?.contacts||[]).find(x=>Number(x.contact_id)===Number(contactId)),card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`);if(!c||!contact||!card)return;const patch={full_name:cardValue(card,"full_name"),role:cardValue(card,"role")||null,mobile:cardValue(card,"mobile")||null,email:cardValue(card,"email")||null,is_primary:String(document.querySelector('input[name="primaryContact"]:checked')?.value||"")===String(contactId),do_not_contact:cardValue(card,"do_not_contact"),do_not_contact_reason:cardValue(card,"do_not_contact_reason")||null};try{const {error}=await sb.rpc("update_center_contact_v1",{p_contact_id:Number(contactId),p_patch:patch,p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona de contacto guardada correctamente")}catch(e){console.error(e);alert(friendlyError(e,"No se ha podido guardar la persona de contacto."))}}
+async function saveContactRecord(contactId){
+ const c=centers.find(x=>x.id===currentCenterId),contact=(c?.workspace?.contacts||[]).find(x=>Number(x.contact_id)===Number(contactId)),card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`);if(!c||!contact||!card)return;
+ if(contactSaveInFlight.has(contactId)){showDialogActionStatus("La persona se está guardando. Espera un momento…","info");return}
+ const patch={full_name:cardValue(card,"full_name"),role:cardValue(card,"role")||null,mobile:cardValue(card,"mobile")||null,email:cardValue(card,"email")||null,is_primary:String(document.querySelector('input[name="primaryContact"]:checked')?.value||"")===String(contactId),do_not_contact:cardValue(card,"do_not_contact"),do_not_contact_reason:cardValue(card,"do_not_contact_reason")||null};
+ if(!confirmContactIsDistinct(c,patch,contactId))return;
+ const btn=card.querySelector("[data-save-contact]");contactSaveInFlight.add(contactId);if(btn){btn.disabled=true;btn.textContent="Guardando…"}
+ try{const {error}=await sb.rpc("update_center_contact_v1",{p_contact_id:Number(contactId),p_patch:patch,p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona de contacto guardada correctamente",null,`contact:${contactId}`)}
+ catch(e){console.error(e);alert(friendlyError(e,"No se ha podido guardar la persona de contacto."));if(btn?.isConnected){btn.disabled=false;btn.textContent="Guardar persona"}}
+ finally{contactSaveInFlight.delete(contactId)}
+}
 async function archiveContactRecord(contactId){
  const c=centers.find(x=>x.id===currentCenterId),contact=(c?.workspace?.contacts||[]).find(x=>Number(x.contact_id)===Number(contactId));if(!c||!contact||!contact.active)return;
+ const lockKey=`contact-archive:${contactId}`;if(lifecycleInFlight.has(lockKey))return;
  const linkedActiveTrip=(c.workspace?.opportunities||[]).find(x=>x.active&&Number(x.contact_id)===Number(contactId));
  if(linkedActiveTrip){alert(`No se puede eliminar esta persona porque está vinculada al viaje activo ${linkedActiveTrip.opportunity_id}. Cambia primero la persona responsable del viaje o déjalo sin persona vinculada.`);return}
  if(!confirm(`Se retirará a «${contact.full_name}» de las personas activas de este centro. El historial se conservará y no se modificará ningún viaje ni contacto comercial. ¿Continuar?`))return;
- const card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`),btn=card?.querySelector("[data-archive-contact]");if(btn){btn.disabled=true;btn.textContent="Eliminando…"}
- try{const {error}=await sb.rpc("archive_center_contact_v1",{p_contact_id:Number(contactId),p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona eliminada de los contactos activos")}
+ const card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`),btn=card?.querySelector("[data-archive-contact]");lifecycleInFlight.add(lockKey);if(btn){btn.disabled=true;btn.textContent="Eliminando…"}
+ try{const {error}=await sb.rpc("archive_center_contact_v1",{p_contact_id:Number(contactId),p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona eliminada de los contactos activos",null,`contact:${contactId}`)}
  catch(e){console.error(e);const message=String(e?.message||"").includes("CONTACT_LINKED_TO_ACTIVE_TRIP")?"No se puede eliminar esta persona porque está vinculada a un viaje activo. Cambia primero la persona responsable del viaje.":friendlyError(e,"No se ha podido eliminar la persona de contacto.");alert(message);if(btn?.isConnected){btn.disabled=false;btn.textContent="Eliminar persona"}}
+ finally{lifecycleInFlight.delete(lockKey)}
 }
 async function createCenterContact(){
  const c=centers.find(x=>x.id===currentCenterId),btn=document.getElementById("createContactBtn");if(!c)return;
  if(createContactInFlight){showDialogActionStatus("La persona se está registrando. Espera un momento…","info");return}
+ const payload={full_name:document.getElementById("newContactName")?.value.trim()||"",role:document.getElementById("newContactRole")?.value||null,mobile:document.getElementById("newContactMobile")?.value.trim()||null,email:document.getElementById("newContactEmail")?.value.trim()||null,is_primary:!!document.getElementById("newContactPrimary")?.checked,do_not_contact:!!document.getElementById("newContactBlocked")?.checked,do_not_contact_reason:document.getElementById("newContactBlockedReason")?.value.trim()||null};
+ if(!confirmContactIsDistinct(c,payload))return;
  createContactInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando persona…"}showDialogActionStatus("Registrando la persona de contacto. Espera un momento…","info");
- try{const {error}=await sb.rpc("create_center_contact_v1",{p_center_id:c.id,p_full_name:document.getElementById("newContactName")?.value.trim()||"",p_role:document.getElementById("newContactRole")?.value||null,p_mobile:document.getElementById("newContactMobile")?.value.trim()||null,p_email:document.getElementById("newContactEmail")?.value.trim()||null,p_is_primary:!!document.getElementById("newContactPrimary")?.checked,p_do_not_contact:!!document.getElementById("newContactBlocked")?.checked,p_do_not_contact_reason:document.getElementById("newContactBlockedReason")?.value.trim()||null});if(error)throw error;await refreshOpenCenter("Persona añadida correctamente")}
+ try{const {error}=await sb.rpc("create_center_contact_v1",{p_center_id:c.id,p_full_name:payload.full_name,p_role:payload.role,p_mobile:payload.mobile,p_email:payload.email,p_is_primary:payload.is_primary,p_do_not_contact:payload.do_not_contact,p_do_not_contact_reason:payload.do_not_contact_reason});if(error)throw error;await refreshOpenCenter("Persona añadida correctamente",null,"new-contact")}
  catch(e){console.error(e);alert(friendlyError(e,"No se ha podido añadir la persona de contacto."))}
  finally{createContactInFlight=false;if(btn?.isConnected){btn.disabled=false;btn.textContent="Añadir persona"}}
 }
 function opportunityPatch(c,card){const status=cardValue(card,"status"),date=cardValue(card,"next_date"),time=cardValue(card,"next_time")||"09:00",sourceChoice=cardValue(card,"lead_source_choice"),sourceDetail=cardValue(card,"lead_source_detail");return {cycle:cardValue(card,"cycle"),group_description:cardValue(card,"group_description")||null,students_count:nullableNumber(cardValue(card,"students_count")),teachers_count:nullableNumber(cardValue(card,"teachers_count")),destination:cardValue(card,"destination")||null,travel_start_on:cardValue(card,"travel_start_on")||null,travel_end_on:cardValue(card,"travel_end_on")||null,contact_id:nullableNumber(cardValue(card,"contact_id")),status,next_contact_at:date?localDateTimeToISO(date,time):null,lead_source:resolvedOpportunitySource(c,sourceChoice),lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)}}
 async function saveOpportunity(opportunityId){
  const c=centers.find(x=>x.id===currentCenterId),o=(c?.workspace?.opportunities||[]).find(x=>x.opportunity_id===opportunityId),card=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId);if(!c||!o||!card)return;
- const btn=card.querySelector("[data-save-opportunity]");if(btn){btn.disabled=true;btn.textContent="Guardando…"}showOpportunitySaveStatus(opportunityId,"Guardando cambios…","info");
+ if(opportunitySaveInFlight.has(opportunityId)){showOpportunitySaveStatus(opportunityId,"El viaje se está guardando. Espera un momento…","info");return}
+ const btn=card.querySelector("[data-save-opportunity]");opportunitySaveInFlight.add(opportunityId);if(btn){btn.disabled=true;btn.textContent="Guardando…"}showOpportunitySaveStatus(opportunityId,"Guardando cambios…","info");
  try{
   const {error}=await sb.rpc("update_travel_opportunity_v1",{p_opportunity_id:opportunityId,p_patch:opportunityPatch(c,card),p_expected_version:Number(o.opportunity_version||1)});if(error)throw error;
-  await refreshOpenCenter(null,{opportunityId,message:`✓ Viaje guardado correctamente · ${localTime()}`,type:"success"})
+  await refreshOpenCenter(null,{opportunityId,message:`✓ Viaje guardado correctamente · ${localTime()}`,type:"success"},`opportunity:${opportunityId}`)
  }catch(e){
   console.error(e);const msg=friendlyError(e,"No se ha podido guardar el viaje.");if(btn){btn.disabled=false;btn.textContent="Guardar viaje"}showOpportunitySaveStatus(opportunityId,`✕ ${msg}`,"error");alert(msg)
- }
+ }finally{opportunitySaveInFlight.delete(opportunityId)}
 }
 async function createOpportunity(){
  const c=centers.find(x=>x.id===currentCenterId),btn=document.getElementById("createOpportunityBtn");if(!c)return;
  if(createOpportunityInFlight){showDialogActionStatus("El viaje se está registrando. Espera un momento…","info");return}
  createOpportunityInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando viaje…"}showDialogActionStatus("Registrando el viaje. Espera un momento…","info");
  const date=document.getElementById("newOppNext")?.value||"",time=document.getElementById("newOppNextTime")?.value||"09:00",sourceChoice=document.getElementById("newOppSourceChoice")?.value||CENTER_SOURCE_OPTION,sourceDetail=document.getElementById("newOppSourceDetail")?.value||"";
- try{const {error}=await sb.rpc("create_travel_opportunity_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null,p_cycle:document.getElementById("newOppCycle")?.value||null,p_group_description:document.getElementById("newOppGroup")?.value.trim()||null,p_students_count:nullableNumber(document.getElementById("newOppStudents")?.value||""),p_teachers_count:nullableNumber(document.getElementById("newOppTeachers")?.value||""),p_destination:document.getElementById("newOppDestination")?.value.trim()||null,p_travel_start_on:document.getElementById("newOppStart")?.value||null,p_travel_end_on:document.getElementById("newOppEnd")?.value||null,p_contact_id:nullableNumber(document.getElementById("newOppContact")?.value||""),p_status:document.getElementById("newOppStatus")?.value||"Pendiente",p_next_contact_at:date?localDateTimeToISO(date,time):null,p_lead_source:resolvedOpportunitySource(c,sourceChoice),p_lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)});if(error)throw error;await refreshOpenCenter("Viaje creado correctamente")}
+ try{const {error}=await sb.rpc("create_travel_opportunity_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null,p_cycle:document.getElementById("newOppCycle")?.value||null,p_group_description:document.getElementById("newOppGroup")?.value.trim()||null,p_students_count:nullableNumber(document.getElementById("newOppStudents")?.value||""),p_teachers_count:nullableNumber(document.getElementById("newOppTeachers")?.value||""),p_destination:document.getElementById("newOppDestination")?.value.trim()||null,p_travel_start_on:document.getElementById("newOppStart")?.value||null,p_travel_end_on:document.getElementById("newOppEnd")?.value||null,p_contact_id:nullableNumber(document.getElementById("newOppContact")?.value||""),p_status:document.getElementById("newOppStatus")?.value||"Pendiente",p_next_contact_at:date?localDateTimeToISO(date,time):null,p_lead_source:resolvedOpportunitySource(c,sourceChoice),p_lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)});if(error)throw error;await refreshOpenCenter("Viaje creado correctamente",null,"new-opportunity")}
  catch(e){console.error(e);alert(friendlyError(e,"No se ha podido crear el viaje."))}
  finally{createOpportunityInFlight=false;if(btn?.isConnected){btn.disabled=false;btn.textContent="Crear viaje"}}
 }
-async function changeOpportunityLifecycle(opportunityId,restore=false){const c=centers.find(x=>x.id===currentCenterId),o=(c?.workspace?.opportunities||[]).find(x=>x.opportunity_id===opportunityId);if(!o)return;const action=restore?"restaurar":"archivar",reason=prompt(`Motivo obligatorio para ${action} ${o.cycle} (${opportunityId}):`);if(reason===null)return;if(reason.trim().length<8){alert("Indica un motivo de al menos 8 caracteres.");return}if(!confirm(`Se va a ${action} este viaje. La ficha del colegio y sus demás viajes no se modificarán. ¿Continuar?`))return;try{const {error}=await sb.rpc(restore?"restore_travel_opportunity_v1":"archive_travel_opportunity_v1",{p_opportunity_id:opportunityId,p_reason:reason.trim(),p_expected_version:Number(o.opportunity_version||1)});if(error)throw error;await refreshOpenCenter(restore?"Viaje restaurado correctamente":"Viaje archivado correctamente") }catch(e){console.error(e);alert(friendlyError(e,`No se ha podido ${action} el viaje.`))}}
+async function changeOpportunityLifecycle(opportunityId,restore=false){
+ const c=centers.find(x=>x.id===currentCenterId),o=(c?.workspace?.opportunities||[]).find(x=>x.opportunity_id===opportunityId);if(!o)return;
+ const lockKey=`opportunity-lifecycle:${opportunityId}`;if(lifecycleInFlight.has(lockKey))return;
+ const action=restore?"restaurar":"archivar",scope=`opportunity:${opportunityId}`;
+ if(centerDialogDirtyScopes.has(scope)&&!confirm(`Este viaje tiene cambios sin guardar. Si continúas, esos cambios se descartarán antes de ${action}.\n\n¿Continuar?`))return;
+ const reason=prompt(`Motivo obligatorio para ${action} ${o.cycle} (${opportunityId}):`);if(reason===null)return;if(reason.trim().length<8){alert("Indica un motivo de al menos 8 caracteres.");return}if(!confirm(`Se va a ${action} este viaje. La ficha del colegio y sus demás viajes no se modificarán. ¿Continuar?`))return;
+ const card=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId),btn=card?.querySelector(restore?"[data-restore-opportunity]":"[data-archive-opportunity]");lifecycleInFlight.add(lockKey);if(btn){btn.disabled=true;btn.textContent=restore?"Restaurando…":"Archivando…"}
+ try{const {error}=await sb.rpc(restore?"restore_travel_opportunity_v1":"archive_travel_opportunity_v1",{p_opportunity_id:opportunityId,p_reason:reason.trim(),p_expected_version:Number(o.opportunity_version||1)});if(error)throw error;await refreshOpenCenter(restore?"Viaje restaurado correctamente":"Viaje archivado correctamente",null,scope)}
+ catch(e){console.error(e);alert(friendlyError(e,`No se ha podido ${action} el viaje.`));if(btn?.isConnected){btn.disabled=false;btn.textContent=restore?"Restaurar viaje":"Archivar viaje"}}
+ finally{lifecycleInFlight.delete(lockKey)}
+}
 function bindCenterDialog(c){
  const dlg=document.getElementById("centerDialog");
- dlg.querySelector(".close").onclick=()=>dlg.close();
+ bindCenterDirtyTracking(dlg);
+ dlg.querySelector(".close").onclick=requestCloseCenterDialog;
  dlg.querySelector("#saveProfile").onclick=saveProfile;
  dlg.querySelector("#contactForm").onsubmit=e=>{e.preventDefault();addContact()};
  const province=dlg.querySelector("#fProvince");if(province)province.onchange=()=>{const community=dlg.querySelector("#fCommunity");if(community)community.value=communityForProvince(province.value)};
@@ -1632,11 +1746,11 @@ function bindCenterDialog(c){
  bindTravelDatePair(dlg.querySelector("#newOppStart"),dlg.querySelector("#newOppEnd"));
  dlg.querySelectorAll(".opportunity-record").forEach(card=>bindTravelDatePair(card.querySelector('[data-field="travel_start_on"]'),card.querySelector('[data-field="travel_end_on"]')));
  dlg.querySelectorAll("[data-opportunity-source]").forEach(select=>{toggleOpportunitySourceDetail(select,false);select.onchange=()=>toggleOpportunitySourceDetail(select,true)});
- dlg.querySelectorAll("[data-save-contact]").forEach(b=>b.onclick=()=>saveContactRecord(Number(b.dataset.saveContact)));
+ dlg.querySelectorAll("[data-save-contact]").forEach(b=>{const id=Number(b.dataset.saveContact);b.onclick=()=>saveContactRecord(id);if(contactSaveInFlight.has(id)){b.disabled=true;b.textContent="Guardando…"}});
  dlg.querySelectorAll(".contact-record").forEach(card=>{const actions=card.querySelector(".entity-actions"),contactId=Number(card.dataset.contactId);if(!actions||actions.querySelector("[data-archive-contact]"))return;const button=document.createElement("button");button.className="btn danger";button.type="button";button.dataset.archiveContact=String(contactId);button.textContent="Eliminar persona";button.onclick=()=>archiveContactRecord(contactId);actions.appendChild(button)});
- dlg.querySelectorAll("[data-save-opportunity]").forEach(b=>b.onclick=()=>saveOpportunity(b.dataset.saveOpportunity));
- dlg.querySelectorAll("[data-archive-opportunity]").forEach(b=>b.onclick=()=>changeOpportunityLifecycle(b.dataset.archiveOpportunity,false));
- dlg.querySelectorAll("[data-restore-opportunity]").forEach(b=>b.onclick=()=>changeOpportunityLifecycle(b.dataset.restoreOpportunity,true));
+ dlg.querySelectorAll("[data-save-opportunity]").forEach(b=>{const id=b.dataset.saveOpportunity;b.onclick=()=>saveOpportunity(id);if(opportunitySaveInFlight.has(id)){b.disabled=true;b.textContent="Guardando…"}});
+ dlg.querySelectorAll("[data-archive-opportunity]").forEach(b=>{const id=b.dataset.archiveOpportunity;b.onclick=()=>changeOpportunityLifecycle(id,false);if(lifecycleInFlight.has(`opportunity-lifecycle:${id}`)){b.disabled=true;b.textContent="Archivando…"}});
+ dlg.querySelectorAll("[data-restore-opportunity]").forEach(b=>{const id=b.dataset.restoreOpportunity;b.onclick=()=>changeOpportunityLifecycle(id,true);if(lifecycleInFlight.has(`opportunity-lifecycle:${id}`)){b.disabled=true;b.textContent="Restaurando…"}});
 }
 function openCenterRefresh(c){const dlg=document.getElementById("centerDialog");dlg.innerHTML=dialogHtml(c);bindCenterDialog(c);if(currentView==="dashboard")renderDashboard();else if(currentView==="stats"){statisticsData=null;renderStatistics()}else if(currentView==="archived")paintArchivedCenters();else renderList()}
 
@@ -1758,7 +1872,7 @@ async function refreshAccessSnapshot(forceRender=true){
    const {data:profileData,error:profileError}=await sb.rpc("get_my_operator");
    if(profileError)throw profileError;
    const profile=Array.isArray(profileData)?profileData[0]:profileData;
-   if(!profile){await signOut();return}
+   if(!profile){await signOut(true);return}
    const oldAdmin=isAdmin,oldOwner=isOwner,oldAccessRole=accessRole;
    currentOperator=profile;currentUser=profile.code;await loadPermissionsForSession();
    const fp=await getFingerprint();
@@ -1767,7 +1881,7 @@ async function refreshAccessSnapshot(forceRender=true){
    if(accessChanged||roleChanged){await loadAll();accessFingerprint=fp;await loadOperators();}
    if(roleChanged)configureNavForRole();
    if(openId&&!centers.some(c=>c.id===openId)){
-     const dlg=document.getElementById("centerDialog");if(dlg?.open)dlg.close();if(dlg)dlg.innerHTML="";
+     const dlg=document.getElementById("centerDialog");clearCenterScopeDirty();if(dlg?.open)dlg.close();if(dlg)dlg.innerHTML="";
      currentCenterId=null;toast("La asignación de una ficha ha cambiado. Se ha actualizado tu acceso.");
    }
    if(forceRender||accessChanged||roleChanged)render();else updateNavCounts();
@@ -1780,6 +1894,7 @@ setInterval(()=>refreshAccessSnapshot(false),ACCESS_REFRESH_MS);
 function clearSensitiveUi(){
  centers=[];archivedCenters=[];lifecycleAudit=[];archivedSearch="";OPERATORS=[];USERS=[];permissionUsers=[];permissionRoleAudit=[];permissionRoleDrafts.clear();statisticsData=null;statisticsRequestId++;statisticsFilters={periodDays:30,operatorCode:"",community:""};currentCampaign=null;agendaItems=[];currentCenterId=null;currentOperator=null;currentUser="";accessRole="seller";permissions={};isAdmin=false;isOwner=false;accessFingerprint="";
  newCenterDuplicateCandidates=[];newCenterDuplicateKey="";newCenterForceConfirmation=false;newCenterDuplicateRequest++;clearTimeout(newCenterSearchTimer);
+ centerDialogDirtyScopes.clear();profileSaveInFlight=false;contactEventInFlight=false;createContactInFlight=false;createOpportunityInFlight=false;contactSaveInFlight.clear();opportunitySaveInFlight.clear();lifecycleInFlight.clear();
  sessionStorage.removeItem("vgeNotifiedReminders");
  sessionStorage.removeItem(BULK_STATE_KEY);
  sessionStorage.removeItem(BULK_LAST_RESULT_KEY);
@@ -1789,7 +1904,9 @@ function clearSensitiveUi(){
  const app=document.getElementById("app");if(app)app.hidden=true;
  const login=document.getElementById("loginScreen");if(login)login.hidden=false;
 }
-async function signOut(){try{if(sb&&currentUser)await sb.rpc("mark_operator_offline");await sb.auth.signOut()}finally{clearSensitiveUi();location.reload()}}
+async function signOut(force=false){if(!force&&document.getElementById("centerDialog")?.open&&centerDialogDirtyScopes.size&&!confirm("Hay cambios sin guardar en la ficha abierta.\n\n¿Cerrar sesión y descartarlos?"))return;try{if(sb&&currentUser)await sb.rpc("mark_operator_offline");await sb.auth.signOut()}finally{clearSensitiveUi();location.reload()}}
+
+window.addEventListener("beforeunload",e=>{if(!centerDialogDirtyScopes.size)return;e.preventDefault();e.returnValue=""});
 
 document.getElementById("loginForm").onsubmit=async e=>{
  e.preventDefault();const err=document.getElementById("loginError");err.textContent="Entrando…";
@@ -1848,7 +1965,7 @@ document.getElementById("invitePasswordForm").onsubmit=async e=>{
  try{await startAuthenticatedApp((await sb.auth.getSession()).data.session)}catch(ex){console.error(ex);err.textContent="La cuenta se activó, pero todavía no está habilitada en el CRM."}
 };
 
-document.getElementById("logoutBtn").onclick=signOut;
+document.getElementById("logoutBtn").onclick=()=>signOut(false);
 document.getElementById("newCenterBtn").onclick=openNewCenterDialog;
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
  capturePermissionRoleDrafts();
@@ -1868,7 +1985,7 @@ document.getElementById("exportCsvBtn").onclick=exportCSV;
 ["pointerdown","keydown","touchstart"].forEach(ev=>window.addEventListener(ev,()=>{lastActivityAt=Date.now();touchPresence({interaction:true})},{passive:true}));
 setInterval(()=>{if(!document.getElementById("app").hidden&&currentUser)touchPresence({interaction:false})},PRESENCE_HEARTBEAT_MS);
 setInterval(()=>{if(currentView==="team"&&isAdmin&&!document.getElementById("app").hidden)renderTeamPresence()},30000);
-setInterval(()=>{if(!document.getElementById("app").hidden&&Date.now()-lastActivityAt>CLIENT_INACTIVITY_MS)signOut()},60000);
+setInterval(()=>{if(!document.getElementById("app").hidden&&Date.now()-lastActivityAt>CLIENT_INACTIVITY_MS)signOut(true)},60000);
 
 (async()=>{
  try{
