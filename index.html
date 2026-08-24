@@ -137,6 +137,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
 .permission-intro{background:#eef5fb;border:1px solid #bfd3e6;border-radius:12px;padding:14px 16px;line-height:1.5;font-size:12px;color:#244a70;margin-bottom:14px}.permission-intro strong{color:var(--navy)}
 .permission-matrix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}.permission-card{padding:15px}.permission-card h3{margin:0 0 8px;color:var(--navy);font-size:14px}.permission-card ul{margin:0;padding-left:18px;color:#4b5563;font-size:12px;line-height:1.55}.permission-card.owner{border-top:4px solid #17365d}.permission-card.manager{border-top:4px solid #2f75b5}.permission-card.seller{border-top:4px solid #94a3b8}
 .role-pill{display:inline-flex;align-items:center;border-radius:99px;padding:4px 8px;font-size:10px;font-weight:800}.role-owner{background:#dbeafe;color:#17365d}.role-manager{background:#e0f2fe;color:#075985}.role-seller{background:#f1f5f9;color:#475569}
+.permission-invite{margin:12px 0;padding:12px;border:1px solid #bfdbfe;border-radius:10px;background:#f8fbff}.permission-invite strong{display:block;margin-bottom:4px;color:var(--navy);font-size:12px}.permission-invite p{margin:0 0 10px;color:#526174;font-size:11px;line-height:1.4}.permission-invite-row{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:8px;align-items:end}.permission-invite-row label{font-size:11px;font-weight:800;color:#526174}.permission-invite-row input{margin-top:5px}.permission-invite-status{min-height:18px;margin-top:7px;font-size:11px;font-weight:700;color:#526174}.permission-invite-status.success{color:#166534}.permission-invite-status.error{color:#b42318}.permission-linked{margin:12px 0;padding:10px 12px;border:1px solid #bbf7d0;border-radius:9px;background:#f0fdf4;color:#166534;font-size:11px;font-weight:800}
 .permission-users{display:grid;gap:12px}.permission-user{padding:15px}.permission-user-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.permission-user-name{font-weight:800;color:var(--navy)}.permission-user-meta{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45}.permission-editor{display:grid;grid-template-columns:210px minmax(240px,1fr) 180px auto;gap:9px;align-items:end;margin-top:13px;padding-top:13px;border-top:1px solid var(--line)}.permission-editor label{display:grid;gap:5px;font-size:10px;color:var(--muted);font-weight:700}.permission-editor input,.permission-editor select{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;background:white}.permission-lock{margin-top:12px;padding:9px 11px;border-radius:8px;background:#f8fafc;color:#475569;font-size:11px}.permission-audit{margin-top:16px}.permission-audit .event-note{margin-top:5px}.permission-empty{padding:18px;text-align:center;color:var(--muted);font-size:12px}
 .lifecycle-intro{background:#fff8df;border:1px solid #e4bd55;border-radius:12px;padding:14px 16px;line-height:1.5;font-size:12px;color:#6b5210;margin-bottom:14px}.lifecycle-intro strong{color:#5b4408}.lifecycle-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.lifecycle-danger{background:#fff5f5;border:1px solid #efb0b7;border-radius:10px;padding:13px;margin-top:14px}.lifecycle-danger h3{color:#8a1c1c!important}.lifecycle-danger p{font-size:12px;color:#6b7280;line-height:1.45;margin:0 0 10px}.archive-form{display:grid;grid-template-columns:minmax(240px,1fr) auto;gap:9px;align-items:end}.archive-form label{display:grid;gap:5px;font-size:11px;color:var(--muted);font-weight:700}.archive-form input{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px;background:#fff}.archived-reason{max-width:320px;white-space:normal;line-height:1.35}.lifecycle-audit{margin-top:16px}.lifecycle-audit .event-note{margin-top:5px}.lifecycle-action-archive{background:#fff3cd;color:#735c10}.lifecycle-action-restore{background:#dcfce7;color:#166534}.lifecycle-action-delete{background:#fee2e2;color:#991b1b}
 .stats-intro{background:#eef5fb;border:1px solid #bfd3e6;border-radius:12px;padding:13px 15px;margin-bottom:14px;color:#244a70;font-size:12px;line-height:1.5}.stats-intro strong{color:var(--navy)}
@@ -190,7 +191,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
   <aside class="sidebar">
     <div class="brand"><div class="logo">VGE</div><div><strong>Viajes de Grupos Escolares</strong><small>CRM de prospección</small></div></div>
     <div class="userbox"><label>Sesión iniciada</label><div class="session-name" id="sessionUser">—</div><div class="session-role" id="sessionRole"></div><span class="online-pill">● ONLINE</span><button class="logout-btn" id="logoutBtn">Cerrar sesión</button></div>
-    <div class="build-badge">VERSIÓN V15 · R9.7</div>
+    <div class="build-badge">VERSIÓN V15 · R9.8</div>
     <nav class="nav" id="nav">
       <button data-view="dashboard" class="active"><span>▦ Panel</span></button>
       <button data-view="stats"><span>▥ Estadísticas</span></button>
@@ -264,7 +265,7 @@ window.VGE_CONFIG = {
 </script>
 <script>
 const INITIAL_CENTERS = []; // La base ya no viaja dentro del HTML.
-const CRM_BUILD = "2026-08-22-production-v15-protection-quality-history-r9-4";
+const CRM_BUILD = "2026-08-24-production-v15-owner-invitations-r9-8";
 let OPERATORS = [];
 let USERS = [];
 const STATUSES = ["Pendiente","Interesado","Trasladado a cotización","No interesado"];
@@ -886,11 +887,20 @@ function permissionUserHtml(u){
  const status=u.active?(u.linked?"Cuenta vinculada":"Pendiente de vincular"):"Usuario desactivado";
  const draft=locked?null:permissionDraftFor(u),selectedRole=draft?.selectedRole||u.access_role;
  const draftReason=draft?.reason||"",draftConfirm=draft?.confirmCode||"";
+ const invitation=u.active&&u.access_role!=="owner"?(u.linked
+   ?`<div class="permission-linked">✓ Acceso creado y vinculado a ${esc(u.email||"su cuenta de usuario")}</div>`
+   :`<div class="permission-invite">
+      <strong>Invitación de acceso al CRM</strong>
+      <p>El correo lo enviará Supabase y la cuenta quedará vinculada automáticamente a este operador.</p>
+      <div class="permission-invite-row"><label>Email corporativo<input type="email" data-invite-email maxlength="254" autocomplete="email" value="${esc(u.email||"")}" placeholder="nombre@viajesdegruposescolares.com"></label><button class="btn primary" type="button" data-invite-send="${esc(u.code)}">Enviar invitación</button></div>
+      <div class="permission-invite-status" data-invite-status aria-live="polite"></div>
+    </div>`):"";
  return `<div class="card permission-user" data-permission-user="${esc(u.code)}">
    <div class="permission-user-head">
     <div><div class="permission-user-name">${esc(u.display_name)}</div><div class="permission-user-meta">${esc(u.code)} · ${esc(u.email||"Sin email")}<br>${esc(status)} · ${Number(u.assigned_centers||0).toLocaleString("es-ES")} centros asignados</div></div>
     <span class="role-pill ${accessRoleClass(u.access_role)}">${esc(accessRoleLabel(u.access_role))}</span>
    </div>
+   ${invitation}
    ${locked?`<div class="permission-lock">${u.access_role==="owner"?"El rol de propietario está protegido. No puede degradarse ni transferirse desde esta pantalla.":"Este usuario está desactivado y no puede recibir nuevos permisos."}</div>`:`<div class="permission-editor">
      <label>Nivel de acceso<select data-role-select><option value="seller" ${selectedRole==="seller"?"selected":""}>Comercial</option><option value="manager" ${selectedRole==="manager"?"selected":""}>Administración operativa</option></select></label>
      <label>Motivo obligatorio<input data-role-reason maxlength="500" value="${esc(draftReason)}" placeholder="Ej.: asume la supervisión operativa del equipo"></label>
@@ -909,7 +919,7 @@ async function renderPermissions(){
    await loadPermissionAdminData();
    if(currentView!=="permissions")return;
    content.innerHTML=`
-    <div class="permission-intro"><strong>Separación de responsabilidades.</strong> La administración operativa puede ver y gestionar todo el trabajo comercial, pero no puede cambiar permisos, obtener la copia completa ni asumir funciones reservadas al propietario. Los cambios se aplican en el servidor inmediatamente y quedan auditados con motivo, usuario y fecha.</div>
+    <div class="permission-intro"><strong>Separación de responsabilidades.</strong> La administración operativa puede ver y gestionar todo el trabajo comercial, pero no puede cambiar permisos, enviar invitaciones, obtener la copia completa ni asumir funciones reservadas al propietario. Las invitaciones y los cambios se validan nuevamente en el servidor y quedan vinculados al usuario que los autoriza.</div>
     <div class="permission-matrix">
      <div class="card permission-card owner"><h3>Propietario</h3><ul><li>Control completo del CRM</li><li>Usuarios y permisos</li><li>Copia completa y seguridad</li><li>Archivo, restauración y borrado permanente</li></ul></div>
      <div class="card permission-card manager"><h3>Administración operativa</h3><ul><li>Visión global y estadísticas</li><li>Asignar y repartir carteras</li><li>Archivar y restaurar centros</li><li>Exportación operativa, sin borrado permanente</li></ul></div>
@@ -921,7 +931,54 @@ async function renderPermissions(){
      ${permissionRoleAudit.length?`<div class="timeline">${permissionRoleAudit.map(a=>`<div class="event"><div class="event-head"><div><strong>${esc(a.operator_name||a.operator_code)}</strong> · ${esc(accessRoleLabel(a.old_role))} → ${esc(accessRoleLabel(a.new_role))}</div><span>${esc(fmtPresenceDate(a.changed_at))}</span></div><div class="event-note">${esc(a.reason)}</div><div class="muted mt6">Autorizado por ${esc(a.changed_by_name||a.changed_by_operator)}</div></div>`).join("")}</div>`:'<div class="permission-empty">Todavía no se ha realizado ningún cambio de rol.</div>'}
     </div>`;
    content.querySelectorAll("[data-role-save]").forEach(btn=>btn.onclick=()=>applyOperatorRoleChange(btn));
+   content.querySelectorAll("[data-invite-send]").forEach(btn=>btn.onclick=()=>inviteOperatorAccess(btn));
  }catch(e){console.error(e);if(currentView==="permissions")content.innerHTML=`<div class="empty">${esc(friendlyError(e,"No se ha podido cargar la gestión de permisos."))}</div>`}
+}
+function invitationErrorMessage(code){
+ return ({
+  OWNER_REQUIRED:"Esta acción está reservada al propietario.",
+  INVALID_SESSION:"La sesión ha caducado. Vuelve a iniciar sesión.",
+  INVALID_INVITATION_DATA:"Revisa el operador y el email corporativo.",
+  INVALID_VGE_EMAIL:"Utiliza una cuenta @viajesdegruposescolares.com.",
+  OPERATOR_NOT_INVITABLE:"El operador no está activo o no admite invitaciones.",
+  OPERATOR_ALREADY_LINKED:"Este operador ya tiene una cuenta vinculada.",
+  EMAIL_ALREADY_ASSIGNED:"Ese email ya pertenece a otro operador.",
+  EMAIL_ALREADY_REGISTERED:"Ese email ya existe en Supabase Auth. Utiliza la recuperación de contraseña o revisa su vinculación.",
+  INVITE_DELIVERY_FAILED:"Supabase no ha podido enviar la invitación. Inténtalo de nuevo más tarde.",
+  INVITE_SENT_LINK_PENDING:"El correo salió, pero la vinculación quedó pendiente. No reenvíes la invitación y contacta con administración.",
+  AUTH_LOOKUP_FAILED:"No se ha podido comprobar el estado de los usuarios.",
+  SERVER_CONFIGURATION_ERROR:"La función de invitaciones no está configurada correctamente."
+ })[code]||"No se ha podido enviar la invitación.";
+}
+async function inviteOperatorAccess(btn){
+ if(!isOwner){alert("Esta acción está reservada al propietario.");return}
+ const card=btn.closest("[data-permission-user]");if(!card)return;
+ const code=card.dataset.permissionUser;
+ const current=permissionUsers.find(u=>u.code===code);
+ const input=card.querySelector("[data-invite-email]");
+ const status=card.querySelector("[data-invite-status]");
+ const email=String(input?.value||"").trim().toLowerCase();
+ if(!current){alert("No se ha encontrado el operador.");return}
+ if(!/^[^\s@]+@viajesdegruposescolares\.com$/.test(email)){status.className="permission-invite-status error";status.textContent="Escribe un email corporativo válido.";input?.focus();return}
+ if(!confirm(`Vas a enviar una invitación de acceso al CRM.\n\nOperador: ${current.display_name} (${code})\nEmail: ${email}\nRol inicial: ${accessRoleLabel(current.access_role)}\n\nLa cuenta quedará vinculada automáticamente. ¿Enviar ahora?`))return;
+ btn.disabled=true;btn.textContent="Enviando…";if(input)input.disabled=true;status.className="permission-invite-status";status.textContent="Comprobando usuario y enviando invitación…";
+ try{
+   const {data,error}=await sb.functions.invoke("vge-admin-invite-operator",{body:{operator_code:code,email}});
+   let codeError=data?.error||"";
+   if(error){
+     try{const detail=await error.context?.json();codeError=detail?.error||codeError}catch{}
+     throw new Error(codeError||error.message||"INVITE_FAILED");
+   }
+   if(!data?.ok)throw new Error(codeError||"INVITE_FAILED");
+   status.className="permission-invite-status success";status.textContent=`Invitación enviada a ${email}.`;
+   toast(`Invitación enviada a ${current.display_name}`);
+   await loadOperators();
+   await renderPermissions();
+ }catch(e){
+   console.error(e);const codeError=String(e?.message||"INVITE_FAILED");
+   status.className="permission-invite-status error";status.textContent=invitationErrorMessage(codeError);
+   btn.disabled=false;btn.textContent="Enviar invitación";if(input)input.disabled=false;
+ }
 }
 async function applyOperatorRoleChange(btn){
  if(!isOwner){alert("Esta acción está reservada al propietario.");return}
