@@ -179,8 +179,8 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
     <form id="invitePasswordForm" hidden>
       <p><strong>Crear o restablecer contraseña</strong></p>
       <p>Elige una contraseña personal para completar el acceso.</p>
-      <div><label>Nueva contraseña</label><input id="invitePassword" type="password" autocomplete="new-password" minlength="12" required></div>
-      <div><label>Repetir contraseña</label><input id="invitePasswordRepeat" type="password" autocomplete="new-password" minlength="12" required></div>
+      <div><label>Nueva contraseña</label><input id="invitePassword" type="password" autocomplete="new-password" minlength="14" required></div>
+      <div><label>Repetir contraseña</label><input id="invitePasswordRepeat" type="password" autocomplete="new-password" minlength="14" required></div>
       <button class="btn primary" type="submit">Guardar contraseña y entrar</button>
       <div class="login-error" id="invitePasswordError"></div>
     </form>
@@ -190,7 +190,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
   <aside class="sidebar">
     <div class="brand"><div class="logo">VGE</div><div><strong>Viajes de Grupos Escolares</strong><small>CRM de prospección</small></div></div>
     <div class="userbox"><label>Sesión iniciada</label><div class="session-name" id="sessionUser">—</div><div class="session-role" id="sessionRole"></div><span class="online-pill">● ONLINE</span><button class="logout-btn" id="logoutBtn">Cerrar sesión</button></div>
-    <div class="build-badge">VERSIÓN V15 · R9.6</div>
+    <div class="build-badge">VERSIÓN V15 · R9.7</div>
     <nav class="nav" id="nav">
       <button data-view="dashboard" class="active"><span>▦ Panel</span></button>
       <button data-view="stats"><span>▥ Estadísticas</span></button>
@@ -241,11 +241,11 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
 <dialog id="passwordDialog">
   <div class="modal-head"><div><h2>Cambiar contraseña</h2><p>La nueva contraseña sustituirá inmediatamente a la actual</p></div><button class="close" id="closePasswordDialog" type="button">✕</button></div>
   <div class="modal-body">
-    <div class="notice">Escribe primero tu contraseña actual. La nueva debe tener al menos 12 caracteres e incluir una mayúscula, una minúscula, un número y un símbolo.</div>
+    <div class="notice">Escribe primero tu contraseña actual. La nueva debe tener al menos 14 caracteres e incluir una mayúscula, una minúscula, un número y un símbolo.</div>
     <form id="changePasswordForm" class="form-grid">
       <div class="field span4"><label>Contraseña actual</label><input id="currentSessionPassword" type="password" autocomplete="current-password" required></div>
-      <div class="field span4"><label>Nueva contraseña</label><input id="newSessionPassword" type="password" autocomplete="new-password" minlength="12" required></div>
-      <div class="field span4"><label>Repetir nueva contraseña</label><input id="newSessionPasswordRepeat" type="password" autocomplete="new-password" minlength="12" required></div>
+      <div class="field span4"><label>Nueva contraseña</label><input id="newSessionPassword" type="password" autocomplete="new-password" minlength="14" required></div>
+      <div class="field span4"><label>Repetir nueva contraseña</label><input id="newSessionPasswordRepeat" type="password" autocomplete="new-password" minlength="14" required></div>
       <div class="field span4"><button class="btn primary" id="changePasswordSubmitBtn" type="submit">Guardar nueva contraseña</button><div class="save-feedback" id="changePasswordStatus"></div></div>
     </form>
   </div>
@@ -2027,12 +2027,12 @@ document.getElementById("invitePasswordForm").onsubmit=async e=>{
  const err=document.getElementById("invitePasswordError");
  const password=document.getElementById("invitePassword").value;
  const repeated=document.getElementById("invitePasswordRepeat").value;
- if(password.length<12){err.textContent="La contraseña debe tener al menos 12 caracteres.";return}
+ if(password.length<14){err.textContent="La contraseña debe tener al menos 14 caracteres.";return}
  if(!/[a-z]/.test(password)||!/[A-Z]/.test(password)||!/[0-9]/.test(password)||!/[^A-Za-z0-9]/.test(password)){err.textContent="La contraseña debe incluir una mayúscula, una minúscula, un número y un símbolo.";return}
  if(password!==repeated){err.textContent="Las dos contraseñas no coinciden.";return}
  err.textContent="Guardando contraseña…";
  const {data,error}=await sb.auth.updateUser({password});
- if(error){console.warn("No se pudo guardar la contraseña",error?.status||"");err.textContent=error?.status===422?"La contraseña no cumple los requisitos: 12 caracteres como mínimo, con mayúscula, minúscula, número y símbolo.":"El enlace ya no es válido o ha caducado. Solicita un nuevo correo de recuperación.";return}
+ if(error){console.warn("No se pudo guardar la contraseña",error?.status||"");err.textContent=error?.status===422?"La contraseña no cumple los requisitos: 14 caracteres como mínimo, con mayúscula, minúscula, número y símbolo.":"El enlace ya no es válido o ha caducado. Solicita un nuevo correo de recuperación.";return}
  history.replaceState(null,"",location.pathname+location.search);
  document.getElementById("invitePasswordForm").hidden=true;
  document.getElementById("loginForm").hidden=false;
@@ -2072,7 +2072,7 @@ document.getElementById("changePasswordForm").onsubmit=async e=>{
  const status=document.getElementById("changePasswordStatus"),button=document.getElementById("changePasswordSubmitBtn");
  status.className="save-feedback show error";
  if(!currentPassword){status.textContent="Introduce tu contraseña actual.";return}
- if(password.length<12){status.textContent="La contraseña debe tener al menos 12 caracteres.";return}
+ if(password.length<14){status.textContent="La contraseña debe tener al menos 14 caracteres.";return}
  if(!/[a-z]/.test(password)||!/[A-Z]/.test(password)||!/[0-9]/.test(password)||!/[^A-Za-z0-9]/.test(password)){status.textContent="Incluye una mayúscula, una minúscula, un número y un símbolo.";return}
  if(password!==repeated){status.textContent="Las dos contraseñas no coinciden.";return}
  button.disabled=true;status.className="save-feedback show info";status.textContent="Guardando la nueva contraseña…";
@@ -2085,8 +2085,12 @@ document.getElementById("changePasswordForm").onsubmit=async e=>{
    console.warn("No se pudo cambiar la contraseña",error?.status||"");status.className="save-feedback show error";
    if(error?.code==="bad_password"||error?.code==="invalid_credentials")status.textContent="La contraseña actual no es correcta.";
    else if(error?.code==="same_password")status.textContent="La nueva contraseña debe ser distinta de la actual.";
-   else if(error?.code==="weak_password")status.textContent="La nueva contraseña es demasiado fácil o aparece en filtraciones. Elige otra menos predecible.";
+   else if(error?.code==="weak_password")status.textContent="La nueva contraseña debe tener al menos 14 caracteres y no ser predecible ni aparecer en filtraciones.";
    else if(error?.code==="current_password_required")status.textContent="Introduce tu contraseña actual.";
+   else if(error?.code==="session_not_found"||error?.status===403){
+     status.textContent="Tu sesión ha caducado. Volverás al acceso para iniciar sesión de nuevo.";
+     setTimeout(async()=>{try{await sb.auth.signOut({scope:"local"})}finally{clearSensitiveUi();location.reload()}},1400);
+   }
    else if(error?.status===422)status.textContent="La contraseña no cumple los requisitos de seguridad.";
    else status.textContent="No se ha podido cambiar la contraseña. Inténtalo de nuevo.";
  }
