@@ -10,6 +10,8 @@ Fecha: 25 de agosto de 2026.
 - Fuente canónica definida para frontend, migraciones y Edge Functions.
 - CI básico añadido: igualdad del HTML, siete pruebas heredadas y consistencia del registro de migraciones.
 - Modelo de separación Git/Supabase/Web documentado.
+- PR de revisión abierto en borrador: `#1`; no fusionable durante esta fase.
+- GitHub Actions `R10 - controles de cimientos`, ejecución `32835455755`: completada con éxito en todos sus pasos.
 
 ## Pendiente antes de cerrar 2A
 
