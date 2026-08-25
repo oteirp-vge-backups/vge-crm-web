@@ -1,16 +1,22 @@
-name: R10 - controles de cimientos
+name: R10 - barrera de calidad
 
 on:
   pull_request:
   push:
     branches:
       - "r10/phase2a-foundations"
+      - "r10/phase2b-quality-gate"
 
 permissions:
   contents: read
 
+concurrency:
+  group: r10-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  foundations:
+  legacy-regressions:
+    name: Regresión heredada (7 pruebas)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -22,21 +28,17 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Verificar la fuente web canónica
+      - name: Ejecutar exactamente las siete pruebas existentes
         shell: bash
         run: |
           set -Eeuo pipefail
-          cmp --silent index.html publish/index.html
-
-      - name: Ejecutar la regresión existente
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          for test_file in tests/*.js; do
+          mapfile -t test_files < <(find tests -maxdepth 1 -type f -name 'test_*.js' | sort)
+          test "${#test_files[@]}" -eq 7
+          for test_file in "${test_files[@]}"; do
             node "$test_file"
           done
 
-      - name: Verificar el registro de migraciones
+      - name: Verificar el registro de migraciones de Fase 2A
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -55,3 +57,138 @@ jobs:
             throw new Error('El número de fuentes SQL presentes no coincide con el registro.');
           }
           NODE
+
+  static-analysis:
+    name: Sintaxis y compilación
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias reproducibles
+        run: npm ci --ignore-scripts
+
+      - name: Validar el frontend y su espejo publicable
+        run: npm run check:frontend
+
+      - name: Validar la sintaxis de las pruebas Node.js
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          while IFS= read -r test_file; do
+            node --check "$test_file"
+          done < <(find tests -type f \( -name '*.js' -o -name '*.mjs' \) | sort)
+
+      - name: Configurar Deno para Edge Functions
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.5.6
+
+      - name: Comprobar tipos y compilación de Edge Functions
+        run: deno check --no-lock supabase/functions/*/index.ts
+
+  database-roles:
+    name: Supabase local y permisos por rol
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Instalar Supabase CLI fijada
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.115.0
+
+      - name: Verificar la línea base antes de probarla
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          (cd supabase/baseline && sha256sum --check current-schema.sql.sha256)
+
+      - name: Iniciar Supabase local efímero sin migraciones parciales
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mv supabase/migrations "${RUNNER_TEMP}/r10-production-migrations"
+          mkdir -p supabase/migrations
+          supabase start
+
+      - name: Aplicar la línea base sanitizada
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file supabase/baseline/current-schema.sql
+
+      - name: Probar owner, manager, seller, anon y service_role
+        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql
+
+      - name: Detener el entorno efímero
+        if: always()
+        run: supabase stop --no-backup
+
+  browser-critical-journeys:
+    name: Playwright sin acceso a producción
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias reproducibles
+        run: npm ci --ignore-scripts
+
+      - name: Instalar Chromium aislado
+        run: npx playwright install --with-deps chromium
+
+      - name: Ejecutar recorridos críticos con Supabase simulado
+        run: npm run test:browser
+
+      - name: Conservar evidencia sólo si falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-playwright-failure-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  quality-gate:
+    name: Barrera R10 / publicación autorizable
+    if: always()
+    needs:
+      - legacy-regressions
+      - static-analysis
+      - database-roles
+      - browser-critical-journeys
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Bloquear si cualquier control falla
+        env:
+          LEGACY_RESULT: ${{ needs.legacy-regressions.result }}
+          STATIC_RESULT: ${{ needs.static-analysis.result }}
+          DATABASE_RESULT: ${{ needs.database-roles.result }}
+          BROWSER_RESULT: ${{ needs.browser-critical-journeys.result }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$LEGACY_RESULT" = success
+          test "$STATIC_RESULT" = success
+          test "$DATABASE_RESULT" = success
+          test "$BROWSER_RESULT" = success
+          echo "Barrera R10 superada: la revisión puede continuar; este job no despliega ni publica."
