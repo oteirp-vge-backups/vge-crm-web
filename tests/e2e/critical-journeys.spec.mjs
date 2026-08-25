@@ -39,14 +39,14 @@ test("recuperación de contraseña confirma el envío sin enumerar cuentas", asy
   await page.getByRole("button", { name: "He olvidado mi contraseña" }).click();
   await expect(page.locator("#recoveryEmail")).toHaveValue("persona@example.invalid");
   await page.getByRole("button", { name: "Enviar enlace de recuperación" }).click();
-  await expect(page.locator("#recoveryStatus")).toContainText("Si existe una cuenta");
+  await expect(page.locator("#recoveryStatus")).toContainText("Si el correo corresponde a una cuenta");
 });
 
 test("invitación exige la política de contraseña antes de activar", async ({ page }) => {
   await page.goto("/?set-password=1");
   await expect(page.locator("#invitePasswordForm")).toBeVisible();
-  await page.locator("#invitePassword").fill("demasiado-corta");
-  await page.locator("#invitePasswordRepeat").fill("demasiado-corta");
+  await page.locator("#invitePassword").fill("Corta-1!");
+  await page.locator("#invitePasswordRepeat").fill("Corta-1!");
   await page.getByRole("button", { name: "Guardar contraseña y entrar" }).click();
   await expect(page.locator("#invitePasswordError")).toContainText("al menos 14 caracteres");
 });
