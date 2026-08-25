@@ -35,13 +35,23 @@ La comprobación se ejecuta en el trabajo `Sintaxis y compilación` de la barrer
 
 ## Verificación
 
-- Cinco comprobaciones individuales de ausencia: pendientes de registrar al cierre.
-- Siete regresiones heredadas: pendientes de registrar al cierre.
-- Frontend y espejo publicable: pendientes de registrar al cierre.
-- Aislamiento STAGING: pendiente de registrar al cierre.
-- Edge Functions: pendientes de registrar al cierre.
-- Supabase local y permisos por rol: pendientes de registrar al cierre.
-- Playwright simulado: pendiente de registrar al cierre.
-- GitHub Actions y barrera conjunta: pendientes de registrar al cierre.
+- Cinco comprobaciones individuales de ausencia: correctas.
+- Siete regresiones heredadas: correctas.
+- Frontend y espejo publicable: correctos e idénticos.
+- Aislamiento STAGING y sintaxis Node.js: correctos.
+- Edge Functions: compilación y tipos Deno correctos.
+- Supabase local efímero: 22 pruebas SQL para `owner`, `manager`, `seller`, `anon` y `service_role`, correctas.
+- Playwright simulado sin acceso a producción: 4 de 4 recorridos correctos.
+- Barrera conjunta `Barrera R10 / publicación autorizable`: correcta.
 
-La Fase 4 no quedará cerrada hasta que toda la barrera esté verde. Este documento no autoriza fusionar ramas, modificar `main`, publicar el frontend ni desplegar sobre producción.
+## Evidencia de GitHub y cierre
+
+- Rama técnica: `r10/phase4-obsolete-cleanup`.
+- PR apilado en borrador: `#4`, con base `r10/phase2c-staging-integration`.
+- Commit técnico verificado: `51e58c3ec6839284f69f893d5e9d8e914b8a131c`.
+- GitHub Actions: ejecución `32902873228`, completada con éxito.
+- El primer intento del trabajo de sintaxis no llegó a descargar `denoland/setup-deno` por un error DNS interno de GitHub. La repetición del flujo terminó íntegramente en verde sin cambiar código.
+- No se creó ninguna rama remota de Supabase: no hubo datos temporales, despliegues ni coste adicional.
+- `main` permanece en `ccdd2909e646381a9326d600651b8aa912f4b731` y producción no recibió cambios.
+
+La Fase 4 queda técnicamente cerrada. Este cierre no autoriza fusionar ramas, modificar `main`, publicar el frontend ni desplegar sobre producción.
