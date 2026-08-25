@@ -1,0 +1,57 @@
+name: R10 - controles de cimientos
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "r10/phase2a-foundations"
+
+permissions:
+  contents: read
+
+jobs:
+  foundations:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Verificar la fuente web canónica
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cmp --silent index.html publish/index.html
+
+      - name: Ejecutar la regresión existente
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for test_file in tests/*.js; do
+            node "$test_file"
+          done
+
+      - name: Verificar el registro de migraciones
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const ledger = JSON.parse(fs.readFileSync('supabase/baseline/applied-migrations.json', 'utf8'));
+          if (ledger.applied_count !== 42 || ledger.migrations.length !== 42) {
+            throw new Error('El registro debe contener exactamente 42 migraciones aplicadas.');
+          }
+          const versions = ledger.migrations.map((migration) => migration.version);
+          if (new Set(versions).size !== versions.length) {
+            throw new Error('El registro contiene versiones de migración duplicadas.');
+          }
+          const tracked = fs.readdirSync('supabase/migrations').filter((name) => name.endsWith('.sql'));
+          if (tracked.length !== ledger.source_sql_files_in_repository) {
+            throw new Error('El número de fuentes SQL presentes no coincide con el registro.');
+          }
+          NODE
