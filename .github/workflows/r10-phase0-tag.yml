@@ -1,0 +1,47 @@
+name: R10 Fase 0 - crear etiqueta congelada
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/r10-phase0-tag.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: r10-phase0-tag
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Crear y verificar la etiqueta
+        shell: bash
+        env:
+          TARGET_SHA: e9f2d72c9375270ff84b38c39d5f6bf93433dead
+          RELEASE_TAG: v15-r9.8-r10-phase0-2026-08-25
+        run: |
+          set -Eeuo pipefail
+          git cat-file -e "${TARGET_SHA}^{commit}"
+
+          if git show-ref --tags --verify --quiet "refs/tags/${RELEASE_TAG}"; then
+            existing_sha="$(git rev-list -n 1 "${RELEASE_TAG}")"
+            test "${existing_sha}" = "${TARGET_SHA}"
+            printf 'Etiqueta ya verificada: %s -> %s\n' "${RELEASE_TAG}" "${TARGET_SHA}"
+            exit 0
+          fi
+
+          git config user.name "VGE CRM Backup Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git tag -a "${RELEASE_TAG}" "${TARGET_SHA}" -m "R10 Fase 0 - V15 R9.8 congelada"
+          git push origin "refs/tags/${RELEASE_TAG}"
+          printf 'Etiqueta creada: %s -> %s\n' "${RELEASE_TAG}" "${TARGET_SHA}"
