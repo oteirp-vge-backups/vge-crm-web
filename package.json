@@ -1,0 +1,13 @@
+{
+  "name": "vge-crm-r10-quality-gate",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Barrera de calidad reproducible para la auditoría técnica R10.",
+  "scripts": {
+    "check:frontend": "node tests/quality/check-frontend-syntax.mjs",
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1"
+  }
+}
