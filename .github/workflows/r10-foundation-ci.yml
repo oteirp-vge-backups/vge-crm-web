@@ -7,6 +7,7 @@ on:
       - "r10/phase2a-foundations"
       - "r10/phase2b-quality-gate"
       - "r10/phase2c-staging-integration"
+      - "r10/phase4-obsolete-cleanup"
 
 permissions:
   contents: read
@@ -78,6 +79,9 @@ jobs:
 
       - name: Validar el frontend y su espejo publicable
         run: npm run check:frontend
+
+      - name: Impedir la reintroducción de componentes obsoletos
+        run: npm run check:obsolete
 
       - name: Validar la sintaxis de las pruebas Node.js
         shell: bash

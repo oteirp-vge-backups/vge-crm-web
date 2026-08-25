@@ -5,6 +5,7 @@
   "description": "Barrera de calidad reproducible para la auditoría técnica R10.",
   "scripts": {
     "check:frontend": "node tests/quality/check-frontend-syntax.mjs",
+    "check:obsolete": "node tests/quality/check-obsolete-components.mjs",
     "check:staging-isolation": "node tests/quality/check-staging-isolation.mjs",
     "test:browser": "playwright test",
     "test:staging": "playwright test --config playwright.staging.config.mjs"
