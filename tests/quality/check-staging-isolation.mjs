@@ -31,13 +31,20 @@ try {
   const html = await response.text();
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("x-r10-staging-project"), stagingRef);
-  assert.match(html, new RegExp(stagingRef));
   assert.doesNotMatch(html, new RegExp(productionRef));
   assert.doesNotMatch(html, /service_role/i);
 
+  const configResponse = await fetch(`http://127.0.0.1:${port}/assets/js/config.js`);
+  const config = await configResponse.text();
+  assert.equal(configResponse.status, 200);
+  assert.equal(configResponse.headers.get("x-r10-staging-project"), stagingRef);
+  assert.match(config, new RegExp(stagingRef));
+  assert.doesNotMatch(config, new RegExp(productionRef));
+  assert.doesNotMatch(config, /service_role/i);
+
   const metadata = await (await fetch(`http://127.0.0.1:${port}/__r10_staging`)).json();
   assert.deepEqual(metadata, { staging: true, projectRef: stagingRef });
-  console.log("OK: el servidor integrado inyecta solo STAGING y elimina la referencia de produccion.");
+  console.log("OK: el servidor integrado inyecta STAGING solo en config.js y elimina la referencia de produccion.");
 } finally {
   child.kill("SIGTERM");
 }

@@ -35,16 +35,16 @@ const contentTypes = new Map([
   [".json", "application/json; charset=utf-8"],
 ]);
 
-function injectStagingConfig(html) {
+function injectStagingConfig(source) {
   const configPattern = /window\.VGE_CONFIG\s*=\s*\{[\s\S]*?\};/g;
-  const matches = html.match(configPattern) || [];
+  const matches = source.match(configPattern) || [];
   if (matches.length !== 1) throw new Error("No se encontro un unico bloque VGE_CONFIG.");
-  const injected = html.replace(configPattern, `window.VGE_CONFIG = ${JSON.stringify({
+  const injected = source.replace(configPattern, `window.VGE_CONFIG = ${JSON.stringify({
     supabaseUrl: stagingUrl,
     supabasePublishableKey: publishableKey,
   })};`);
   if (injected.includes(PRODUCTION_PROJECT_REF)) {
-    throw new Error("BLOQUEADO: el HTML servido conserva una referencia a produccion.");
+    throw new Error("BLOQUEADO: la configuracion servida conserva una referencia a produccion.");
   }
   return injected;
 }
@@ -62,7 +62,12 @@ http.createServer(async (request, response) => {
     if (filePath !== root && !filePath.startsWith(`${root}${path.sep}`)) throw new Error("Ruta no permitida");
     const body = await readFile(filePath);
     const extension = path.extname(filePath);
-    const payload = extension === ".html" ? Buffer.from(injectStagingConfig(body.toString("utf8"))) : body;
+    const relativePath = path.relative(root, filePath).split(path.sep).join("/");
+    const isConfig = relativePath === "assets/js/config.js" || relativePath === "publish/assets/js/config.js";
+    const payload = isConfig ? Buffer.from(injectStagingConfig(body.toString("utf8"))) : body;
+    if (extension === ".html" && body.includes(PRODUCTION_PROJECT_REF)) {
+      throw new Error("BLOQUEADO: el HTML servido contiene una referencia a produccion.");
+    }
     response.writeHead(200, {
       "content-type": contentTypes.get(extension) ?? "application/octet-stream",
       "cache-control": "no-store",
