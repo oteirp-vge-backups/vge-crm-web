@@ -22,3 +22,11 @@ Este commit incorpora el código exacto de las Edge Functions activas, las migra
 ## Congelación
 
 Hasta comenzar la Fase 1 no se modifican el frontend, las Edge Functions ni el esquema salvo incidente crítico, con copia previa, prueba de regresión y nueva huella.
+
+## Cierre formal
+
+- Etiqueta: `v15-r9.8-r10-phase0-2026-08-25`.
+- Commit congelado: `e9f2d72c9375270ff84b38c39d5f6bf93433dead`.
+- Backup cifrado posterior a R9.8: ejecutado y verificado el 25 de agosto de 2026.
+- Evidencia detallada: repositorio privado de backup, `audit/R10_PHASE0_BACKUP_2026-08-25.md`.
+- Estado: Fase 0 cerrada.
