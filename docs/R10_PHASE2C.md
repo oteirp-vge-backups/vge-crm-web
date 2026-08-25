@@ -6,14 +6,14 @@ Ventana de ejecución: 25 de agosto de 2026, de `21:10:30Z` a `21:26:58Z` (16 mi
 
 Esta fase valida el CRM en navegador contra una rama remota y desechable de Supabase, sin datos de producción. No modifica `main`, no publica el frontend y no escribe en el proyecto de producción `sjraugywirjohrqmacvb`.
 
-## Diseno de aislamiento
+## Diseño de aislamiento
 
 - La rama Supabase se crea solo cuando el arnés ya está preparado y se elimina al terminar.
-- El servidor local de pruebas sustituye `VGE_CONFIG` en memoria; `index.html` y `publish/index.html` permanecen identicos y con su configuracion publicable intacta.
+- El servidor local de pruebas sustituye `VGE_CONFIG` en memoria; `index.html` y `publish/index.html` permanecen idénticos y con su configuración publicable intacta.
 - El servidor rechaza expresamente el project ref de producción y cualquier clave identificada como `service_role`.
-- Playwright bloquea cualquier peticion a un host Supabase distinto del STAGING autorizado.
+- Playwright bloquea cualquier petición a un host Supabase distinto del STAGING autorizado.
 - Correos, contraseñas y claves se suministran por variables de entorno y nunca se versionan.
-- Los usuarios, centros y viajes sinteticos solo existen en la rama desechable.
+- Los usuarios, centros y viajes sintéticos solo existen en la rama desechable.
 
 ## Recorridos obligatorios
 
@@ -42,5 +42,14 @@ Supabase confirmó `success: true` al eliminar la rama a las `21:26:58Z`. La con
 ## Coste y cierre
 
 La tarifa confirmada fue de 0,01344 USD por hora mientras existiera la rama. La ventana facturable fue de 16 minutos y 28 segundos y ya no queda coste recurrente. La facturación efectiva depende del criterio de prorrateo de Supabase.
+
+## Evidencia de GitHub
+
+- Rama técnica: `r10/phase2c-staging-integration`.
+- PR apilado en borrador: `#3`, con base `r10/phase2b-quality-gate`.
+- Commit técnico verificado: `7fcddb75fe0a980f68a2cace13be65de53d18f39`.
+- GitHub Actions: ejecución `32901461857`, completada con éxito.
+- Regresiones heredadas, sintaxis y compilación, Supabase local por roles, Playwright simulado y `Barrera R10 / publicación autorizable`: correctos.
+- `main` permanece en `ccdd2909e646381a9326d600651b8aa912f4b731` y producción no recibió cambios.
 
 La Fase 2C queda técnicamente cerrada. Este cierre no autoriza fusionar ramas, modificar `main`, publicar el frontend ni desplegar sobre producción.
