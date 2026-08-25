@@ -8,6 +8,11 @@ const moduleNames = [
   "config.js",
   "core.js",
   "supabase-service.js",
+  "centers.js",
+  "contacts.js",
+  "travel-agenda.js",
+  "management.js",
+  "owner.js",
   "app.js",
   "auth-permissions.js",
 ];
@@ -35,6 +40,12 @@ assert.match(moduleSources.get("core.js"), /function friendlyError\(/, "Las util
 assert.match(moduleSources.get("supabase-service.js"), /async function rpcJson\(/, "El servicio RPC debe estar separado");
 assert.match(moduleSources.get("supabase-service.js"), /window\.supabase\.createClient\(/, "La conexión debe residir en el servicio Supabase");
 assert.match(moduleSources.get("supabase-service.js"), /function supabaseFunction\(/, "Las Edge Functions deben pasar por el servicio Supabase");
+assert.match(moduleSources.get("centers.js"), /async function createNewCenter\(/, "La gestión de centros debe estar separada");
+assert.match(moduleSources.get("contacts.js"), /async function createCenterContact\(/, "La gestión de contactos debe estar separada");
+assert.match(moduleSources.get("travel-agenda.js"), /async function saveOpportunity\(/, "Los viajes y la agenda deben estar separados");
+assert.match(moduleSources.get("management.js"), /async function renderStatistics\(/, "Las operaciones de dirección deben estar separadas");
+assert.match(moduleSources.get("owner.js"), /async function renderPermissions\(/, "Los controles del propietario deben estar separados");
+assert.match(moduleSources.get("app.js"), /function render\(/, "La composición y el renderizado común deben permanecer en app.js");
 assert.match(moduleSources.get("auth-permissions.js"), /initializeSupabaseClient\(\)/, "El arranque autenticado debe solicitar el cliente al servicio");
 assert.match(moduleSources.get("auth-permissions.js"), /async function loadPermissionsForSession\(/, "Los permisos deben estar junto a autenticación");
 const outsideSupabaseService = moduleNames

@@ -3,10 +3,10 @@
 ## Aplicación web
 
 - Fuentes editables: `/index.html` y `/assets/js/`.
-- Módulos canónicos: `config.js`, `core.js`, `supabase-service.js`, `app.js` y `auth-permissions.js`.
+- Módulos canónicos, en orden de carga: `config.js`, `core.js`, `supabase-service.js`, `centers.js`, `contacts.js`, `travel-agenda.js`, `management.js`, `owner.js`, `app.js` y `auth-permissions.js`.
 - Espejo generado: `/publish/index.html` y `/publish/assets/js/`; no se editan de forma independiente.
 - `npm run build:publish` regenera el espejo y `npm run check:publish` bloquea cualquier divergencia.
-- El workflow `R10 - barrera de calidad` compila por separado los cinco módulos, prohíbe JavaScript concatenado dentro del HTML y comprueba el orden de carga.
+- El workflow `R10 - barrera de calidad` compila por separado los diez módulos, prohíbe JavaScript concatenado dentro del HTML, comprueba el orden de carga y valida la propiedad única de las funciones por dominio.
 
 ## Base de datos
 
