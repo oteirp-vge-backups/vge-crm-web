@@ -45,10 +45,12 @@ test("recuperación de contraseña confirma el envío sin enumerar cuentas", asy
 test("invitación exige la política de contraseña antes de activar", async ({ page }) => {
   await page.goto("/?set-password=1");
   await expect(page.locator("#invitePasswordForm")).toBeVisible();
-  await page.locator("#invitePassword").fill("Corta-1!");
-  await page.locator("#invitePasswordRepeat").fill("Corta-1!");
+  await expect(page.locator("#invitePassword")).toHaveAttribute("minlength", "14");
+  await expect(page.locator("#invitePasswordRepeat")).toHaveAttribute("minlength", "14");
+  await page.locator("#invitePassword").fill("demasiado-corta");
+  await page.locator("#invitePasswordRepeat").fill("demasiado-corta");
   await page.getByRole("button", { name: "Guardar contraseña y entrar" }).click();
-  await expect(page.locator("#invitePasswordError")).toContainText("al menos 14 caracteres");
+  await expect(page.locator("#invitePasswordError")).toContainText("una mayúscula, una minúscula, un número y un símbolo");
 });
 
 test("sesión comercial carga el panel y oculta acciones de propietario", async ({ page }) => {
