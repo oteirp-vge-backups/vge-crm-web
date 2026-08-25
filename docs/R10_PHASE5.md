@@ -42,8 +42,17 @@ No existen cambios de esquema, migraciones, RLS, datos, Auth, claves ni Edge Fun
 - Cinco controles antiobsolescencia: correctos.
 - Siete regresiones heredadas: correctas.
 - Playwright simulado sin acceso a producción: 4 de 4 recorridos correctos.
-- Edge Functions Deno: pendiente de registrar al cierre.
-- Supabase local y 22 pruebas SQL por roles: pendientes de registrar al cierre.
-- GitHub Actions y barrera conjunta: pendientes de registrar al cierre.
+- Edge Functions: compilación y tipos Deno correctos.
+- Supabase local efímero: 22 pruebas SQL para `owner`, `manager`, `seller`, `anon` y `service_role`, correctas.
+- Barrera conjunta `Barrera R10 / publicación autorizable`: correcta.
 
-La Fase 5 no quedará cerrada hasta que toda la barrera de GitHub esté verde. Este documento no autoriza fusionar ramas, modificar `main`, publicar el frontend ni desplegar sobre producción.
+## Evidencia de GitHub y cierre
+
+- Rama técnica: `r10/phase5-core-modularization`.
+- PR apilado en borrador: `#5`, con base `r10/phase4-obsolete-cleanup`.
+- Commit técnico verificado: `6e6774d4a8a517b023915385ce4192f059d4d8db`.
+- GitHub Actions: ejecución `32905250674`, completada con éxito.
+- No se creó ninguna rama remota de Supabase: no hubo datos temporales, despliegues ni coste adicional.
+- `main` permanece en `ccdd2909e646381a9326d600651b8aa912f4b731` y producción no recibió cambios.
+
+La Fase 5 queda técnicamente cerrada. Este cierre no autoriza fusionar ramas, modificar `main`, publicar el frontend ni desplegar sobre producción.
