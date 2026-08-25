@@ -40,4 +40,25 @@ La barrera usa Node.js 22, Deno 2.5.6, Supabase CLI 2.115.0, PostgreSQL local ef
 
 El check requerido para cualquier futura promoción a `main` es `Barrera R10 / publicación autorizable`. Una ejecución verde autoriza únicamente la revisión técnica; no sustituye la autorización explícita de despliegue a producción ni fusiona ninguna rama.
 
-La protección efectiva de `main` se verificará y configurará cuando el check haya quedado registrado por GitHub Actions. Hasta entonces `main` y producción permanecen sin cambios.
+## Evidencia de ejecución
+
+- Rama técnica: `r10/phase2b-quality-gate`.
+- PR apilado en borrador: `#2`, con base `r10/phase2a-foundations`.
+- Commit verificado: `5ce7842a75fd968d7ffabd1a48a3d5f3060a7420`.
+- GitHub Actions: ejecución `32847989854`, completada con éxito.
+- Los cinco jobs, incluida `Barrera R10 / publicación autorizable`, quedaron verdes.
+- La base efímera aplicó la línea base y superó las 22 aserciones pgTAP.
+- Los cuatro recorridos Playwright pasaron sin peticiones a producción.
+
+## Protección de `main`: control administrativo pendiente
+
+Después de registrar el check, la consulta de rulesets del repositorio devolvió una lista vacía. La integración GitHub disponible no tiene permiso administrativo para leer o escribir la protección clásica de ramas: el endpoint de `main` respondió `403 Resource not accessible by integration` y no existe una herramienta autorizada de escritura de rulesets.
+
+Por tanto, el repositorio todavía debe aplicar desde una identidad administrativa una regla para `main` que:
+
+1. exija pull request antes de fusionar;
+2. requiera el check `Barrera R10 / publicación autorizable` actualizado con la rama;
+3. bloquee fusiones cuando el check falle o esté pendiente;
+4. impida force-push y eliminación de `main`.
+
+Hasta que GitHub confirme esa regla, el PR permanece en borrador y esta fase no habilita publicación, fusión ni despliegue. `main` y producción permanecen sin cambios.
