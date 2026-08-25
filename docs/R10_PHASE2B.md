@@ -40,25 +40,38 @@ La barrera usa Node.js 22, Deno 2.5.6, Supabase CLI 2.115.0, PostgreSQL local ef
 
 El check requerido para cualquier futura promoción a `main` es `Barrera R10 / publicación autorizable`. Una ejecución verde autoriza únicamente la revisión técnica; no sustituye la autorización explícita de despliegue a producción ni fusiona ninguna rama.
 
-## Evidencia de ejecución
+## Evidencia técnica final
 
 - Rama técnica: `r10/phase2b-quality-gate`.
 - PR apilado en borrador: `#2`, con base `r10/phase2a-foundations`.
-- Commit verificado: `5ce7842a75fd968d7ffabd1a48a3d5f3060a7420`.
-- GitHub Actions: ejecución `32847989854`, completada con éxito.
+- Commit técnico verificado: `88bb7bd2365a9149acd6305049f59cf9b99550be`.
+- GitHub Actions: ejecución `32848261297`, completada con éxito.
 - Los cinco jobs, incluida `Barrera R10 / publicación autorizable`, quedaron verdes.
 - La base efímera aplicó la línea base y superó las 22 aserciones pgTAP.
 - Los cuatro recorridos Playwright pasaron sin peticiones a producción.
 
-## Protección de `main`: control administrativo pendiente
+## Protección de `main`: control administrativo completado
 
-Después de registrar el check, la consulta de rulesets del repositorio devolvió una lista vacía. La integración GitHub disponible no tiene permiso administrativo para leer o escribir la protección clásica de ramas: el endpoint de `main` respondió `403 Resource not accessible by integration` y no existe una herramienta autorizada de escritura de rulesets.
+El 25 de agosto de 2026 se creó y verificó el ruleset de repositorio `R10 - protección de main` (ID `21485889`).
 
-Por tanto, el repositorio todavía debe aplicar desde una identidad administrativa una regla para `main` que:
+GitHub confirmó:
 
-1. exija pull request antes de fusionar;
-2. requiera el check `Barrera R10 / publicación autorizable` actualizado con la rama;
-3. bloquee fusiones cuando el check falle o esté pendiente;
-4. impida force-push y eliminación de `main`.
+- estado `active`;
+- aplicación exclusiva a la rama predeterminada `main`;
+- lista de bypass vacía y `current_user_can_bypass: never`;
+- pull request obligatorio antes de fusionar, con 0 aprobaciones requeridas;
+- check obligatorio `Barrera R10 / publicación autorizable`;
+- política estricta de rama actualizada antes de fusionar;
+- bloqueo de force-push;
+- bloqueo de eliminación de `main`;
+- rama `main` marcada como `protected: true`.
 
-Hasta que GitHub confirme esa regla, el PR permanece en borrador y esta fase no habilita publicación, fusión ni despliegue. `main` y producción permanecen sin cambios.
+## Cierre de fase
+
+La Fase 2B queda cerrada técnicamente y administrativamente. Este cierre no autoriza fusionar el PR, modificar `main`, desplegar la aplicación ni escribir en producción.
+
+En el momento del cierre:
+
+- el PR `#2` permanece abierto y en borrador;
+- `main` permanece en `ccdd2909e646381a9326d600651b8aa912f4b731`;
+- producción no ha recibido cambios.
