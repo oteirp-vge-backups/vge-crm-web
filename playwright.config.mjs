@@ -9,6 +9,9 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:4173",
     browserName: "chromium",
+    launchOptions: process.env.R10_CHROMIUM_EXECUTABLE_PATH
+      ? { executablePath: process.env.R10_CHROMIUM_EXECUTABLE_PATH }
+      : {},
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
   },

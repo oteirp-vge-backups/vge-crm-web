@@ -6,6 +6,7 @@ on:
     branches:
       - "r10/phase2a-foundations"
       - "r10/phase2b-quality-gate"
+      - "r10/phase2c-staging-integration"
 
 permissions:
   contents: read
@@ -85,6 +86,9 @@ jobs:
           while IFS= read -r test_file; do
             node --check "$test_file"
           done < <(find tests -type f \( -name '*.js' -o -name '*.mjs' \) | sort)
+
+      - name: Verificar el aislamiento del arnés STAGING
+        run: npm run check:staging-isolation
 
       - name: Configurar Deno para Edge Functions
         uses: denoland/setup-deno@v2
