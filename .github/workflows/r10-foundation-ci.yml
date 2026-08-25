@@ -9,6 +9,7 @@ on:
       - "r10/phase2c-staging-integration"
       - "r10/phase4-obsolete-cleanup"
       - "r10/phase5-core-modularization"
+      - "r10/phase6-functional-modules"
 
 permissions:
   contents: read

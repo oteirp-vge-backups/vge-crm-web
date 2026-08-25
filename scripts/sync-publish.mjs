@@ -6,6 +6,11 @@ const artifacts = [
   "assets/js/config.js",
   "assets/js/core.js",
   "assets/js/supabase-service.js",
+  "assets/js/centers.js",
+  "assets/js/contacts.js",
+  "assets/js/travel-agenda.js",
+  "assets/js/management.js",
+  "assets/js/owner.js",
   "assets/js/app.js",
   "assets/js/auth-permissions.js",
 ];

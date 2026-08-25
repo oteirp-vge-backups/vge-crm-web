@@ -7,6 +7,11 @@ const moduleNames = [
   "config.js",
   "core.js",
   "supabase-service.js",
+  "centers.js",
+  "contacts.js",
+  "travel-agenda.js",
+  "management.js",
+  "owner.js",
   "app.js",
   "auth-permissions.js",
 ];
