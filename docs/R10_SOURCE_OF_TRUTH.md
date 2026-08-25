@@ -2,11 +2,11 @@
 
 ## Aplicación web
 
-- Fuente editable: `/index.html`.
-- Espejo de publicación: `/publish/index.html`.
-- Ambos archivos deben conservar exactamente el mismo contenido mientras continúe la publicación heredada.
-- El workflow `R10 - controles de cimientos` bloquea divergencias entre ambos.
-- En una fase posterior, el espejo se generará automáticamente; hasta entonces no se edita de forma independiente.
+- Fuentes editables: `/index.html` y `/assets/js/`.
+- Módulos canónicos: `config.js`, `core.js`, `supabase-service.js`, `app.js` y `auth-permissions.js`.
+- Espejo generado: `/publish/index.html` y `/publish/assets/js/`; no se editan de forma independiente.
+- `npm run build:publish` regenera el espejo y `npm run check:publish` bloquea cualquier divergencia.
+- El workflow `R10 - barrera de calidad` compila por separado los cinco módulos, prohíbe JavaScript concatenado dentro del HTML y comprueba el orden de carga.
 
 ## Base de datos
 
