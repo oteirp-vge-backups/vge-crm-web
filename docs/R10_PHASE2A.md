@@ -12,17 +12,21 @@ Fecha: 25 de agosto de 2026.
 - Modelo de separación Git/Supabase/Web documentado.
 - PR de revisión abierto en borrador: `#1`; no fusionable durante esta fase.
 - GitHub Actions `R10 - controles de cimientos`, ejecución `32835455755`: completada con éxito.
-- STAGING temporal `r10-phase2a-staging-temp` creado como rama Supabase aislada, sin datos, con coste de USD 0,01344 por hora y eliminación automática prevista como máximo el 1 de septiembre de 2026.
-- La creación automática de STAGING solo aplicó 3 de 42 migraciones; el entorno permanece aislado y no se considera válido para pruebas funcionales.
+- STAGING temporal `r10-phase2a-staging-temp` creado como rama Supabase aislada y sin datos. La creación automática solo aplicó 3 de 42 migraciones y dejó el estado administrativo `MIGRATIONS_FAILED`.
 - Línea base SQL estructural extraída en una sola ejecución privada (`32842633266`), auditada y publicada en copia sanitizada con SHA-256 `6dc0ca0103fcba8cfe8a880af0fcd4c5a5b06ec55b9e078e1b31db29f5c1f27a`.
 - Inventario de la línea base: 20 tablas públicas, 2 vistas públicas, 73 funciones, 17 políticas RLS y 15 triggers; sin filas, cuentas de usuario, definiciones de roles personalizadas ni secretos.
 - Un correo operativo incrustado como valor por defecto fue sustituido en las dos apariciones de la copia pública por `r10-staging-recipient@example.invalid`; el SQL original exacto permanece solo en el artefacto privado efímero.
 - El workflow privado de Fase 0 se restauró exactamente tras la extracción y la restauración no produjo otra ejecución.
+- STAGING se reinicializó de forma controlada y la línea base sanitizada se aplicó una única vez.
+- La comprobación en STAGING reprodujo exactamente 20 tablas públicas, 2 vistas, 73 funciones, 17 políticas RLS y 15 triggers; las 20 tablas tenían RLS y las dos vistas `security_invoker`.
+- Se verificaron cero filas, usuarios, identidades, sesiones, objetos Storage, secretos Vault y trabajos Cron.
+- `anon` no obtuvo permisos de tabla ni de RPC privilegiadas; todas las funciones `SECURITY DEFINER` fijaban `search_path` y las RPC autenticadas conservaban controles internos de autorización.
+- Los asesores no devolvieron errores. Sus avisos de seguridad y rendimiento quedaron documentados en `docs/R10_PHASE2A_STAGING_VALIDATION.md` sin alterar el diseño auditado.
+- STAGING se eliminó correctamente el 25 de agosto de 2026 a las 11:52:34 UTC. La comprobación posterior confirmó que solo permanece la rama principal de producción.
+- La duración real de STAGING fue inferior a una hora, con consumo estimado inferior a USD 0,01344 antes de impuestos.
 
-## Pendiente antes de cerrar 2A
+## Cierre de Fase 2A
 
-1. Reinicializar de forma controlada el STAGING parcial y aplicar la línea base exclusivamente allí.
-2. Verificar en STAGING estructura, RLS, funciones, triggers y permisos antes de cualquier refactor.
-3. Eliminar STAGING al terminar o, en todo caso, antes del límite temporal autorizado.
+La Fase 2A queda técnicamente completada: línea base extraída, sanitizada, publicada, reproducida y verificada en un entorno aislado que ya ha sido eliminado.
 
-Ninguno de estos puntos autoriza un cambio en producción ni una fusión a `main`.
+El PR `#1` permanece en borrador y no se ha fusionado. Producción y `main` permanecen sin cambios.
