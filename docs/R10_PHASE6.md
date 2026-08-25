@@ -45,13 +45,17 @@ No existen cambios de esquema, migraciones, RLS, datos, Auth, claves ni Edge Fun
 - Aislamiento STAGING y cinco controles antiobsolescencia: correctos.
 - Siete regresiones heredadas: correctas.
 - Playwright simulado sin acceso a producción: 4 de 4 recorridos correctos.
+- Edge Functions: compilación y tipos Deno correctos en GitHub Actions.
+- Supabase local efímero: 22 pruebas SQL para `owner`, `manager`, `seller`, `anon` y `service_role`, correctas.
+- Barrera conjunta `Barrera R10 / publicación autorizable`: correcta.
 
 ## Evidencia de GitHub y cierre
 
 - Rama técnica: `r10/phase6-functional-modules`.
-- PR apilado en borrador: pendiente de crear, con base `r10/phase5-core-modularization`.
-- Commit técnico verificado: pendiente.
-- GitHub Actions: pendiente; la ejecución remota realizará además la compilación Deno y las 22 pruebas SQL para `owner`, `manager`, `seller`, `anon` y `service_role` sobre Supabase local efímero.
-- `main` debe permanecer en `ccdd2909e646381a9326d600651b8aa912f4b731` y producción no debe recibir cambios.
+- PR apilado en borrador: `#6`, con base `r10/phase5-core-modularization`.
+- Commit técnico verificado: `f5a5342a359c937f6e1a4c8d2d2c21e5e79ec217`.
+- GitHub Actions: ejecución `32907050225`, completada con éxito.
+- No se creó ninguna rama remota de Supabase: la consulta final devuelve únicamente `main`; no hubo datos temporales, despliegues ni coste adicional.
+- `main` permanece protegida y en `ccdd2909e646381a9326d600651b8aa912f4b731`; producción no recibió cambios.
 
-La Fase 6 permanecerá abierta hasta que la barrera conjunta de GitHub quede verde. Este documento no autoriza fusionar ramas, modificar `main`, publicar el frontend ni desplegar sobre producción.
+La Fase 6 queda técnicamente cerrada. Este cierre no autoriza fusionar ramas, modificar `main`, publicar el frontend ni desplegar sobre producción.
