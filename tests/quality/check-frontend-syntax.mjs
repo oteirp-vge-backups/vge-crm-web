@@ -6,6 +6,7 @@ const source = await readFile("index.html", "utf8");
 const published = await readFile("publish/index.html", "utf8");
 const moduleNames = [
   "config.js",
+  "observability.js",
   "core.js",
   "supabase-service.js",
   "centers.js",
@@ -36,6 +37,8 @@ for (const moduleName of moduleNames) {
 
 assert.match(source, /@supabase\/supabase-js@2\.111\.0/, "La dependencia de navegador debe estar fijada");
 assert.match(moduleSources.get("config.js"), /window\.VGE_CONFIG\s*=/, "La configuración debe residir en config.js");
+assert.match(moduleSources.get("observability.js"), /function attachTechnicalIncident\(/, "La correlación técnica debe residir en observability.js");
+assert.match(moduleSources.get("observability.js"), /function technicalReference\(/, "La referencia diagnosticable debe residir en observability.js");
 assert.match(moduleSources.get("core.js"), /function friendlyError\(/, "Las utilidades deben residir en core.js");
 assert.match(moduleSources.get("supabase-service.js"), /async function rpcJson\(/, "El servicio RPC debe estar separado");
 assert.match(moduleSources.get("supabase-service.js"), /window\.supabase\.createClient\(/, "La conexión debe residir en el servicio Supabase");

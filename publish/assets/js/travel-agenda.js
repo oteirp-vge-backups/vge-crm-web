@@ -59,7 +59,7 @@ async function saveOpportunity(opportunityId){
   const {error}=await supabaseRpc("update_travel_opportunity_v1",{p_opportunity_id:opportunityId,p_patch:opportunityPatch(c,card),p_expected_version:Number(o.opportunity_version||1)});if(error)throw error;
   await refreshOpenCenter(null,{opportunityId,message:`✓ Viaje guardado correctamente · ${localTime()}`,type:"success"},`opportunity:${opportunityId}`)
  }catch(e){
-  console.error(e);const msg=friendlyError(e,"No se ha podido guardar el viaje.");if(btn){btn.disabled=false;btn.textContent="Guardar viaje"}showOpportunitySaveStatus(opportunityId,`✕ ${msg}`,"error");alert(msg)
+  const msg=friendlyError(e,"No se ha podido guardar el viaje.");if(btn){btn.disabled=false;btn.textContent="Guardar viaje"}showOpportunitySaveStatus(opportunityId,`✕ ${msg}`,"error");alert(msg)
  }finally{
   opportunitySaveInFlight.delete(opportunityId);
   const currentCard=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId),currentBtn=currentCard?.querySelector("[data-save-opportunity]");
@@ -72,7 +72,7 @@ async function createOpportunity(){
  createOpportunityInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando viaje…"}showDialogActionStatus("Registrando el viaje. Espera un momento…","info");
  const date=document.getElementById("newOppNext")?.value||"",time=document.getElementById("newOppNextTime")?.value||"09:00",sourceChoice=document.getElementById("newOppSourceChoice")?.value||CENTER_SOURCE_OPTION,sourceDetail=document.getElementById("newOppSourceDetail")?.value||"";
  try{const {error}=await supabaseRpc("create_travel_opportunity_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null,p_cycle:document.getElementById("newOppCycle")?.value||null,p_group_description:document.getElementById("newOppGroup")?.value.trim()||null,p_students_count:nullableNumber(document.getElementById("newOppStudents")?.value||""),p_teachers_count:nullableNumber(document.getElementById("newOppTeachers")?.value||""),p_destination:document.getElementById("newOppDestination")?.value.trim()||null,p_travel_start_on:document.getElementById("newOppStart")?.value||null,p_travel_end_on:document.getElementById("newOppEnd")?.value||null,p_contact_id:nullableNumber(document.getElementById("newOppContact")?.value||""),p_status:document.getElementById("newOppStatus")?.value||"Pendiente",p_next_contact_at:date?localDateTimeToISO(date,time):null,p_lead_source:resolvedOpportunitySource(c,sourceChoice),p_lead_source_detail:resolvedOpportunitySourceDetail(c,sourceChoice,sourceDetail)});if(error)throw error;await refreshOpenCenter("Viaje creado correctamente",null,"new-opportunity")}
- catch(e){console.error(e);alert(friendlyError(e,"No se ha podido crear el viaje."))}
+ catch(e){alert(friendlyError(e,"No se ha podido crear el viaje."))}
  finally{
   createOpportunityInFlight=false;
   const currentBtn=document.getElementById("createOpportunityBtn");
@@ -87,7 +87,7 @@ async function changeOpportunityLifecycle(opportunityId,restore=false){
  const reason=prompt(`Motivo obligatorio para ${action} ${o.cycle} (${opportunityId}):`);if(reason===null)return;if(reason.trim().length<8){alert("Indica un motivo de al menos 8 caracteres.");return}if(!confirm(`Se va a ${action} este viaje. La ficha del colegio y sus demás viajes no se modificarán. ¿Continuar?`))return;
  const card=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId),btn=card?.querySelector(restore?"[data-restore-opportunity]":"[data-archive-opportunity]");lifecycleInFlight.add(lockKey);if(btn){btn.disabled=true;btn.textContent=restore?"Restaurando…":"Archivando…"}
  try{const {error}=await supabaseRpc(restore?"restore_travel_opportunity_v1":"archive_travel_opportunity_v1",{p_opportunity_id:opportunityId,p_reason:reason.trim(),p_expected_version:Number(o.opportunity_version||1)});if(error)throw error;await refreshOpenCenter(restore?"Viaje restaurado correctamente":"Viaje archivado correctamente",null,scope)}
- catch(e){console.error(e);alert(friendlyError(e,`No se ha podido ${action} el viaje.`));if(btn?.isConnected){btn.disabled=false;btn.textContent=restore?"Restaurar viaje":"Archivar viaje"}}
+ catch(e){alert(friendlyError(e,`No se ha podido ${action} el viaje.`));if(btn?.isConnected){btn.disabled=false;btn.textContent=restore?"Restaurar viaje":"Archivar viaje"}}
  finally{
   lifecycleInFlight.delete(lockKey);
   const currentCard=[...document.querySelectorAll(".opportunity-record")].find(item=>item.dataset.opportunityId===opportunityId),currentBtn=currentCard?.querySelector("[data-restore-opportunity], [data-archive-opportunity]");

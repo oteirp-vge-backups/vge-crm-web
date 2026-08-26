@@ -39,7 +39,7 @@ async function renderArchivedCenters(){
  try{
    await Promise.all([loadArchivedCenters(),loadLifecycleAudit(100)]);
    if(currentView==="archived")paintArchivedCenters();
- }catch(e){console.error(e);if(currentView==="archived")content.innerHTML=`<div class="empty">${esc(friendlyError(e,"No se ha podido cargar el archivo de centros."))}</div>`}
+ }catch(e){if(currentView==="archived")content.innerHTML=`<div class="empty">${esc(friendlyError(e,"No se ha podido cargar el archivo de centros."))}</div>`}
 }
 async function restoreArchivedCenter(id,btn){
  if(!permissions.can_restore_centers){alert("Esta acción está reservada a la administración operativa.");return}
@@ -51,7 +51,7 @@ async function restoreArchivedCenter(id,btn){
  try{
    const {error}=await supabaseRpc("restore_center",{p_center_id:id,p_reason:reason});if(error)throw error;
    await loadAll();await loadLifecycleAudit(100);accessFingerprint=await getFingerprint();updateNavCounts();paintArchivedCenters();toast(`Centro restaurado · ${id}`);
- }catch(e){console.error(e);alert(friendlyError(e,"No se ha podido restaurar el centro."));btn.disabled=false;btn.textContent="Restaurar"}
+ }catch(e){alert(friendlyError(e,"No se ha podido restaurar el centro."));btn.disabled=false;btn.textContent="Restaurar"}
 }
 function baseForView(){
  if(currentView==="mine"||currentView==="status")return centers.filter(c=>c.assignedTo===currentUser);
@@ -258,7 +258,7 @@ async function searchNewCenterDuplicates({showIncomplete=true}={}){
  const {data,error}=await supabaseRpc("search_center_duplicates",{p_school:v.school,p_city:v.city,p_province:v.province});
  if(request!==newCenterDuplicateRequest)return newCenterDuplicateCandidates;
  if(error){
-   console.error(error);newCenterDuplicateCandidates=[];newCenterDuplicateKey="";
+   newCenterDuplicateCandidates=[];newCenterDuplicateKey="";
    setNewCenterDuplicateBox(esc(friendlyError(error,"No se ha podido comprobar si el centro ya existe.")),"blocked");
    throw error;
  }
@@ -301,7 +301,7 @@ async function createNewCenter(e){
  };
  const {data,error}=await supabaseRpc("create_manual_center",payload);
  if(error){
-   console.error(error);if(btn){btn.disabled=false;btn.textContent="Crear centro"}
+   if(btn){btn.disabled=false;btn.textContent="Crear centro"}
    if(String(error.message||"").includes("POSSIBLE_DUPLICATE_CONFIRM_REQUIRED")){
      newCenterForceConfirmation=true;renderNewCenterDuplicates();newCenterStatus("El servidor ha detectado otra coincidencia. Confirma que se trata de un centro distinto.","error");return;
    }
@@ -318,7 +318,7 @@ async function createNewCenter(e){
    render();document.getElementById("newCenterDialog")?.close();
    await openCenter(centerId);toast(`Centro creado · ${centerId}`);
  }catch(refreshError){
-   console.error(refreshError);if(btn){btn.disabled=false;btn.textContent="Crear centro"}
+   if(btn){btn.disabled=false;btn.textContent="Crear centro"}
    newCenterStatus(`El centro ${centerId} se ha creado, pero no se ha podido refrescar la pantalla. Recarga el CRM.`,"error");
  }
 }
@@ -342,7 +342,7 @@ async function openCenter(id){
  const existing=document.getElementById("centerDialog");
  if(existing?.open&&currentCenterId!==id&&!requestCloseCenterDialog())return;
  currentCenterId=id;const c=centers.find(x=>x.id===id);if(!c)return;
- try{await Promise.all([loadHistory(c),loadWorkspace(c)])}catch(e){console.error(e);toast("No se ha podido cargar toda la ficha")}
+ try{await Promise.all([loadHistory(c),loadWorkspace(c)])}catch(e){toast(friendlyError(e,"No se ha podido cargar toda la ficha"))}
  const dlg=document.getElementById("centerDialog");
  dlg.innerHTML=dialogHtml(c);dlg.showModal();
  bindCenterDialog(c);
@@ -408,7 +408,7 @@ async function archiveCurrentCenter(){
    const {error}=await supabaseRpc("archive_center",{p_center_id:c.id,p_reason:reason});if(error)throw error;
    const dlg=document.getElementById("centerDialog");clearCenterScopeDirty();if(dlg?.open)dlg.close();currentCenterId=null;
    await loadAll();await loadLifecycleAudit(100);accessFingerprint=await getFingerprint();currentView="archived";activeStatus="";filters={search:"",status:"",community:"",seller:"",quick:"all"};render();toast(`Centro archivado · ${c.id}`);
- }catch(e){console.error(e);alert(friendlyError(e,"No se ha podido archivar el centro."));if(btn){btn.disabled=false;btn.textContent="Archivar centro"}}
+ }catch(e){alert(friendlyError(e,"No se ha podido archivar el centro."));if(btn){btn.disabled=false;btn.textContent="Archivar centro"}}
 }
 async function saveProfile(){
  const c=centers.find(x=>x.id===currentCenterId);if(!c)return;
@@ -433,7 +433,6 @@ async function saveProfile(){
    await saveCenter(c);
    await refreshOpenCenter("Ficha guardada correctamente",null,"profile");
  }catch(e){
-   console.error(e);
    const msg=friendlyError(e,"No se ha podido guardar la ficha.");
    if(btn){btn.disabled=false;btn.textContent="Guardar ficha"}
    showSaveStatus(`✕ ${msg}`,"error");
@@ -475,4 +474,3 @@ function bindCenterDialog(c){
  dlg.querySelectorAll("[data-restore-opportunity]").forEach(b=>{const id=b.dataset.restoreOpportunity;b.onclick=()=>changeOpportunityLifecycle(id,true);if(lifecycleInFlight.has(`opportunity-lifecycle:${id}`)){b.disabled=true;b.textContent="Restaurando…"}});
 }
 function openCenterRefresh(c){const dlg=document.getElementById("centerDialog");dlg.innerHTML=dialogHtml(c);bindCenterDialog(c);if(currentView==="dashboard")renderDashboard();else if(currentView==="stats"){statisticsData=null;renderStatistics()}else if(currentView==="archived")paintArchivedCenters();else renderList()}
-

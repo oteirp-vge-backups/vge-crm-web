@@ -3,11 +3,12 @@ function initializeSupabaseClient(){
  if(!window.supabase)throw new Error("No se ha cargado la librería Supabase.");
  if(!VGE_CONFIG.supabaseUrl||!VGE_CONFIG.supabasePublishableKey||VGE_CONFIG.supabaseUrl.includes("REEMPLAZAR"))throw new Error("Falta configurar config.js con la URL y la Publishable Key de Supabase.");
  sb=window.supabase.createClient(VGE_CONFIG.supabaseUrl,VGE_CONFIG.supabasePublishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ configureTechnicalIncidentTransport(async incident=>{const {error}=await sb.functions.invoke("vge-technical-incident",{body:incident});if(error)throw error});
  return sb
 }
 function supabaseFrom(table){return sb.from(table)}
-function supabaseRpc(name,args={}){return sb.rpc(name,args)}
-function supabaseFunction(name,options={}){return sb.functions.invoke(name,options)}
+async function supabaseRpc(name,args={}){const result=await sb.rpc(name,args);if(result.error)attachTechnicalIncident(result.error,{component:"database",operation:name,severity:technicalSeverity(result.error)});return result}
+async function supabaseFunction(name,options={}){const result=await sb.functions.invoke(name,options);if(result.error)attachTechnicalIncident(result.error,{component:"edge_function",operation:name.replace(/^vge-/,"vge_"),severity:technicalSeverity(result.error)});return result}
 
 async function fetchAllRows(table, select="*", orderColumn="id"){
  const all=[],size=1000;let lastValue=null;
@@ -15,7 +16,7 @@ async function fetchAllRows(table, select="*", orderColumn="id"){
    let q=supabaseFrom(table).select(select).order(orderColumn,{ascending:true}).limit(size);
    if(lastValue!==null)q=q.gt(orderColumn,lastValue);
    const {data,error}=await q;
-   if(error)throw error;all.push(...(data||[]));if(!data||data.length<size)break;
+   if(error){attachTechnicalIncident(error,{component:"data_api",operation:`read_${table}`,severity:technicalSeverity(error)});throw error}all.push(...(data||[]));if(!data||data.length<size)break;
    const nextValue=data[data.length-1]?.[orderColumn];
    if(nextValue===null||nextValue===undefined||nextValue===lastValue)throw new Error("PAGINATION_STALLED");
    lastValue=nextValue;
@@ -68,7 +69,7 @@ async function refreshCenterSnapshot(id){
   rpcJson("get_visible_travel_summaries_v1",{p_campaign_code:null}),
   rpcJson("get_agenda_items_v2",{p_campaign_code:null})
  ]);
- if(centerResult.error)throw centerResult.error;
+ if(centerResult.error){attachTechnicalIncident(centerResult.error,{component:"data_api",operation:"read_crm_centers",severity:technicalSeverity(centerResult.error)});throw centerResult.error}
  const row=centerResult.data?.[0];if(!row)return null;
  agendaItems=agendaPayload?.items||[];
  const travel=(travelPayload?.centers||[]).find(x=>x.center_id===id)||{};

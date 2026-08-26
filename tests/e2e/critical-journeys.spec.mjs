@@ -62,3 +62,24 @@ test("sesión comercial carga el panel y oculta acciones de propietario", async 
   await expect(page.locator("#backupBtn")).toBeHidden();
   await expect(page.locator("#permissionsNavBtn")).toBeHidden();
 });
+
+test("incidencia simulada queda diagnosticable por correlación y sin PII", async ({ page }) => {
+  await page.goto("/?r10-auth=1");
+  await expect(page.locator("#app")).toBeVisible();
+  const result = await page.evaluate(async () => {
+    const failure = {
+      code: "PGRST301",
+      message: "Fernando · fernando@example.invalid · 600000000",
+      stack: "centro/LEON-001",
+    };
+    attachTechnicalIncident(failure, { component: "database", operation: "simulated_failure" });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    return {
+      reference: technicalReference(failure),
+      incidents: window.__r10TechnicalIncidents,
+    };
+  });
+  expect(result.incidents).toHaveLength(1);
+  expect(result.reference).toContain(result.incidents[0].correlation_id);
+  expect(JSON.stringify(result.incidents)).not.toMatch(/Fernando|@example|600000000|LEON-001|centro\//);
+});

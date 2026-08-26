@@ -11,6 +11,7 @@ on:
       - "r10/phase5-core-modularization"
       - "r10/phase6-functional-modules"
       - "r10/phase7-security-definer"
+      - "r10/phase8-observability"
 
 permissions:
   contents: read
@@ -97,6 +98,9 @@ jobs:
 
       - name: Comprobar tipos y compilación de Edge Functions
         run: deno check --no-lock supabase/functions/*/index.ts
+
+      - name: Probar contrato de observabilidad sin PII
+        run: deno test --no-lock supabase/functions/_shared/technical-incident.test.ts
 
   database-roles:
     name: Supabase local y permisos por rol

@@ -5,6 +5,7 @@ const originalReadFileSync = fs.readFileSync.bind(fs);
 const publishedHtml = path.resolve("publish/index.html");
 const moduleNames = [
   "config.js",
+  "observability.js",
   "core.js",
   "supabase-service.js",
   "centers.js",
