@@ -30,3 +30,14 @@ Para cada persona basta responder con una de estas dos fórmulas:
 - `NOMBRE — incidencia en PASO — texto exacto mostrado`.
 
 No enviar contraseñas, capturas con datos reales ni información personal. Una incidencia no se corregirá directamente en producción: primero se reproducirá en STAGING, se convertirá en prueba automática y se validará de nuevo.
+
+## Resultado final — 26 de agosto de 2026
+
+| Persona | Perfil validado | Resultado |
+| --- | --- | --- |
+| Fernando | Propietario | Correcto |
+| Leticia | Comercial | Correcto |
+| Elena | Comercial | Correcto |
+| Silvia | Comercial | Correcto |
+
+No se comunicaron incidencias. El STAGING temporal fue eliminado inmediatamente después de registrar las cuatro conformidades.
