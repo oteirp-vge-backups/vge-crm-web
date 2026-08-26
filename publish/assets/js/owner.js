@@ -83,7 +83,7 @@ async function renderPermissions(){
     </div>`;
    content.querySelectorAll("[data-role-save]").forEach(btn=>btn.onclick=()=>applyOperatorRoleChange(btn));
    content.querySelectorAll("[data-invite-send]").forEach(btn=>btn.onclick=()=>inviteOperatorAccess(btn));
- }catch(e){console.error(e);if(currentView==="permissions")content.innerHTML=`<div class="empty">${esc(friendlyError(e,"No se ha podido cargar la gestión de permisos."))}</div>`}
+ }catch(e){if(currentView==="permissions")content.innerHTML=`<div class="empty">${esc(friendlyError(e,"No se ha podido cargar la gestión de permisos."))}</div>`}
 }
 function invitationErrorMessage(code){
  return ({
@@ -126,8 +126,8 @@ async function inviteOperatorAccess(btn){
    await loadOperators();
    await renderPermissions();
  }catch(e){
-   console.error(e);const codeError=String(e?.message||"INVITE_FAILED");
-   status.className="permission-invite-status error";status.textContent=invitationErrorMessage(codeError);
+   attachTechnicalIncident(e,{component:"edge_function",operation:"vge_admin_invite_operator",severity:technicalSeverity(e)});const codeError=String(e?.message||"INVITE_FAILED");
+   status.className="permission-invite-status error";status.textContent=`${invitationErrorMessage(codeError)}${technicalReference(e)}`;
    btn.disabled=false;btn.textContent="Enviar invitación";if(input)input.disabled=false;
  }
 }
@@ -153,7 +153,7 @@ async function applyOperatorRoleChange(btn){
    await loadOperators();
    toast(`Permisos actualizados para ${current.display_name}`);
    await renderPermissions();
- }catch(e){console.error(e);alert(friendlyError(e,"No se ha podido cambiar el nivel de acceso."));btn.disabled=false;btn.textContent="Aplicar cambio"}
+ }catch(e){alert(friendlyError(e,"No se ha podido cambiar el nivel de acceso."));btn.disabled=false;btn.textContent="Aplicar cambio"}
 }
 
 async function permanentlyDeleteArchivedCenter(id,btn){
@@ -168,7 +168,7 @@ async function permanentlyDeleteArchivedCenter(id,btn){
  try{
    const {error}=await supabaseRpc("owner_permanently_delete_center",{p_center_id:id,p_reason:reason,p_confirm_center_id:typed.trim()});if(error)throw error;
    await loadAll();await loadLifecycleAudit(100);accessFingerprint=await getFingerprint();updateNavCounts();paintArchivedCenters();toast(`Centro eliminado permanentemente · ${id}`);
- }catch(e){console.error(e);alert(friendlyError(e,"No se ha podido borrar el centro."));btn.disabled=false;btn.textContent="Borrar definitivamente"}
+ }catch(e){alert(friendlyError(e,"No se ha podido borrar el centro."));btn.disabled=false;btn.textContent="Borrar definitivamente"}
 }
 
 async function exportJSON(){
@@ -182,7 +182,7 @@ async function exportJSON(){
    await logExport("json","owner-full-v15",backup.centers.length,{events:backup.contact_events.length,travel_opportunities:(backup.travel_opportunities||[]).length,center_contacts:(backup.center_contacts||[]).length,active_centers:activeCount,archived_centers:archivedCount,schema_version:backup.schema_version});
    download(`crm-vge-copia-completa-v15-${localISO()}.json`,JSON.stringify(backup,null,2));
    toast("Copia completa generada");
- }catch(e){console.error(e);alert(friendlyError(e,"No se ha podido realizar la copia completa."))}
+ }catch(e){alert(friendlyError(e,"No se ha podido realizar la copia completa."))}
 }
 async function importJSON(){alert("La versión online no sustituye la base desde el navegador. Usa el procedimiento de migración administrada.")}
 async function resetData(){alert("Restablecimiento deshabilitado en producción para proteger el histórico.")}
@@ -202,4 +202,3 @@ function configureNavForRole(){
  const backup=document.getElementById("backupBtn");if(backup)backup.style.display=isOwner?"":"none";
  const jsonBtn=document.getElementById("exportBtn");if(jsonBtn)jsonBtn.style.display=isOwner?"":"none";
 }
-

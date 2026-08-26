@@ -21,7 +21,7 @@ async function addContact(){
   c.lastContactAt=contactedAt;c.lastResult=result;c.lastOperator=currentUser;c.contactCount=(c.contactCount||0)+1;
   await refreshOpenCenter(`Contacto registrado correctamente${opportunityIds.length?` · vinculado a ${opportunityIds.length} viaje${opportunityIds.length===1?"":"s"}`:" · seguimiento general"}`,null,"contact-event");
  }catch(error){
-  console.error(error);const msg=friendlyError(error,"No se ha podido registrar el contacto.");if(btn){btn.disabled=false;btn.textContent="Registrar contacto"}showDialogActionStatus(`✕ ${msg}`,"error");alert(msg)
+  const msg=friendlyError(error,"No se ha podido registrar el contacto.");if(btn){btn.disabled=false;btn.textContent="Registrar contacto"}showDialogActionStatus(`✕ ${msg}`,"error");alert(msg)
  }finally{contactEventInFlight=false}
 }
 async function saveContactRecord(contactId){
@@ -31,7 +31,7 @@ async function saveContactRecord(contactId){
  if(!confirmContactIsDistinct(c,patch,contactId))return;
  const btn=card.querySelector("[data-save-contact]");contactSaveInFlight.add(contactId);if(btn){btn.disabled=true;btn.textContent="Guardando…"}
  try{const {error}=await supabaseRpc("update_center_contact_v1",{p_contact_id:Number(contactId),p_patch:patch,p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona de contacto guardada correctamente",null,`contact:${contactId}`)}
- catch(e){console.error(e);alert(friendlyError(e,"No se ha podido guardar la persona de contacto."));if(btn?.isConnected){btn.disabled=false;btn.textContent="Guardar persona"}}
+ catch(e){alert(friendlyError(e,"No se ha podido guardar la persona de contacto."));if(btn?.isConnected){btn.disabled=false;btn.textContent="Guardar persona"}}
  finally{
   contactSaveInFlight.delete(contactId);
   const currentCard=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`),currentBtn=currentCard?.querySelector("[data-save-contact]");
@@ -46,7 +46,7 @@ async function archiveContactRecord(contactId){
  if(!confirm(`Se retirará a «${contact.full_name}» de las personas activas de este centro. El historial se conservará y no se modificará ningún viaje ni contacto comercial. ¿Continuar?`))return;
  const card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`),btn=card?.querySelector("[data-archive-contact]");lifecycleInFlight.add(lockKey);if(btn){btn.disabled=true;btn.textContent="Eliminando…"}
  try{const {error}=await supabaseRpc("archive_center_contact_v1",{p_contact_id:Number(contactId),p_expected_version:Number(contact.contact_version||1)});if(error)throw error;await refreshOpenCenter("Persona eliminada de los contactos activos",null,`contact:${contactId}`)}
- catch(e){console.error(e);const message=String(e?.message||"").includes("CONTACT_LINKED_TO_ACTIVE_TRIP")?"No se puede eliminar esta persona porque está vinculada a un viaje activo. Cambia primero la persona responsable del viaje.":friendlyError(e,"No se ha podido eliminar la persona de contacto.");alert(message);if(btn?.isConnected){btn.disabled=false;btn.textContent="Eliminar persona"}}
+ catch(e){const message=String(e?.message||"").includes("CONTACT_LINKED_TO_ACTIVE_TRIP")?`No se puede eliminar esta persona porque está vinculada a un viaje activo. Cambia primero la persona responsable del viaje.${technicalReference(e)}`:friendlyError(e,"No se ha podido eliminar la persona de contacto.");alert(message);if(btn?.isConnected){btn.disabled=false;btn.textContent="Eliminar persona"}}
  finally{lifecycleInFlight.delete(lockKey)}
 }
 async function createCenterContact(){
@@ -55,13 +55,13 @@ async function createCenterContact(){
  const payload={full_name:document.getElementById("newContactName")?.value.trim()||"",role:document.getElementById("newContactRole")?.value||null,mobile:document.getElementById("newContactMobile")?.value.trim()||null,email:document.getElementById("newContactEmail")?.value.trim()||null,is_primary:!!document.getElementById("newContactPrimary")?.checked,do_not_contact:!!document.getElementById("newContactBlocked")?.checked,do_not_contact_reason:document.getElementById("newContactBlockedReason")?.value.trim()||null};
  createContactInFlight=true;if(btn){btn.disabled=true;btn.textContent="Comprobando persona…"}showDialogActionStatus("Comprobando que la persona no esté ya registrada…","info");
  try{
-  try{await loadWorkspace(c)}catch(refreshError){console.warn("No se pudo refrescar la comprobación previa",refreshError?.message||"")}
+  try{await loadWorkspace(c)}catch(refreshError){attachTechnicalIncident(refreshError,{component:"frontend",operation:"refresh_contact_workspace",severity:"warning"})}
   if(!confirmContactIsDistinct(c,payload)){showDialogActionStatus("No se ha añadido: coincide con una persona existente.","error");return}
   if(btn?.isConnected)btn.textContent="Registrando persona…";showDialogActionStatus("Registrando la persona de contacto. Espera un momento…","info");
   const {error}=await supabaseRpc("create_center_contact_v1",{p_center_id:c.id,p_full_name:payload.full_name,p_role:payload.role,p_mobile:payload.mobile,p_email:payload.email,p_is_primary:payload.is_primary,p_do_not_contact:payload.do_not_contact,p_do_not_contact_reason:payload.do_not_contact_reason});if(error)throw error;
   await refreshOpenCenter("Persona añadida correctamente",null,"new-contact")
  }
- catch(e){console.error(e);const message=friendlyError(e,"No se ha podido añadir la persona de contacto.");showDialogActionStatus(`✕ ${message}`,"error");alert(message)}
+ catch(e){const message=friendlyError(e,"No se ha podido añadir la persona de contacto.");showDialogActionStatus(`✕ ${message}`,"error");alert(message)}
  finally{
   createContactInFlight=false;
   const currentBtn=document.getElementById("createContactBtn");

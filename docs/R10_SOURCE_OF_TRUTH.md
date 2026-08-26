@@ -3,10 +3,10 @@
 ## Aplicación web
 
 - Fuentes editables: `/index.html` y `/assets/js/`.
-- Módulos canónicos, en orden de carga: `config.js`, `core.js`, `supabase-service.js`, `centers.js`, `contacts.js`, `travel-agenda.js`, `management.js`, `owner.js`, `app.js` y `auth-permissions.js`.
+- Módulos canónicos, en orden de carga: `config.js`, `observability.js`, `core.js`, `supabase-service.js`, `centers.js`, `contacts.js`, `travel-agenda.js`, `management.js`, `owner.js`, `app.js` y `auth-permissions.js`.
 - Espejo generado: `/publish/index.html` y `/publish/assets/js/`; no se editan de forma independiente.
 - `npm run build:publish` regenera el espejo y `npm run check:publish` bloquea cualquier divergencia.
-- El workflow `R10 - barrera de calidad` compila por separado los diez módulos, prohíbe JavaScript concatenado dentro del HTML, comprueba el orden de carga y valida la propiedad única de las funciones por dominio.
+- El workflow `R10 - barrera de calidad` compila por separado los once módulos, prohíbe JavaScript concatenado dentro del HTML, comprueba el orden de carga y valida la propiedad única de las funciones por dominio.
 
 ## Base de datos
 
@@ -17,7 +17,7 @@
 
 ## Edge Functions
 
-Las fuentes bajo `supabase/functions/` son canónicas porque la auditoría de Fase 1 comprobó que coinciden con las versiones desplegadas. Los cambios futuros deben nacer en Git y desplegarse primero a STAGING.
+Las fuentes bajo `supabase/functions/` son canónicas. Las dos funciones heredadas coinciden con sus versiones desplegadas; `vge-technical-incident` es una candidata de Fase 8 aún no desplegada. Los cambios futuros deben nacer en Git y desplegarse primero a STAGING.
 
 ## Prohibiciones de Fase 2A
 

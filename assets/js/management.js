@@ -58,7 +58,7 @@ async function renderStatistics(){
    if(!payload||Number(payload.schema_version)!==2)throw new Error("STATS_PAYLOAD_INVALID");
    statisticsData=payload;paintStatistics();
  }catch(e){
-   console.error(e);if(requestId!==statisticsRequestId||currentView!=="stats")return;
+   if(requestId!==statisticsRequestId||currentView!=="stats")return;
    content.innerHTML=`${statisticsIntroHtml()}${statisticsControlsHtml()}<div class="card stats-empty">${esc(friendlyError(e,"No se han podido calcular las estadísticas."))}</div>`;bindStatisticsControls();
  }
 }
@@ -131,7 +131,7 @@ async function touchPresence({interaction=false,login=false}={}){
    const {error}=await supabaseRpc("touch_operator_presence",{p_interaction:!!interaction,p_login:!!login});
    if(error)throw error;
    lastPresenceHeartbeatAt=now;if(interaction||login)lastPresenceInteractionSentAt=now;
- }catch(e){console.warn("No se ha podido actualizar la presencia del operador",e?.message||e)}
+ }catch(e){attachTechnicalIncident(e,{component:"frontend",operation:"update_operator_presence",severity:"warning"})}
 }
 async function loadTeamPresence(){
  if(!isAdmin){teamPresence=[];return []}
@@ -170,7 +170,7 @@ async function renderTeamPresence(){
       <div class="team-note">“Online” significa que el CRM ha recibido presencia de esa sesión recientemente. “Inactividad” mide el tiempo desde la última interacción con el CRM; no rastrea el ratón ni otras aplicaciones. “Última actividad real” refleja acciones operativas registradas en la base.</div>
     </div>`;
    const refresh=document.getElementById("refreshTeamBtn");if(refresh)refresh.onclick=renderTeamPresence;
- }catch(e){console.error(e);if(currentView==="team")content.innerHTML='<div class="empty">No se ha podido cargar el estado del equipo.</div>'}
+ }catch(e){if(currentView==="team")content.innerHTML=`<div class="empty">${esc(friendlyError(e,"No se ha podido cargar el estado del equipo."))}</div>`}
 }
 
 function bulkScopeValues(kind){
@@ -239,7 +239,7 @@ async function applyBulkAssignment(){
  const shares=Object.fromEntries(parts.map(x=>[x.user,x.pct]));
  const btn=document.getElementById("applyBulkBtn");if(btn){btn.disabled=true;btn.textContent="Aplicando reparto…"}
  const {data,error}=await supabaseRpc("bulk_assign_zone",{p_scope_type:kind,p_scope_value:zone,p_shares:shares});
- if(error){console.error(error);if(btn){btn.disabled=false;btn.textContent="Aplicar reparto masivo"}alert(friendlyError(error,"No se ha podido aplicar el reparto masivo."));return}
+ if(error){if(btn){btn.disabled=false;btn.textContent="Aplicar reparto masivo"}alert(friendlyError(error,"No se ha podido aplicar el reparto masivo."));return}
  saveBulkLastResult({scopeLabel,zone,total:target.length,quotas,appliedAt:new Date().toISOString()});
  await loadAll();updateNavCounts();
  renderBulkAssignment();
@@ -370,7 +370,7 @@ async function exportStatisticsExcel(){
  try{
    await logExport("excel","statistics",rows.length,{period_days:statisticsData.scope?.period_days,operator_code:statisticsData.scope?.operator_code||null,community:statisticsData.scope?.community||null});
    download(`crm-vge-estadisticas-${localISO()}.xlsx`,xlsx,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");toast(`Excel de estadísticas generado · ${rows.length.toLocaleString("es-ES")} filas`);
- }catch(e){console.error(e);alert("No se ha podido registrar la exportación; no se ha generado el fichero.")}
+ }catch(e){alert(friendlyError(e,"No se ha podido registrar la exportación; no se ha generado el fichero."))}
 }
 async function exportStatisticsCSV(){
  if(!statisticsData){alert("Espera a que termine el cálculo de estadísticas.");return}
@@ -380,7 +380,7 @@ async function exportStatisticsCSV(){
  try{
    await logExport("csv","statistics",rows.length,{period_days:statisticsData.scope?.period_days,operator_code:statisticsData.scope?.operator_code||null,community:statisticsData.scope?.community||null});
    download(`crm-vge-estadisticas-${localISO()}.csv`,csv,"text/csv;charset=utf-8");toast("CSV de estadísticas exportado");
- }catch(e){console.error(e);alert("No se ha podido registrar la exportación; no se ha generado el fichero.")}
+ }catch(e){alert(friendlyError(e,"No se ha podido registrar la exportación; no se ha generado el fichero."))}
 }
 async function exportExcel(){
  if(currentView==="stats"){await exportStatisticsExcel();return}
@@ -394,10 +394,10 @@ async function exportExcel(){
    await logExport("excel",String(label||"vista"),arr.length,{status:activeStatus||filters.status||null});
    download(`crm-vge-${String(label||"vista").replace(/[^a-z0-9áéíóúñ]+/gi,"-")}-r6-${localISO()}.xlsx`,xlsx,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
    toast(`Excel V15 R7 generado · ${arr.length.toLocaleString("es-ES")} centros · sin filtros visuales`);
- }catch(e){console.error(e);alert("No se ha podido registrar la exportación; no se ha generado el fichero.")}
+ }catch(e){alert(friendlyError(e,"No se ha podido registrar la exportación; no se ha generado el fichero."))}
 }
 
-async function logExport(format,view,rowCount,details={}){const {error}=await supabaseRpc("log_export",{p_format:format,p_view:view,p_row_count:rowCount,p_details:details});if(error){console.error(error);throw new Error("No se ha podido registrar la exportación")}}
+async function logExport(format,view,rowCount,details={}){const {error}=await supabaseRpc("log_export",{p_format:format,p_view:view,p_row_count:rowCount,p_details:details});if(error)throw error}
 function download(name,text,type="application/json"){
  const blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500);
 }

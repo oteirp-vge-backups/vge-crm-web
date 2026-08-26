@@ -58,7 +58,7 @@ async function refreshAccessSnapshot(forceRender=true){
      currentCenterId=null;toast("La asignación de una ficha ha cambiado. Se ha actualizado tu acceso.");
    }
    if(forceRender||accessChanged||roleChanged)render();else updateNavCounts();
- }catch(e){console.error("No se ha podido sincronizar el acceso",e);}
+ }catch(e){attachTechnicalIncident(e,{component:"frontend",operation:"refresh_access_snapshot",severity:technicalSeverity(e)})}
 }
 window.addEventListener("focus",()=>refreshAccessSnapshot(false));
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshAccessSnapshot(false)});
@@ -85,8 +85,8 @@ document.getElementById("loginForm").onsubmit=async e=>{
  e.preventDefault();const err=document.getElementById("loginError");err.textContent="Entrando…";
  const email=document.getElementById("loginEmail").value.trim(),password=document.getElementById("loginPassword").value;
  const {data,error}=await sb.auth.signInWithPassword({email,password});
- if(error){console.warn("Login rechazado",error?.status||"");err.textContent="No se ha podido iniciar sesión. Revisa el email y la contraseña.";return}
- try{await startAuthenticatedApp(data.session)}catch(ex){console.error(ex);err.textContent="Tu cuenta no está habilitada para acceder al CRM.";await sb.auth.signOut()}
+ if(error){err.textContent="No se ha podido iniciar sesión. Revisa el email y la contraseña.";return}
+ try{await startAuthenticatedApp(data.session)}catch(ex){err.textContent=friendlyError(ex,"Tu cuenta no está habilitada para acceder al CRM.");await sb.auth.signOut()}
 };
 
 const RECOVERY_REDIRECT_URL="https://crm.viajesdegruposescolares.com/";
@@ -116,7 +116,6 @@ document.getElementById("recoveryForm").onsubmit=async e=>{
    status.classList.add("success");
    status.textContent="Si el correo corresponde a una cuenta del CRM, recibirás un enlace de recuperación. Revisa también el correo no deseado.";
  }catch(error){
-   console.warn("No se pudo solicitar la recuperación",error?.status||"");
    status.textContent=error?.status===429?"Espera unos minutos antes de solicitar otro enlace.":"No se ha podido enviar el enlace. Inténtalo de nuevo más tarde o contacta con administración.";
  }finally{button.disabled=false}
 };
@@ -131,11 +130,11 @@ document.getElementById("invitePasswordForm").onsubmit=async e=>{
  if(password!==repeated){err.textContent="Las dos contraseñas no coinciden.";return}
  err.textContent="Guardando contraseña…";
  const {data,error}=await sb.auth.updateUser({password});
- if(error){console.warn("No se pudo guardar la contraseña",error?.status||"");err.textContent=error?.status===422?"La contraseña no cumple los requisitos: 14 caracteres como mínimo, con mayúscula, minúscula, número y símbolo.":"El enlace ya no es válido o ha caducado. Solicita un nuevo correo de recuperación.";return}
+ if(error){err.textContent=error?.status===422?"La contraseña no cumple los requisitos: 14 caracteres como mínimo, con mayúscula, minúscula, número y símbolo.":"El enlace ya no es válido o ha caducado. Solicita un nuevo correo de recuperación.";return}
  history.replaceState(null,"",location.pathname+location.search);
  document.getElementById("invitePasswordForm").hidden=true;
  document.getElementById("loginForm").hidden=false;
- try{await startAuthenticatedApp((await sb.auth.getSession()).data.session)}catch(ex){console.error(ex);err.textContent="La cuenta se activó, pero todavía no está habilitada en el CRM."}
+ try{await startAuthenticatedApp((await sb.auth.getSession()).data.session)}catch(ex){err.textContent=friendlyError(ex,"La cuenta se activó, pero todavía no está habilitada en el CRM.")}
 };
 
 document.getElementById("logoutBtn").onclick=()=>signOut(false);
@@ -181,7 +180,7 @@ document.getElementById("changePasswordForm").onsubmit=async e=>{
    document.getElementById("currentSessionPassword").value="";document.getElementById("newSessionPassword").value="";document.getElementById("newSessionPasswordRepeat").value="";
    setTimeout(()=>{closePasswordDialog();toast("Contraseña actualizada correctamente")},900);
  }catch(error){
-   console.warn("No se pudo cambiar la contraseña",error?.status||"");status.className="save-feedback show error";
+   status.className="save-feedback show error";
    if(error?.code==="bad_password"||error?.code==="invalid_credentials")status.textContent="La contraseña actual no es correcta.";
    else if(error?.code==="same_password")status.textContent="La nueva contraseña debe ser distinta de la actual.";
    else if(error?.code==="weak_password")status.textContent="La nueva contraseña debe tener al menos 14 caracteres y no ser predecible ni aparecer en filtraciones.";
@@ -223,5 +222,5 @@ setInterval(()=>{if(!document.getElementById("app").hidden&&Date.now()-lastActiv
      }
    });
    setInterval(()=>{if(!document.getElementById("app").hidden)checkReminders()},30000);
- }catch(e){console.error(e);document.getElementById("loginError").textContent="No se ha podido iniciar el CRM. Revisa la configuración o contacta con administración."}
+ }catch(e){document.getElementById("loginError").textContent=friendlyError(e,"No se ha podido iniciar el CRM. Revisa la configuración o contacta con administración.")}
 })();

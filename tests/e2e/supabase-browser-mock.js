@@ -1,4 +1,5 @@
 (function installSupabaseMock() {
+  window.__r10TechnicalIncidents = [];
   const session = {
     user: { id: "10000000-0000-4000-8000-000000000003", email: "seller@example.invalid" },
   };
@@ -63,6 +64,15 @@
         },
         async rpc(name) { return { data: rpcData(name), error: null }; },
         from(table) { return queryBuilder(table); },
+        functions: {
+          async invoke(name, options = {}) {
+            if (name === "vge-technical-incident") {
+              window.__r10TechnicalIncidents.push(options.body);
+              return { data: { ok: true, correlation_id: options.body?.correlation_id }, error: null };
+            }
+            return { data: { ok: true }, error: null };
+          },
+        },
       };
     },
   };

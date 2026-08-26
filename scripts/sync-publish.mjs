@@ -4,6 +4,7 @@ import { copyFile, mkdir, readFile } from "node:fs/promises";
 const artifacts = [
   "index.html",
   "assets/js/config.js",
+  "assets/js/observability.js",
   "assets/js/core.js",
   "assets/js/supabase-service.js",
   "assets/js/centers.js",
