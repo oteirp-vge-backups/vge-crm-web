@@ -105,5 +105,5 @@ Los avisos informativos `rls_enabled_no_policy` de `admin_migration_runs`, `agen
 - Fuente auditada: catálogo de producción en modo de sólo lectura y línea base reproducible.
 - Cambio: `20260826061114_reduce_security_definer_surface.sql`.
 - Validación automática: 13 aserciones estructurales de Fase 7 más las 22 pruebas de roles existentes.
-- Estado técnico: pendiente de la barrera de GitHub Actions.
+- Estado técnico: validado por la ejecución `32937702772`; las 13 aserciones de Fase 7 y las 22 pruebas de roles son correctas.
 - Alcance: rama de Fase 7; no implica despliegue, publicación ni fusión.

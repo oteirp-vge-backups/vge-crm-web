@@ -44,7 +44,15 @@ La fase quedará técnicamente cerrada cuando la migración y sus 35 pruebas SQL
 ## Evidencia de GitHub
 
 - Rama técnica: `r10/phase7-security-definer`.
-- PR apilado: pendiente de creación, con base `r10/phase6-functional-modules`.
-- Commit técnico: pendiente.
-- GitHub Actions: pendiente.
-- Estado: en validación; sin despliegue.
+- PR apilado en borrador: `#7`, con base `r10/phase6-functional-modules`.
+- Commit técnico verificado: `2570092e9a6614595f915a383d2f35382711b690`.
+- GitHub Actions: ejecución `32937702772`, completada con éxito.
+- Supabase local efímero: migración aplicada y 35 de 35 pruebas SQL correctas.
+- Regresión heredada: siete de siete pruebas correctas.
+- Frontend y Edge Functions: sintaxis, compilación y contratos correctos.
+- Playwright simulado sin producción: cuatro de cuatro recorridos correctos.
+- Barrera conjunta `Barrera R10 / publicación autorizable`: correcta.
+- Supabase remoto conserva únicamente la rama `main` y las 42 migraciones previas; la migración candidata no se desplegó y no generó coste adicional.
+- `main` continúa intacta en `ccdd2909e646381a9326d600651b8aa912f4b731`; producción no recibió cambios.
+
+La Fase 7 queda técnicamente cerrada. Este cierre no autoriza fusionar ramas, modificar `main`, desplegar la migración ni publicar el frontend.
