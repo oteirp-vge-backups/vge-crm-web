@@ -1,0 +1,325 @@
+name: R10 - barrera de calidad
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "r10/phase2a-foundations"
+      - "r10/phase2b-quality-gate"
+      - "r10/phase2c-staging-integration"
+      - "r10/phase4-obsolete-cleanup"
+      - "r10/phase5-core-modularization"
+      - "r10/phase6-functional-modules"
+      - "r10/phase7-security-definer"
+      - "r10/phase8-observability"
+      - "r10/phase9-cicd-rollback"
+      - "r10/phase10-real-user-stabilization"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r10-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  legacy-regressions:
+    name: Regresión heredada (7 pruebas)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Ejecutar exactamente las siete pruebas existentes
+        run: npm run test:legacy
+
+      - name: Verificar el registro de migraciones de Fase 2A
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const ledger = JSON.parse(fs.readFileSync('supabase/baseline/applied-migrations.json', 'utf8'));
+          if (ledger.applied_count !== 42 || ledger.migrations.length !== 42) {
+            throw new Error('El registro debe contener exactamente 42 migraciones aplicadas.');
+          }
+          const versions = ledger.migrations.map((migration) => migration.version);
+          if (new Set(versions).size !== versions.length) {
+            throw new Error('El registro contiene versiones de migración duplicadas.');
+          }
+          const tracked = fs.readdirSync('supabase/migrations').filter((name) => name.endsWith('.sql'));
+          if (tracked.length !== ledger.source_sql_files_in_repository) {
+            throw new Error('El número de fuentes SQL presentes no coincide con el registro.');
+          }
+          NODE
+
+  static-analysis:
+    name: Sintaxis y compilación
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias reproducibles
+        run: npm ci --ignore-scripts
+
+      - name: Validar el frontend y su espejo publicable
+        run: npm run check:publish && npm run check:frontend
+
+      - name: Impedir la reintroducción de componentes obsoletos
+        run: npm run check:obsolete
+
+      - name: Validar la sintaxis de las pruebas Node.js
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          while IFS= read -r test_file; do
+            node --check "$test_file"
+          done < <(find tests -type f \( -name '*.js' -o -name '*.mjs' \) | sort)
+
+      - name: Verificar el aislamiento del arnés STAGING
+        run: npm run check:staging-isolation
+
+      - name: Configurar Deno para Edge Functions
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.5.6
+
+      - name: Comprobar tipos y compilación de Edge Functions
+        run: deno check --no-lock supabase/functions/*/index.ts
+
+      - name: Probar contrato de observabilidad sin PII
+        run: deno test --no-lock supabase/functions/_shared/technical-incident.test.ts
+
+      - name: Validar el contrato de publicación y retorno
+        env:
+          R10_ROLLBACK_REF: 67949891bf93387cde377d1dea6e9f0df392e7be
+        run: |
+          npm run check:release -- --base-ref "$R10_ROLLBACK_REF"
+          npm run test:release
+
+  database-roles:
+    name: Supabase local y permisos por rol (37 pruebas)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Instalar Supabase CLI fijada
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.115.0
+
+      - name: Verificar la línea base antes de probarla
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          (cd supabase/baseline && sha256sum --check current-schema.sql.sha256)
+
+      - name: Iniciar Supabase local efímero sin migraciones parciales
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mv supabase/migrations "${RUNNER_TEMP}/r10-production-migrations"
+          mkdir -p supabase/migrations
+          supabase start
+
+      - name: Aplicar la línea base sanitizada
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file supabase/baseline/current-schema.sql
+
+      - name: Aplicar la migración candidata de Fase 7
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260826061114_reduce_security_definer_surface.sql"
+
+      - name: Probar roles y superficie SECURITY DEFINER
+        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql
+
+      - name: Detener el entorno efímero
+        if: always()
+        run: supabase stop --no-backup
+
+  browser-critical-journeys:
+    name: Playwright sin acceso a producción
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias reproducibles
+        run: npm ci --ignore-scripts
+
+      - name: Instalar Chromium aislado
+        run: npx playwright install --with-deps chromium
+
+      - name: Ejecutar recorridos críticos con Supabase simulado
+        run: npm run test:browser
+
+      - name: Conservar evidencia sólo si falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-playwright-failure-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  immutable-release-artifact:
+    name: Artefacto único e inmutable
+    needs:
+      - legacy-regressions
+      - static-analysis
+      - database-roles
+      - browser-critical-journeys
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Construir y verificar el paquete exacto
+        run: |
+          npm run build:release -- --output dist/r10-release --source-ref "$GITHUB_SHA"
+          npm run verify:release -- --input dist/r10-release
+
+      - name: Sellar el mismo paquete para la siguiente etapa
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-release-${{ github.sha }}
+          path: dist/r10-release/
+          retention-days: 1
+          if-no-files-found: error
+
+  staging-and-rollback-simulation:
+    name: Promoción efímera y retorno exacto
+    needs:
+      - immutable-release-artifact
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      R10_ROLLBACK_REF: 67949891bf93387cde377d1dea6e9f0df392e7be
+    steps:
+      - name: Obtener el repositorio y el punto de retorno
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias reproducibles
+        run: npm ci --ignore-scripts
+
+      - name: Descargar el mismo artefacto sellado
+        uses: actions/download-artifact@v5
+        with:
+          name: r10-release-${{ github.sha }}
+          path: ${{ runner.temp }}/r10-candidate
+
+      - name: Verificar la identidad antes de promover
+        run: node scripts/r10-release.mjs verify --input "${RUNNER_TEMP}/r10-candidate"
+
+      - name: Reconstruir el paquete anterior desde la referencia sellada
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p "${RUNNER_TEMP}/r10-previous-source"
+          git archive "$R10_ROLLBACK_REF" | tar -x -C "${RUNNER_TEMP}/r10-previous-source"
+          node scripts/r10-release.mjs build \
+            --source "${RUNNER_TEMP}/r10-previous-source" \
+            --output "${RUNNER_TEMP}/r10-previous" \
+            --source-ref "$R10_ROLLBACK_REF"
+          node scripts/r10-release.mjs verify --input "${RUNNER_TEMP}/r10-previous"
+
+      - name: Instalar Chromium aislado
+        run: npx playwright install --with-deps chromium
+
+      - name: Probar el artefacto candidato sin conexión a producción
+        env:
+          R10_WEB_ROOT: ${{ runner.temp }}/r10-candidate/publish
+        run: npm run test:browser
+
+      - name: Simular fallo posterior y restaurar el paquete anterior
+        run: |
+          node scripts/r10-release.mjs simulate-rollback \
+            --candidate "${RUNNER_TEMP}/r10-candidate" \
+            --previous "${RUNNER_TEMP}/r10-previous" \
+            --active "${RUNNER_TEMP}/r10-active" \
+            --evidence "${RUNNER_TEMP}/r10-rollback-evidence.json"
+
+      - name: Conservar la evidencia del retorno
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-rollback-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/r10-rollback-evidence.json
+          retention-days: 1
+          if-no-files-found: error
+
+  quality-gate:
+    name: Barrera R10 / publicación autorizable
+    if: always()
+    needs:
+      - legacy-regressions
+      - static-analysis
+      - database-roles
+      - browser-critical-journeys
+      - immutable-release-artifact
+      - staging-and-rollback-simulation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Bloquear si cualquier control falla
+        env:
+          LEGACY_RESULT: ${{ needs.legacy-regressions.result }}
+          STATIC_RESULT: ${{ needs.static-analysis.result }}
+          DATABASE_RESULT: ${{ needs.database-roles.result }}
+          BROWSER_RESULT: ${{ needs.browser-critical-journeys.result }}
+          ARTIFACT_RESULT: ${{ needs.immutable-release-artifact.result }}
+          ROLLBACK_RESULT: ${{ needs.staging-and-rollback-simulation.result }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$LEGACY_RESULT" = success
+          test "$STATIC_RESULT" = success
+          test "$DATABASE_RESULT" = success
+          test "$BROWSER_RESULT" = success
+          test "$ARTIFACT_RESULT" = success
+          test "$ROLLBACK_RESULT" = success
+          echo "Barrera R10 superada: mismo artefacto probado y retorno exacto simulado; este job no despliega ni publica."

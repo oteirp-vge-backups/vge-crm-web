@@ -1,11 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.111.0";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.111.0";
 
 const APP_ORIGIN = "https://crm.viajesdegruposescolares.com";
 const INVITE_REDIRECT = `${APP_ORIGIN}/?set-password=1`;
 const ALLOWED_HEADERS = "authorization, x-client-info, apikey, content-type";
 
-function corsHeaders(origin) {
+function corsHeaders(origin: string) {
   return {
     "access-control-allow-origin": origin === APP_ORIGIN ? origin : APP_ORIGIN,
     "access-control-allow-headers": ALLOWED_HEADERS,
@@ -15,7 +15,7 @@ function corsHeaders(origin) {
   };
 }
 
-function json(body, status, origin) {
+function json(body: unknown, status: number, origin: string) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
@@ -26,7 +26,7 @@ function json(body, status, origin) {
   });
 }
 
-function defaultKey(jsonValue) {
+function defaultKey(jsonValue: string | undefined) {
   if (!jsonValue) return "";
   try {
     const keys = JSON.parse(jsonValue);
@@ -36,11 +36,11 @@ function defaultKey(jsonValue) {
   }
 }
 
-function normalizedEmail(value) {
+function normalizedEmail(value: unknown) {
   return String(value ?? "").trim().toLowerCase();
 }
 
-function publicError(error) {
+function publicError(error: { message?: unknown } | null | undefined) {
   const message = String(error?.message ?? "");
   const known = [
     "OWNER_REQUIRED",
@@ -53,7 +53,13 @@ function publicError(error) {
   return known.find((code) => message.includes(code)) ?? "INVITE_FAILED";
 }
 
-async function finishAudit(adminClient, invitationId, status, errorCode = null, authUserId = null) {
+async function finishAudit(
+  adminClient: SupabaseClient,
+  invitationId: number | null,
+  status: string,
+  errorCode: string | null = null,
+  authUserId: string | null = null,
+) {
   if (!invitationId) return;
   await adminClient
     .from("operator_invitation_audit")
