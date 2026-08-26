@@ -1,25 +1,29 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(22);
+select plan(24);
 
 insert into auth.users (id, email) values
   ('10000000-0000-4000-8000-000000000001', 'owner@example.invalid'),
   ('10000000-0000-4000-8000-000000000002', 'manager@example.invalid'),
-  ('10000000-0000-4000-8000-000000000003', 'seller@example.invalid');
+  ('10000000-0000-4000-8000-000000000003', 'seller@example.invalid'),
+  ('10000000-0000-4000-8000-000000000004', 'seller-b@example.invalid');
 
 insert into public.operators (code, display_name, email, auth_user_id, role, access_role, active) values
   ('Sin asignar', 'Sin asignar', null, null, 'system', 'system', true),
   ('OP-OWNER', 'Propietario de prueba', 'owner@example.invalid', '10000000-0000-4000-8000-000000000001', 'admin', 'owner', true),
   ('OP-MANAGER', 'Responsable de prueba', 'manager@example.invalid', '10000000-0000-4000-8000-000000000002', 'admin', 'manager', true),
-  ('OP-SELLER', 'Comercial de prueba', 'seller@example.invalid', '10000000-0000-4000-8000-000000000003', 'seller', 'seller', true);
+  ('OP-SELLER', 'Comercial de prueba', 'seller@example.invalid', '10000000-0000-4000-8000-000000000003', 'seller', 'seller', true),
+  ('OP-SELLER-B', 'Segundo comercial de prueba', 'seller-b@example.invalid', '10000000-0000-4000-8000-000000000004', 'seller', 'seller', true);
 
 insert into public.centers (id, school, city, province, community) values
   ('R10-CENTER-OWNER', 'Centro global de prueba', 'Madrid', 'Madrid', 'Madrid'),
-  ('R10-CENTER-SELLER', 'Centro comercial de prueba', 'Valladolid', 'Valladolid', 'Castilla y León');
+  ('R10-CENTER-SELLER', 'Centro comercial de prueba', 'Valladolid', 'Valladolid', 'Castilla y León'),
+  ('R10-CENTER-SELLER-B', 'Segundo centro comercial de prueba', 'León', 'León', 'Castilla y León');
 
 update public.center_state set assigned_to = 'OP-OWNER' where center_id = 'R10-CENTER-OWNER';
 update public.center_state set assigned_to = 'OP-SELLER' where center_id = 'R10-CENTER-SELLER';
+update public.center_state set assigned_to = 'OP-SELLER-B' where center_id = 'R10-CENTER-SELLER-B';
 
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"10000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
@@ -29,7 +33,7 @@ select results_eq(
   $$values ('owner'::text, true, true, true, true)$$,
   'owner recibe exclusivamente la matriz funcional de propietario'
 );
-select results_eq($$select count(*) from public.crm_centers$$, array[2::bigint], 'owner ve todo el CRM activo');
+select results_eq($$select count(*) from public.crm_centers$$, array[3::bigint], 'owner ve todo el CRM activo');
 select lives_ok($$select * from public.owner_list_operators()$$, 'owner puede consultar la administración de usuarios');
 select ok((select private.is_owner()), 'owner satisface el control interno de propietario');
 
@@ -39,7 +43,7 @@ select results_eq(
   $$values ('manager'::text, true, true, false, false)$$,
   'manager obtiene acceso global operativo sin facultades de propietario'
 );
-select results_eq($$select count(*) from public.crm_centers$$, array[2::bigint], 'manager ve todo el CRM activo');
+select results_eq($$select count(*) from public.crm_centers$$, array[3::bigint], 'manager ve todo el CRM activo');
 select throws_ok($$select * from public.owner_list_operators()$$, 'P0001', 'OWNER_REQUIRED', 'manager no puede administrar usuarios de propietario');
 select lives_ok($$select public.admin_assign_center('R10-CENTER-SELLER', 'OP-SELLER')$$, 'manager puede asignar centros');
 
@@ -54,6 +58,10 @@ select results_eq($$select id from public.crm_centers$$, array['R10-CENTER-SELLE
 select throws_ok($$select public.admin_assign_center('R10-CENTER-OWNER', 'OP-SELLER')$$, 'P0001', 'ADMIN_REQUIRED', 'seller no puede reasignar centros');
 select throws_ok($$select * from public.owner_list_operators()$$, 'P0001', 'OWNER_REQUIRED', 'seller no puede administrar usuarios');
 select ok(not (select private.is_owner()), 'seller no satisface el control interno de propietario');
+
+select set_config('request.jwt.claims', '{"sub":"10000000-0000-4000-8000-000000000004","role":"authenticated"}', true);
+select results_eq($$select id from public.crm_centers$$, array['R10-CENTER-SELLER-B'::text], 'segundo seller sólo ve su propia cartera');
+select results_eq($$select count(*) from public.crm_centers where id = 'R10-CENTER-SELLER'$$, array[0::bigint], 'dos comerciales no pueden cruzar sus centros');
 
 reset role;
 select ok(not has_table_privilege('anon', 'public.centers', 'SELECT'), 'anon no tiene lectura directa de centros');
