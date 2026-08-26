@@ -68,7 +68,16 @@ La fase quedará técnicamente cerrada cuando la incidencia simulada sea correla
 ## Evidencia de GitHub
 
 - Rama técnica: `r10/phase8-observability`.
-- PR apilado: pendiente de creación, con base `r10/phase7-security-definer`.
-- Commit técnico: pendiente.
-- GitHub Actions: pendiente.
-- Estado: en validación; sin despliegue ni publicación.
+- PR apilado en borrador: `#8`, con base `r10/phase7-security-definer`.
+- Commit técnico verificado: `4c4a3b352a59d7071bff7f74279cb5b23f87310d`.
+- GitHub Actions: ejecución `32940043153`, completada con éxito.
+- Contrato Edge: compilación correcta y tres de tres pruebas Deno correctas.
+- Incidencia simulada: correlación exacta y ausencia de PII verificadas en Node.js y navegador.
+- Regresión heredada: siete de siete pruebas correctas.
+- Playwright simulado sin producción: cinco de cinco recorridos correctos.
+- Supabase local efímero: 35 de 35 pruebas SQL acumuladas correctas.
+- Barrera conjunta `Barrera R10 / publicación autorizable`: correcta.
+- Supabase remoto conserva únicamente su rama `main`, 42 migraciones y las dos Edge Functions anteriores; `vge-technical-incident` no fue desplegada y no generó coste adicional.
+- `main` continúa intacta en `ccdd2909e646381a9326d600651b8aa912f4b731`; producción no recibió cambios.
+
+La Fase 8 queda técnicamente cerrada. Este cierre no autoriza fusionar ramas, modificar `main`, desplegar la Edge Function ni publicar el frontend.
