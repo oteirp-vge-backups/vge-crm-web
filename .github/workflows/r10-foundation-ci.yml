@@ -13,6 +13,7 @@ on:
       - "r10/phase7-security-definer"
       - "r10/phase8-observability"
       - "r10/phase9-cicd-rollback"
+      - "r10/phase10-real-user-stabilization"
 
 permissions:
   contents: read
@@ -115,7 +116,7 @@ jobs:
           npm run test:release
 
   database-roles:
-    name: Supabase local y permisos por rol
+    name: Supabase local y permisos por rol (37 pruebas)
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:

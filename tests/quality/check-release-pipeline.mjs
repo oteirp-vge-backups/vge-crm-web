@@ -6,7 +6,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const script = path.join(root, "scripts/r10-release.mjs");
-const temporary = await mkdtemp(path.join(os.tmpdir(), "r10-phase9-"));
+const temporary = await mkdtemp(path.join(os.tmpdir(), "r10-phase10-"));
 const candidate = path.join(temporary, "candidate-release");
 const previousSource = path.join(temporary, "previous-source");
 const previous = path.join(temporary, "previous-release");
@@ -18,7 +18,7 @@ function run(...args) {
 }
 
 try {
-  run("build", "--source", root, "--output", candidate, "--source-ref", "phase9-test-candidate");
+  run("build", "--source", root, "--output", candidate, "--source-ref", "phase10-test-candidate");
   run("verify", "--input", candidate);
 
   await cp(root, previousSource, {
@@ -28,9 +28,9 @@ try {
   for (const relative of ["assets/js/config.js", "publish/assets/js/config.js"]) {
     const target = path.join(previousSource, relative);
     const source = await readFile(target, "utf8");
-    await writeFile(target, source.replace("r10-phase9.0.0", "r10-phase8.0.0-test"), "utf8");
+    await writeFile(target, source.replace("r10-phase10.0.0", "r10-phase9.0.0-test"), "utf8");
   }
-  run("build", "--source", previousSource, "--output", previous, "--source-ref", "phase8-test-return");
+  run("build", "--source", previousSource, "--output", previous, "--source-ref", "phase9-test-return");
   run("simulate-rollback", "--candidate", candidate, "--previous", previous, "--active", active, "--evidence", evidence);
 
   const result = JSON.parse(await readFile(evidence, "utf8"));
@@ -54,7 +54,7 @@ try {
   const leaked = spawnSync(process.execPath, [script, "build", "--source", previousSource, "--output", path.join(temporary, "leaked-release")], { cwd: root, encoding: "utf8" });
   assert.notEqual(leaked.status, 0, "Un secreto debe bloquear la construcción del artefacto");
 
-  console.log("Fase 9: artefacto inmutable, alteración bloqueada y retorno exacto simulados correctamente.");
+  console.log("Fase 10: artefacto inmutable, alteración bloqueada y retorno exacto simulados correctamente.");
 } finally {
   await rm(temporary, { recursive: true, force: true });
 }

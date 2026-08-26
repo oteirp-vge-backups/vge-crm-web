@@ -14,7 +14,7 @@ import path from "node:path";
 import process from "node:process";
 
 const repositoryRoot = process.cwd();
-const policyPath = path.join(repositoryRoot, "release/r10-phase9-policy.json");
+const policyPath = path.join(repositoryRoot, "release/r10-phase10-policy.json");
 const manifestName = "release-manifest.json";
 const includedRoots = [
   "publish",
@@ -236,7 +236,7 @@ async function preflight() {
   await assertFunctionDeclarations(repositoryRoot);
   const version = releaseVersion(await readFile(path.join(repositoryRoot, "publish/assets/js/config.js"), "utf8"));
   assert.equal(version, rules.release_version, "La versión del frontend no coincide con la política de Fase 9");
-  console.log(`Preflight de Fase 9 correcto: ${files.length} cambios revisados desde ${baseRef}.`);
+  console.log(`Preflight de Fase 10 correcto: ${files.length} cambios revisados desde ${baseRef}.`);
 }
 
 async function simulateRollback() {

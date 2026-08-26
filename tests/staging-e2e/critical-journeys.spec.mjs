@@ -6,9 +6,10 @@ const users = {
   owner: { email: process.env.R10_STAGING_OWNER_EMAIL, role: "Propietario" },
   manager: { email: process.env.R10_STAGING_MANAGER_EMAIL, role: "Administración operativa" },
   seller: { email: process.env.R10_STAGING_SELLER_EMAIL, role: "Comercial" },
+  sellerB: { email: process.env.R10_STAGING_SELLER_B_EMAIL, role: "Comercial" },
 };
 const runId = (process.env.R10_STAGING_RUN_ID || Date.now().toString(36)).replace(/[^a-z0-9-]/gi, "").slice(-18);
-const school = `R10 2C Centro ${runId}`;
+const school = `R10 F10 Centro ${runId}`;
 let centerId = "";
 
 async function guardNetwork(page) {
@@ -41,7 +42,7 @@ async function logout(page) {
   await expect(page.locator("#loginScreen")).toBeVisible();
 }
 
-test.describe.serial("R10 2C contra STAGING real", () => {
+test.describe.serial("R10 Fase 10 contra STAGING real", () => {
   test("seller crea una ficha, una persona y un viaje sin duplicar el alta", async ({ page }) => {
     await login(page, "seller");
     await expect(page.locator('[data-view="all"]')).toBeHidden();
@@ -97,6 +98,17 @@ test.describe.serial("R10 2C contra STAGING real", () => {
     await logout(page);
   });
 
+  test("un segundo seller no puede ver la cartera creada por el primero", async ({ page }) => {
+    expect(centerId).not.toBe("");
+    await login(page, "sellerB");
+    await page.locator('[data-view="mine"]').click();
+    await page.locator("#searchFilter").fill(school);
+    await expect(page.locator(`tr[data-open="${centerId}"]`)).toHaveCount(0);
+    await expect(page.locator('[data-view="all"]')).toBeHidden();
+    await expect(page.locator("#permissionsNavBtn")).toBeHidden();
+    await logout(page);
+  });
+
   test("manager ve el alcance global y completa archivo y restauracion", async ({ page }) => {
     expect(centerId).not.toBe("");
     await login(page, "manager");
@@ -108,7 +120,7 @@ test.describe.serial("R10 2C contra STAGING real", () => {
     await page.locator('[data-view="all"]').click();
     await page.locator("#searchFilter").fill(school);
     await page.locator(`tr[data-open="${centerId}"]`).click();
-    await page.locator("#fArchiveReason").fill("Prueba reversible integrada R10 2C");
+    await page.locator("#fArchiveReason").fill("Prueba reversible integrada R10 F10");
     page.once("dialog", (dialog) => dialog.accept());
     await page.locator("#archiveCenterBtn").click();
     await expect(page.locator("#toast")).toContainText("Centro archivado");
@@ -116,9 +128,9 @@ test.describe.serial("R10 2C contra STAGING real", () => {
     await page.locator("#archivedSearch").fill(centerId);
     const archivedRow = page.locator("tr", { hasText: centerId });
     await expect(archivedRow).toHaveCount(1);
-    const prompts = ["Restauracion reversible integrada R10 2C"];
+    const prompts = ["Restauracion reversible integrada R10 F10"];
     page.on("dialog", async (dialog) => {
-      if (dialog.type() === "prompt") await dialog.accept(prompts.shift() || "Restauracion integrada R10 2C");
+      if (dialog.type() === "prompt") await dialog.accept(prompts.shift() || "Restauracion integrada R10 F10");
       else await dialog.accept();
     });
     await archivedRow.locator('[data-restore-center]').click();

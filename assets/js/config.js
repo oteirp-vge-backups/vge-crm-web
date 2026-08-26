@@ -4,5 +4,5 @@
 window.VGE_CONFIG = {
   supabaseUrl: "https://sjraugywirjohrqmacvb.supabase.co",
   supabasePublishableKey: "sb_publishable_3lU2Jh5IXnc--vngI7_viA_6vA4xy7j",
-  appVersion: "r10-phase9.0.0"
+  appVersion: "r10-phase10.0.0"
 };
