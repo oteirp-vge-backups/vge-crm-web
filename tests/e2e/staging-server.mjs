@@ -42,7 +42,7 @@ function injectStagingConfig(source) {
   const injected = source.replace(configPattern, `window.VGE_CONFIG = ${JSON.stringify({
     supabaseUrl: stagingUrl,
     supabasePublishableKey: publishableKey,
-    appVersion: "r10-phase8.0.0-staging",
+    appVersion: "r10-phase9.0.0-staging",
   })};`);
   if (injected.includes(PRODUCTION_PROJECT_REF)) {
     throw new Error("BLOQUEADO: la configuracion servida conserva una referencia a produccion.");

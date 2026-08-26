@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "phase": "R10_PHASE9",
+  "release_version": "r10-phase9.0.0",
+  "rollback_ref": "67949891bf93387cde377d1dea6e9f0df392e7be",
+  "rollback_version": "r10-phase8.0.0",
+  "production_project_ref": "sjraugywirjohrqmacvb",
+  "deployment_authorized": false
+}

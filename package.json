@@ -9,9 +9,13 @@
     "check:frontend": "node tests/quality/check-frontend-syntax.mjs && node tests/quality/check-functional-modules.mjs && node tests/quality/check-observability.mjs",
     "check:obsolete": "node tests/quality/check-obsolete-components.mjs",
     "check:staging-isolation": "node tests/quality/check-staging-isolation.mjs",
+    "check:release": "node scripts/r10-release.mjs preflight",
+    "build:release": "node scripts/r10-release.mjs build",
+    "verify:release": "node scripts/r10-release.mjs verify",
     "test:legacy": "node scripts/run-legacy-tests.mjs",
     "test:browser": "playwright test",
-    "test:staging": "playwright test --config playwright.staging.config.mjs"
+    "test:staging": "playwright test --config playwright.staging.config.mjs",
+    "test:release": "node tests/quality/check-release-pipeline.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1"

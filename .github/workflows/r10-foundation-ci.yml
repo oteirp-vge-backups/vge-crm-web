@@ -12,6 +12,7 @@ on:
       - "r10/phase6-functional-modules"
       - "r10/phase7-security-definer"
       - "r10/phase8-observability"
+      - "r10/phase9-cicd-rollback"
 
 permissions:
   contents: read
@@ -28,6 +29,8 @@ jobs:
     steps:
       - name: Obtener el repositorio
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Configurar Node.js soportado
         uses: actions/setup-node@v5
@@ -64,6 +67,8 @@ jobs:
     steps:
       - name: Obtener el repositorio
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Configurar Node.js soportado
         uses: actions/setup-node@v5
@@ -101,6 +106,13 @@ jobs:
 
       - name: Probar contrato de observabilidad sin PII
         run: deno test --no-lock supabase/functions/_shared/technical-incident.test.ts
+
+      - name: Validar el contrato de publicación y retorno
+        env:
+          R10_ROLLBACK_REF: 67949891bf93387cde377d1dea6e9f0df392e7be
+        run: |
+          npm run check:release -- --base-ref "$R10_ROLLBACK_REF"
+          npm run test:release
 
   database-roles:
     name: Supabase local y permisos por rol
@@ -180,6 +192,105 @@ jobs:
           retention-days: 1
           if-no-files-found: ignore
 
+  immutable-release-artifact:
+    name: Artefacto único e inmutable
+    needs:
+      - legacy-regressions
+      - static-analysis
+      - database-roles
+      - browser-critical-journeys
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Construir y verificar el paquete exacto
+        run: |
+          npm run build:release -- --output dist/r10-release --source-ref "$GITHUB_SHA"
+          npm run verify:release -- --input dist/r10-release
+
+      - name: Sellar el mismo paquete para la siguiente etapa
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-release-${{ github.sha }}
+          path: dist/r10-release/
+          retention-days: 1
+          if-no-files-found: error
+
+  staging-and-rollback-simulation:
+    name: Promoción efímera y retorno exacto
+    needs:
+      - immutable-release-artifact
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      R10_ROLLBACK_REF: 67949891bf93387cde377d1dea6e9f0df392e7be
+    steps:
+      - name: Obtener el repositorio y el punto de retorno
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js soportado
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias reproducibles
+        run: npm ci --ignore-scripts
+
+      - name: Descargar el mismo artefacto sellado
+        uses: actions/download-artifact@v5
+        with:
+          name: r10-release-${{ github.sha }}
+          path: ${{ runner.temp }}/r10-candidate
+
+      - name: Verificar la identidad antes de promover
+        run: node scripts/r10-release.mjs verify --input "${RUNNER_TEMP}/r10-candidate"
+
+      - name: Reconstruir el paquete anterior desde la referencia sellada
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p "${RUNNER_TEMP}/r10-previous-source"
+          git archive "$R10_ROLLBACK_REF" | tar -x -C "${RUNNER_TEMP}/r10-previous-source"
+          node scripts/r10-release.mjs build \
+            --source "${RUNNER_TEMP}/r10-previous-source" \
+            --output "${RUNNER_TEMP}/r10-previous" \
+            --source-ref "$R10_ROLLBACK_REF"
+          node scripts/r10-release.mjs verify --input "${RUNNER_TEMP}/r10-previous"
+
+      - name: Instalar Chromium aislado
+        run: npx playwright install --with-deps chromium
+
+      - name: Probar el artefacto candidato sin conexión a producción
+        env:
+          R10_WEB_ROOT: ${{ runner.temp }}/r10-candidate/publish
+        run: npm run test:browser
+
+      - name: Simular fallo posterior y restaurar el paquete anterior
+        run: |
+          node scripts/r10-release.mjs simulate-rollback \
+            --candidate "${RUNNER_TEMP}/r10-candidate" \
+            --previous "${RUNNER_TEMP}/r10-previous" \
+            --active "${RUNNER_TEMP}/r10-active" \
+            --evidence "${RUNNER_TEMP}/r10-rollback-evidence.json"
+
+      - name: Conservar la evidencia del retorno
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-rollback-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/r10-rollback-evidence.json
+          retention-days: 1
+          if-no-files-found: error
+
   quality-gate:
     name: Barrera R10 / publicación autorizable
     if: always()
@@ -188,6 +299,8 @@ jobs:
       - static-analysis
       - database-roles
       - browser-critical-journeys
+      - immutable-release-artifact
+      - staging-and-rollback-simulation
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -197,6 +310,8 @@ jobs:
           STATIC_RESULT: ${{ needs.static-analysis.result }}
           DATABASE_RESULT: ${{ needs.database-roles.result }}
           BROWSER_RESULT: ${{ needs.browser-critical-journeys.result }}
+          ARTIFACT_RESULT: ${{ needs.immutable-release-artifact.result }}
+          ROLLBACK_RESULT: ${{ needs.staging-and-rollback-simulation.result }}
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -204,4 +319,6 @@ jobs:
           test "$STATIC_RESULT" = success
           test "$DATABASE_RESULT" = success
           test "$BROWSER_RESULT" = success
-          echo "Barrera R10 superada: la revisión puede continuar; este job no despliega ni publica."
+          test "$ARTIFACT_RESULT" = success
+          test "$ROLLBACK_RESULT" = success
+          echo "Barrera R10 superada: mismo artefacto probado y retorno exacto simulado; este job no despliega ni publica."
