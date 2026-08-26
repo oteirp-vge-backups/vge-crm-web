@@ -32,4 +32,13 @@ La matriz automática permanente aumenta de 35 a 37 pruebas SQL acumuladas. El r
 
 ## Estado de cierre
 
-La fase permanece abierta hasta completar el checklist humano de los cuatro usuarios y resolver cualquier incidencia mediante una prueba automática. Este documento no autoriza fusionar PR, desplegar Edge Functions, publicar el frontend ni aplicar migraciones en producción.
+La validación humana se completó el 26 de agosto de 2026 sin incidencias:
+
+- Fernando, propietario: UAT correcta.
+- Leticia, comercial: UAT correcta.
+- Elena, comercial: UAT correcta.
+- Silvia, comercial: UAT correcta.
+
+La rama temporal se eliminó al finalizar la UAT. Existió aproximadamente 1 hora y 9 minutos, con un coste estimado de 0,0155 USD a la tarifa confirmada. La comprobación posterior confirmó que Supabase conserva únicamente `main`, producción permanece saludable con sus 42 migraciones y mantiene exclusivamente sus dos Edge Functions anteriores.
+
+La Fase 10 queda funcionalmente cerrada. Este documento no autoriza fusionar PR, desplegar Edge Functions, publicar el frontend ni aplicar migraciones en producción.
