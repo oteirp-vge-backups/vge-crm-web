@@ -3,7 +3,7 @@ import { stat } from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
 
-const root = process.cwd();
+const root = path.resolve(process.env.R10_WEB_ROOT || process.cwd());
 const port = 4173;
 const contentTypes = new Map([
   [".html", "text/html; charset=utf-8"],
@@ -30,5 +30,5 @@ http.createServer(async (request, response) => {
     response.end("Not found");
   }
 }).listen(port, "127.0.0.1", () => {
-  console.log(`Servidor R10 disponible en http://127.0.0.1:${port}`);
+  console.log(`Servidor R10 disponible en http://127.0.0.1:${port} desde ${root}`);
 });

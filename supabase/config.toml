@@ -28,5 +28,11 @@ additional_redirect_urls = ["http://127.0.0.1:4173"]
 jwt_expiry = 3600
 enable_signup = false
 
+[functions.vge-agenda-email-worker]
+verify_jwt = false
+
+[functions.vge-admin-invite-operator]
+verify_jwt = false
+
 [functions.vge-technical-incident]
 verify_jwt = true
