@@ -10,6 +10,7 @@ on:
       - "r10/phase4-obsolete-cleanup"
       - "r10/phase5-core-modularization"
       - "r10/phase6-functional-modules"
+      - "r10/phase7-security-definer"
 
 permissions:
   contents: read
@@ -129,8 +130,13 @@ jobs:
           PGPASSWORD: postgres
         run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file supabase/baseline/current-schema.sql
 
-      - name: Probar owner, manager, seller, anon y service_role
-        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql
+      - name: Aplicar la migración candidata de Fase 7
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260826061114_reduce_security_definer_surface.sql"
+
+      - name: Probar roles y superficie SECURITY DEFINER
+        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql
 
       - name: Detener el entorno efímero
         if: always()

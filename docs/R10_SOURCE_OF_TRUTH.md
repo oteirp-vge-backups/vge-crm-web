@@ -11,9 +11,9 @@
 ## Base de datos
 
 - Estado aplicado: `supabase/baseline/applied-migrations.json`.
-- Fuentes históricas disponibles: los tres SQL existentes en `supabase/migrations/`.
+- Fuentes históricas disponibles: tres SQL en `supabase/migrations/`; las migraciones posteriores se conservan como candidatas independientes hasta su despliegue autorizado.
 - Fuentes históricas ausentes: 39; no se recrean ni se renombran de manera especulativa.
-- Futuro: cada cambio es una migración nueva creada con Supabase CLI y probada fuera de producción.
+- Futuro: cada cambio es una migración nueva, probada fuera de producción y acompañada por un rollback revisable. Si la CLI no puede escribir en el entorno gestionado, se utiliza un timestamp UTC real y se documenta la excepción, sin alterar migraciones previas.
 
 ## Edge Functions
 

@@ -11,7 +11,7 @@ La copia pública tiene 236.998 bytes y SHA-256 `6dc0ca0103fcba8cfe8a880af0fcd4c
 
 La auditoría preventiva encontró un único correo operativo, repetido dos veces como valor estructural por defecto. La copia pública sustituye exclusivamente ese literal por `r10-staging-recipient@example.invalid`; el original exacto quedó limitado al artefacto privado efímero. Antes de probar envíos en STAGING debe configurarse un destinatario no productivo mediante una migración específica.
 
-No se inventan las 39 fuentes históricas que no están en Git. Los tres archivos existentes en `supabase/migrations/` conservan su identidad original. El histórico futuro comienza con migraciones nuevas, creadas por Supabase CLI, revisadas en una rama y comprobadas fuera de producción.
+No se inventan las 39 fuentes históricas que no están en Git. Los tres archivos históricos existentes en `supabase/migrations/` conservan su identidad original. Las migraciones nuevas se añaden como candidatas pendientes hasta su despliegue autorizado; por eso el registro puede contabilizar más fuentes SQL que migraciones aplicadas.
 
 ## Reglas
 
