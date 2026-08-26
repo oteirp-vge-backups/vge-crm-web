@@ -65,6 +65,20 @@ La Fase 9 queda técnicamente cerrada cuando el workflow comprueba el mismo arte
 
 ## Evidencia de GitHub
 
-Pendiente de completar tras la primera ejecución de la rama y el PR borrador de Fase 9.
+- Rama técnica: `r10/phase9-cicd-rollback`.
+- PR apilado en borrador: `#9`, con base `r10/phase8-observability`.
+- Commit técnico verificado: `e1c5704e43041bfa23d95a15f0dec6a0d4f3bb86`.
+- GitHub Actions: ejecución `32942398810`, completada con éxito.
+- Regresiones heredadas: siete de siete correctas.
+- Compilación frontend y Edge Functions: correcta; contrato Deno sin PII: tres de tres.
+- Supabase local efímero: 35 de 35 pruebas SQL acumuladas correctas.
+- Playwright desde las fuentes: cinco de cinco recorridos correctos.
+- Artefacto candidato: 22 archivos, versión `r10-phase9.0.0`, huella `e3f1de86ec17f010a30997eff9b5ee49a9f60bc7b26737d6e6eab9f8576d7476`.
+- El mismo artefacto descargado conservó exactamente esa huella y superó otros cinco de cinco recorridos Playwright.
+- Artefacto de retorno: 22 archivos, versión `r10-phase8.0.0`, huella `57f3af613983214b57b3605e7acbbfba3b4e67d92ec0f60f4497ee3d8e6c205e`.
+- Retorno simulado: correcto; la ubicación activa restauró exactamente la huella anterior y registró `production_touched: false`.
+- Barrera conjunta `Barrera R10 / publicación autorizable`: correcta.
+
+La Fase 9 queda técnicamente cerrada. La ejecución de cierre documental debe conservar estos controles en verde.
 
 Este documento no autoriza fusionar ramas, modificar `main`, desplegar en Supabase ni publicar el frontend.
