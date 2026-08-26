@@ -6,6 +6,7 @@ const required = [
   "R10_STAGING_OWNER_EMAIL",
   "R10_STAGING_MANAGER_EMAIL",
   "R10_STAGING_SELLER_EMAIL",
+  "R10_STAGING_SELLER_B_EMAIL",
   "R10_STAGING_TEST_PASSWORD",
 ];
 const missing = required.filter((name) => !process.env[name]);
