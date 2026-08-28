@@ -31,6 +31,13 @@ select ok(
   'la restricción está validada sobre todos los centros'
 );
 
+-- Cada archivo pgTAP se ejecuta en una transacción independiente. Reponemos
+-- el operador técnico mínimo que necesita el trigger heredado de center_state.
+insert into public.operators
+  (code, display_name, email, auth_user_id, role, access_role, active)
+values
+  ('Sin asignar', 'Sin asignar', null, null, 'system', 'system', true);
+
 insert into public.centers(id, school, city, province, community)
 values ('R10-COMMUNITY-001', 'Centro prueba Andalucía', 'Almería', 'Almeria', 'Andalucia');
 
