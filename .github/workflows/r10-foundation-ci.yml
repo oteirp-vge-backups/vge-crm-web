@@ -116,7 +116,7 @@ jobs:
           npm run test:release
 
   database-roles:
-    name: Supabase local y permisos por rol (37 pruebas)
+    name: Supabase local, permisos y comunidades (51 pruebas)
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -152,8 +152,13 @@ jobs:
           PGPASSWORD: postgres
         run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260826061114_reduce_security_definer_surface.sql"
 
-      - name: Probar roles y superficie SECURITY DEFINER
-        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql
+      - name: Aplicar la corrección de comunidades autónomas
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260828072643_normalize_center_communities.sql"
+
+      - name: Probar roles, superficie SECURITY DEFINER y comunidades
+        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql
 
       - name: Detener el entorno efímero
         if: always()

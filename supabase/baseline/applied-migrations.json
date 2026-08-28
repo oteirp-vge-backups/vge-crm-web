@@ -3,7 +3,7 @@
   "source": "Supabase migration ledger",
   "project_ref": "sjraugywirjohrqmacvb",
   "applied_count": 42,
-  "source_sql_files_in_repository": 4,
+  "source_sql_files_in_repository": 5,
   "missing_historical_source_files": 39,
   "migrations": [
     { "version": "20260817150635", "name": "vge_step_1a_base_schema" },
