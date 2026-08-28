@@ -116,7 +116,7 @@ jobs:
           npm run test:release
 
   database-roles:
-    name: Supabase local, permisos y comunidades (50 pruebas)
+    name: Supabase local, permisos y comunidades (51 pruebas)
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
