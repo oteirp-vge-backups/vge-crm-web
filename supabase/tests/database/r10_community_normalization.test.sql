@@ -14,8 +14,16 @@ select is(private.canonical_community('Comunitat Valenciana'), 'Comunidad Valenc
 select is(private.canonical_community('zona inventada'), null,
   'rechaza comunidades desconocidas');
 
-select has_check('public', 'centers', 'centers_community_canonical_check',
-  'centers tiene una restricción de comunidad canónica');
+select ok(
+  exists (
+    select 1
+    from pg_constraint
+    where conrelid = 'public.centers'::regclass
+      and conname = 'centers_community_canonical_check'
+      and contype = 'c'
+  ),
+  'centers tiene una restricción de comunidad canónica'
+);
 select ok(
   (select convalidated from pg_constraint
    where conrelid = 'public.centers'::regclass
