@@ -28,7 +28,12 @@ try {
   for (const relative of ["assets/js/config.js", "publish/assets/js/config.js"]) {
     const target = path.join(previousSource, relative);
     const source = await readFile(target, "utf8");
-    await writeFile(target, source.replace("r10-phase10.0.0", "r10-phase9.0.0-test"), "utf8");
+    const previousVersion = source.replace(
+      /(appVersion:\s*["'])r10-phase\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?(["'])/,
+      "$1r10-phase9.0.0-test$2",
+    );
+    assert.notEqual(previousVersion, source, `No se pudo preparar la versión de retorno en ${relative}`);
+    await writeFile(target, previousVersion, "utf8");
   }
   run("build", "--source", previousSource, "--output", previous, "--source-ref", "phase9-test-return");
   run("simulate-rollback", "--candidate", candidate, "--previous", previous, "--active", active, "--evidence", evidence);

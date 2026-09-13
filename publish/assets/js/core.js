@@ -1,6 +1,6 @@
 // CRM VGE R10 · Fase 5 · core.js
 const INITIAL_CENTERS = []; // La base ya no viaja dentro del HTML.
-const CRM_BUILD = "2026-08-24-production-v15-owner-invitations-r9-8";
+const CRM_BUILD = "2026-09-13-r10-statistics-portfolio-alignment";
 let OPERATORS = [];
 let USERS = [];
 const STATUSES = ["Pendiente","Interesado","Trasladado a cotización","No interesado"];
