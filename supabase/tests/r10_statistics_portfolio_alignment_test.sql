@@ -48,11 +48,8 @@ update public.center_state
 set assigned_to = 'R10-STAT-B', status = 'Pendiente'
 where center_id = 'R10-STAT-B1';
 
-insert into public.center_campaigns (center_id, campaign_id)
-select center_id, (select campaign_id from public.campaigns where code = 'R10STAT26')
-from (values
-  ('R10-STAT-A2'),('R10-STAT-A3'),('R10-STAT-A4'),('R10-STAT-B1')
-) as fixture(center_id);
+-- El trigger de alta de centros crea el vínculo con la campaña predeterminada.
+-- Reutilizarlo prueba también la ruta real y evita una segunda inserción artificial.
 
 insert into public.travel_opportunities
   (opportunity_id, center_campaign_id, center_id, cycle, status)

@@ -68,11 +68,15 @@ test("estadísticas distingue centros efectivos y viajes a cotización", async (
   await page.getByRole("button", { name: /Estadísticas/ }).click();
   await expect(page.locator("#pageTitle")).toHaveText("Estadísticas");
 
-  const centreQuote = page.locator(".stats-kpi").filter({ hasText: "Centros a cotización" });
+  const centreQuote = page.locator(".stats-kpi").filter({
+    has: page.locator(".label", { hasText: /^Centros a cotización$/ }),
+  });
   await expect(centreQuote.locator(".value")).toHaveText("3");
   await expect(centreQuote.locator(".hint")).toContainText("algún viaje");
 
-  const travelQuote = page.locator(".stats-kpi").filter({ hasText: "Viajes a cotización" });
+  const travelQuote = page.locator(".stats-kpi").filter({
+    has: page.locator(".label", { hasText: /^Viajes a cotización$/ }),
+  });
   await expect(travelQuote.locator(".value")).toHaveText("4");
 });
 
