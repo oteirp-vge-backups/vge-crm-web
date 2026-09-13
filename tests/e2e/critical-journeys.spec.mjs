@@ -63,6 +63,19 @@ test("sesión comercial carga el panel y oculta acciones de propietario", async 
   await expect(page.locator("#permissionsNavBtn")).toBeHidden();
 });
 
+test("estadísticas distingue centros efectivos y viajes a cotización", async ({ page }) => {
+  await page.goto("/?r10-auth=1");
+  await page.getByRole("button", { name: /Estadísticas/ }).click();
+  await expect(page.locator("#pageTitle")).toHaveText("Estadísticas");
+
+  const centreQuote = page.locator(".stats-kpi").filter({ hasText: "Centros a cotización" });
+  await expect(centreQuote.locator(".value")).toHaveText("3");
+  await expect(centreQuote.locator(".hint")).toContainText("algún viaje");
+
+  const travelQuote = page.locator(".stats-kpi").filter({ hasText: "Viajes a cotización" });
+  await expect(travelQuote.locator(".value")).toHaveText("4");
+});
+
 test("incidencia simulada queda diagnosticable por correlación y sin PII", async ({ page }) => {
   await page.goto("/?r10-auth=1");
   await expect(page.locator("#app")).toBeVisible();
