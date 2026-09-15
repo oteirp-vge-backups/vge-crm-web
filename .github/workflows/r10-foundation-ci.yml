@@ -116,7 +116,7 @@ jobs:
           npm run test:release
 
   database-roles:
-    name: Supabase local, permisos, estadísticas y avisos (75 pruebas)
+    name: Supabase local, permisos, estadísticas y agenda (95 pruebas)
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -172,8 +172,13 @@ jobs:
           PGPASSWORD: postgres
         run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260915103838_disable_agenda_email_notifications.sql"
 
-      - name: Probar roles, seguridad, comunidades, estadísticas y avisos
-        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql supabase/tests/r10_statistics_portfolio_alignment_test.sql supabase/tests/database/r10_disable_agenda_email_notifications.test.sql
+      - name: Aplicar la corrección del ámbito de agenda
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260915113006_resolve_general_followup_from_linked_contact.sql"
+
+      - name: Probar roles, seguridad, comunidades, estadísticas, avisos y agenda
+        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql supabase/tests/r10_statistics_portfolio_alignment_test.sql supabase/tests/database/r10_disable_agenda_email_notifications.test.sql supabase/tests/database/r10_agenda_scope_resolution.test.sql
 
       - name: Detener el entorno efímero
         if: always()
