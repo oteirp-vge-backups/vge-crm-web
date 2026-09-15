@@ -204,7 +204,7 @@ jobs:
       - name: Instalar Chromium aislado
         run: npx playwright install --with-deps chromium
 
-      - name: Ejecutar seis recorridos críticos con Supabase simulado
+      - name: Ejecutar siete recorridos críticos con Supabase simulado
         run: npm run test:browser
 
       - name: Conservar evidencia sólo si falla
