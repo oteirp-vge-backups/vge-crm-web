@@ -116,7 +116,7 @@ jobs:
           npm run test:release
 
   database-roles:
-    name: Supabase local, permisos y estadísticas (68 pruebas)
+    name: Supabase local, permisos, estadísticas y avisos (75 pruebas)
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -162,8 +162,18 @@ jobs:
           PGPASSWORD: postgres
         run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260913071737_align_statistics_with_portfolio_status.sql"
 
-      - name: Probar roles, seguridad, comunidades y estadísticas
-        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql supabase/tests/r10_statistics_portfolio_alignment_test.sql
+      - name: Preparar trabajos Cron inertes para la prueba de avisos
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file supabase/tests/fixtures/r10_agenda_email_cron_fixture.sql
+
+      - name: Desactivar los avisos automáticos por email
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260915103838_disable_agenda_email_notifications.sql"
+
+      - name: Probar roles, seguridad, comunidades, estadísticas y avisos
+        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql supabase/tests/r10_statistics_portfolio_alignment_test.sql supabase/tests/database/r10_disable_agenda_email_notifications.test.sql
 
       - name: Detener el entorno efímero
         if: always()
