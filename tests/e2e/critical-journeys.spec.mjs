@@ -80,6 +80,50 @@ test("estadísticas distingue centros efectivos y viajes a cotización", async (
   await expect(travelQuote.locator(".value")).toHaveText("4");
 });
 
+test("el contacto explica la fecha cerrada y permite atender viaje y agenda general una sola vez", async ({ page }) => {
+  await page.goto("/?r10-auth=1");
+  await page.locator('[data-view="overdue"]').click();
+  await page.getByRole("button", { name: "Abrir ficha" }).click();
+
+  const nextDate = page.locator("#cNext");
+  const nextTime = page.locator("#cNextTime");
+  const resolveGeneral = page.locator("#cResolveGeneral");
+
+  await expect(resolveGeneral).toBeDisabled();
+  await nextDate.fill("2099-05-01");
+  await nextTime.fill("10:30");
+  await page.locator("#cResult").selectOption({ label: "Pide presupuesto" });
+  await expect(nextDate).toBeDisabled();
+  await expect(nextTime).toBeDisabled();
+  await expect(nextDate).toHaveValue("");
+  await expect(page.locator("#cNextHelp")).toContainText("cierra este seguimiento");
+
+  await page.locator("#cResult").selectOption({ label: "Volver a contactar" });
+  await expect(nextDate).toBeEnabled();
+  await nextDate.fill("2099-05-01");
+  await nextTime.fill("10:30");
+
+  await page.locator('input[name="cOpportunity"][value="VGE-O-MOCK-1"]').check();
+  await expect(resolveGeneral).toBeEnabled();
+  await resolveGeneral.check();
+  await page.locator("#cChannel").selectOption({ label: "Llamada" });
+  await page.locator("#cNote").fill("La misma conversación atiende el viaje y el seguimiento general.");
+  await page.getByRole("button", { name: "Registrar contacto" }).click();
+
+  await expect.poll(async () => page.evaluate(() => {
+    const call = window.__r10RpcCalls.findLast(item => item.name === "register_contact_multi_v1");
+    return call ? {
+      opportunityIds: call.args.p_opportunity_ids,
+      alsoResolveGeneral: call.args.p_also_resolve_general_followup,
+      hasNextDate: String(call.args.p_next_contact_at || "").includes("2099-05-01"),
+    } : null;
+  })).toEqual({
+    opportunityIds: ["VGE-O-MOCK-1"],
+    alsoResolveGeneral: true,
+    hasNextDate: true,
+  });
+});
+
 test("incidencia simulada queda diagnosticable por correlación y sin PII", async ({ page }) => {
   await page.goto("/?r10-auth=1");
   await expect(page.locator("#app")).toBeVisible();

@@ -1,7 +1,27 @@
 (function installSupabaseMock() {
   window.__r10TechnicalIncidents = [];
+  window.__r10RpcCalls = [];
   const session = {
     user: { id: "10000000-0000-4000-8000-000000000003", email: "seller@example.invalid" },
+  };
+  const agendaCenter = {
+    id: "R10-MOCK-AGENDA",
+    school: "Centro agenda de prueba",
+    city: "León",
+    province: "León",
+    community: "Castilla y León",
+    school_phone: "987000000",
+    school_email: "centro@example.invalid",
+    assigned_to: "OP-SELLER",
+    status: "Pendiente",
+    next_contact_at: "2000-01-15T09:00:00Z",
+    last_contact_at: null,
+    last_result: null,
+    last_operator_code: null,
+    contact_count: 0,
+    state_version: 7,
+    state_updated_at: "2000-01-01T09:00:00Z",
+    row_updated_at: "2000-01-01T09:00:00Z",
   };
 
   function rpcData(name) {
@@ -22,8 +42,44 @@
       }],
       get_visible_operators: [{ code: "OP-SELLER", display_name: "Comercial de prueba", role: "seller", access_role: "seller" }],
       get_current_campaign_v1: { code: "R10", label: "Campaña de prueba" },
-      get_visible_travel_summaries_v1: { centers: [] },
-      get_agenda_items_v2: { items: [] },
+      get_visible_travel_summaries_v1: { centers: [{
+        center_id: agendaCenter.id,
+        opportunity_total: 1,
+        opportunity_pending: 1,
+        opportunity_interested: 0,
+        opportunity_quoted: 0,
+        opportunity_not_interested: 0,
+        opportunity_overdue: 0,
+        opportunity_next_contact_at: null,
+      }] },
+      get_agenda_items_v2: { items: [{
+        task_key: `center:${agendaCenter.id}`,
+        task_type: "Centro",
+        title: "Seguimiento general",
+        center_id: agendaCenter.id,
+        assigned_to: "OP-SELLER",
+        status: "Pendiente",
+        due_at: agendaCenter.next_contact_at,
+        contact_name: "",
+        contact_role: "",
+        contact_mobile: "",
+        contact_email: agendaCenter.school_email,
+      }] },
+      get_center_history_v2: [],
+      get_center_workspace_v1: {
+        campaign: { code: "R10", label: "Campaña de prueba" },
+        contacts: [],
+        opportunities: [{
+          opportunity_id: "VGE-O-MOCK-1",
+          center_id: agendaCenter.id,
+          cycle: "Bachillerato",
+          destination: "Italia",
+          status: "Pendiente",
+          active: true,
+          opportunity_version: 3,
+        }],
+      },
+      register_contact_multi_v1: { ok: true },
       get_statistics_dashboard_v2: {
         schema_version: 2,
         generated_at: "2026-09-13T08:00:00Z",
@@ -73,7 +129,7 @@
   }
 
   function queryBuilder(table) {
-    const response = { data: table === "crm_centers" ? [] : [], error: null };
+    const response = { data: table === "crm_centers" ? [agendaCenter] : [], error: null };
     const builder = {
       select() { return builder; },
       order() { return builder; },
@@ -103,7 +159,10 @@
           async signOut() { return { error: null }; },
           onAuthStateChange() { return { data: { subscription: { unsubscribe() {} } } }; },
         },
-        async rpc(name) { return { data: rpcData(name), error: null }; },
+        async rpc(name, args = {}) {
+          window.__r10RpcCalls.push({ name, args });
+          return { data: rpcData(name), error: null };
+        },
         from(table) { return queryBuilder(table); },
         functions: {
           async invoke(name, options = {}) {
