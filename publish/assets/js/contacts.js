@@ -13,8 +13,8 @@ function syncContactScopeControls(){
 }
 async function addContact(){
  const c=centers.find(x=>x.id===currentCenterId);if(!c)return;
- if(contactEventInFlight){showDialogActionStatus("El contacto se está registrando. Espera un momento…","info");return}
- const btn=document.getElementById("contactForm")?.querySelector('button[type="submit"]');
+ if(contactEventInFlight){showDialogActionStatus("Ya se está guardando una entrada del historial. Espera un momento…","info");return}
+ const btn=document.getElementById("contactForm")?.querySelector('button[type="submit"]'),noteBtn=document.getElementById("internalNoteBtn");
  const date=document.getElementById("cDate").value,channel=document.getElementById("cChannel").value,result=document.getElementById("cResult").value,note=document.getElementById("cNote").value.trim(),closesFollowup=["Pide presupuesto","No interesado"].includes(result),next=closesFollowup?"":document.getElementById("cNext").value,nextInput=closesFollowup?"":document.getElementById("cNextTime").value,nextTime=next?(nextInput||"09:00"):"";
  if(result==="Volver a contactar"&&!next){alert("Indica la fecha del próximo contacto para no perder este seguimiento.");document.getElementById("cNext")?.focus();return}
  const contactTime=date===localISO()?localTime():"12:00";
@@ -22,7 +22,7 @@ async function addContact(){
  const opportunityIds=[...document.querySelectorAll('input[name="cOpportunity"]:checked')].map(x=>x.value),alsoResolveGeneral=opportunityIds.length>0&&!!document.getElementById("cResolveGeneral")?.checked,versions={};
  (c.workspace?.opportunities||[]).forEach(o=>{if(opportunityIds.includes(o.opportunity_id))versions[o.opportunity_id]=Number(o.opportunity_version||1)});
  const contactId=Number(document.getElementById("cContactId")?.value||0)||null;
- contactEventInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando…"}showDialogActionStatus("Registrando contacto…","info");
+ contactEventInFlight=true;if(btn){btn.disabled=true;btn.textContent="Registrando…"}if(noteBtn)noteBtn.disabled=true;showDialogActionStatus("Registrando contacto…","info");
  try{
   const {error}=await supabaseRpc("register_contact_multi_v1",{p_center_id:c.id,p_contacted_at:contactedAt,p_channel:channel,p_result:result,p_notes:note,p_next_contact_at:nextAt,p_expected_state_version:Number(c.stateVersion||1),p_contact_id:contactId,p_opportunity_ids:opportunityIds,p_expected_opportunity_versions:versions,p_also_resolve_general_followup:alsoResolveGeneral});
   if(error)throw error;
@@ -30,8 +30,30 @@ async function addContact(){
   c.lastContactAt=contactedAt;c.lastResult=result;c.lastOperator=currentUser;c.contactCount=(c.contactCount||0)+1;
   await refreshOpenCenter(`Contacto registrado correctamente${opportunityIds.length?` · vinculado a ${opportunityIds.length} viaje${opportunityIds.length===1?"":"s"}${alsoResolveGeneral?" · seguimiento general atendido":""}`:" · seguimiento general"}`,null,"contact-event");
  }catch(error){
-  const msg=friendlyError(error,"No se ha podido registrar el contacto.");if(btn){btn.disabled=false;btn.textContent="Registrar contacto"}showDialogActionStatus(`✕ ${msg}`,"error");alert(msg)
- }finally{contactEventInFlight=false}
+  const msg=friendlyError(error,"No se ha podido registrar el contacto.");showDialogActionStatus(`✕ ${msg}`,"error");alert(msg)
+ }finally{
+  contactEventInFlight=false;
+  const currentForm=document.getElementById("contactForm"),currentBtn=currentForm?.querySelector('button[type="submit"]'),currentNoteBtn=document.getElementById("internalNoteBtn");
+  if(currentBtn){currentBtn.disabled=false;currentBtn.textContent="Registrar contacto"}if(currentNoteBtn){currentNoteBtn.disabled=false;currentNoteBtn.textContent="Guardar anotación interna"}
+ }
+}
+async function addInternalNote(){
+ const c=centers.find(x=>x.id===currentCenterId),input=document.getElementById("cNote");if(!c||!input)return;
+ if(contactEventInFlight){showDialogActionStatus("Ya se está guardando una entrada del historial. Espera un momento…","info");return}
+ const note=input.value.trim();
+ if(!note){alert("Escribe la anotación interna antes de guardarla.");input.focus();return}
+ const form=document.getElementById("contactForm"),contactBtn=form?.querySelector('button[type="submit"]'),noteBtn=document.getElementById("internalNoteBtn");
+ contactEventInFlight=true;if(contactBtn)contactBtn.disabled=true;if(noteBtn){noteBtn.disabled=true;noteBtn.textContent="Guardando anotación…"}showDialogActionStatus("Guardando anotación interna…","info");
+ try{
+  const {error}=await supabaseRpc("register_internal_note_v1",{p_center_id:c.id,p_notes:note});if(error)throw error;
+  await refreshOpenCenter("Anotación interna guardada · no cuenta como contacto",null,"contact-event");
+ }catch(error){
+  const msg=friendlyError(error,"No se ha podido guardar la anotación interna.");showDialogActionStatus(`✕ ${msg}`,"error");alert(msg)
+ }finally{
+  contactEventInFlight=false;
+  const currentForm=document.getElementById("contactForm"),currentContactBtn=currentForm?.querySelector('button[type="submit"]'),currentNoteBtn=document.getElementById("internalNoteBtn");
+  if(currentContactBtn){currentContactBtn.disabled=false;currentContactBtn.textContent="Registrar contacto"}if(currentNoteBtn){currentNoteBtn.disabled=false;currentNoteBtn.textContent="Guardar anotación interna"}
+ }
 }
 async function saveContactRecord(contactId){
  const c=centers.find(x=>x.id===currentCenterId),contact=(c?.workspace?.contacts||[]).find(x=>Number(x.contact_id)===Number(contactId)),card=document.querySelector(`.contact-record[data-contact-id="${contactId}"]`);if(!c||!contact||!card)return;

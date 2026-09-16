@@ -7,8 +7,8 @@ const contracts = {
     markers: ["renderArchivedCenters", "renderList", "createNewCenter", "openCenter", "saveProfile", "bindCenterDialog"],
   },
   "contacts.js": {
-    declarations: 8,
-    markers: ["contactsHtml", "syncContactFollowupControls", "syncContactScopeControls", "addContact", "saveContactRecord", "archiveContactRecord", "createCenterContact"],
+    declarations: 9,
+    markers: ["contactsHtml", "syncContactFollowupControls", "syncContactScopeControls", "addContact", "addInternalNote", "saveContactRecord", "archiveContactRecord", "createCenterContact"],
   },
   "travel-agenda.js": {
     declarations: 21,
