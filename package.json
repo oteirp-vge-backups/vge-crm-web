@@ -6,7 +6,7 @@
   "scripts": {
     "build:publish": "node scripts/sync-publish.mjs --write",
     "check:publish": "node scripts/sync-publish.mjs",
-    "check:frontend": "node tests/quality/check-frontend-syntax.mjs && node tests/quality/check-functional-modules.mjs && node tests/quality/check-observability.mjs && node tests/quality/check-contact-agenda-scope.mjs",
+    "check:frontend": "node tests/quality/check-frontend-syntax.mjs && node tests/quality/check-functional-modules.mjs && node tests/quality/check-observability.mjs && node tests/quality/check-contact-agenda-scope.mjs && node tests/quality/check-province-filter.mjs",
     "check:obsolete": "node tests/quality/check-obsolete-components.mjs",
     "check:staging-isolation": "node tests/quality/check-staging-isolation.mjs",
     "check:release": "node scripts/r10-release.mjs preflight",
