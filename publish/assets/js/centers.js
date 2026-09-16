@@ -60,12 +60,21 @@ function baseForView(){
  if(currentView==="unassigned")return centers.filter(c=>c.assignedTo==="Sin asignar");
  return centers.slice();
 }
+// Optional filter state keeps all existing navigation resets backwards compatible.
+const NO_PROVINCE_FILTER = "__missing_province__";
+function provinceFilterChoices(base=baseForView()){
+ const scoped=filters.community?base.filter(c=>c.community===filters.community):base;
+ const values=[...new Set(scoped.map(c=>String(c.province||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+ if(scoped.some(c=>!String(c.province||"").trim()))values.push(NO_PROVINCE_FILTER);
+ return values;
+}
 function filtered(){
  let arr=baseForView(), t=localISO(), q=norm(filters.search);
  if(q)arr=arr.filter(c=>norm([c.school,c.city,c.province,c.community,c.id,c.contactName,c.schoolEmail,c.directEmail,c._agendaItem?.title,c._agendaItem?.opportunity_id].join(" ")).includes(q));
  const statusFilter=currentView==="status"?activeStatus:filters.status;
  if(statusFilter)arr=arr.filter(c=>portfolioStatus(c)===statusFilter);
  if(filters.community)arr=arr.filter(c=>c.community===filters.community);
+ if(filters.province)arr=arr.filter(c=>filters.province===NO_PROVINCE_FILTER?!String(c.province||"").trim():String(c.province||"").trim()===filters.province);
  if(filters.seller)arr=arr.filter(c=>c.assignedTo===filters.seller);
  if(filters.quick==="pending")arr=arr.filter(c=>portfolioStatus(c)==="Pendiente");
  if(filters.quick==="today")arr=arr.filter(c=>nextParts(c).date===t);
@@ -89,6 +98,10 @@ function renderList(){
  setTitle(...titles[currentView]);
  const base=baseForView();
  const communities=[...new Set(base.map(c=>c.community).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+ const provinces=provinceFilterChoices(base),selectedProvince=filters.province||"";
+ // If data refresh removes the last match, show the active filter rather than
+ // silently broadening the results or hiding the selected value.
+ if(selectedProvince&&!provinces.includes(selectedProvince))provinces.push(selectedProvince);
  const showSeller=currentView==="all";
  const showStatusFilter=currentView!=="status";
  const data=filtered(), pageSize=50,totalPages=Math.max(1,Math.ceil(data.length/pageSize));currentPage=Math.min(currentPage,totalPages);
@@ -101,7 +114,8 @@ function renderList(){
  <div class="filters">
    <input class="search" id="searchFilter" placeholder="Buscar centro, ciudad, provincia, ID o contacto…" value="${esc(filters.search)}">
    ${showStatusFilter?`<select id="statusFilter"><option value="">Todos los estados</option>${options(STATUSES,filters.status)}</select>`:""}
-   <select id="communityFilter"><option value="">Todas las zonas</option>${communities.map(x=>`<option ${x===filters.community?"selected":""}>${esc(x)}</option>`).join("")}</select>
+   <select id="communityFilter" aria-label="Filtrar por comunidad autónoma"><option value="">Todas las zonas</option>${communities.map(x=>`<option ${x===filters.community?"selected":""}>${esc(x)}</option>`).join("")}</select>
+   <select id="provinceFilter" aria-label="Filtrar por provincia"><option value="">Todas las provincias</option>${provinces.map(x=>`<option value="${esc(x)}" ${x===selectedProvince?"selected":""}>${esc(x===NO_PROVINCE_FILTER?"Sin provincia informada":x)}</option>`).join("")}</select>
    ${showSeller?`<select id="sellerFilter"><option value="">Todo el equipo</option>${operatorOptions(filters.seller,false)}</select>`:""}
  </div>
  ${!["status","overdue"].includes(currentView)?`<div class="chips">
@@ -139,8 +153,11 @@ function bindFilters(){
    searchTimer=setTimeout(()=>{renderList();requestAnimationFrame(()=>{const n=document.getElementById("searchFilter");if(n){n.focus();const p=Math.min(pos,n.value.length);try{n.setSelectionRange(p,p)}catch(e){}}})},400);
   });
  }
- const bindChange=(id,key)=>{const el=document.getElementById(id);if(el)el.addEventListener("change",()=>{filters[key]=el.value;currentPage=1;renderList()})};
- bindChange("statusFilter","status");bindChange("communityFilter","community");bindChange("sellerFilter","seller");
+ const bindChange=(id,key,afterChange)=>{const el=document.getElementById(id);if(el)el.addEventListener("change",()=>{filters[key]=el.value;if(afterChange)afterChange();currentPage=1;renderList()})};
+ bindChange("statusFilter","status");bindChange("sellerFilter","seller");bindChange("provinceFilter","province");
+ bindChange("communityFilter","community",()=>{
+  if(filters.province&&!provinceFilterChoices().includes(filters.province))filters.province="";
+ });
  document.querySelectorAll("[data-quick]").forEach(b=>b.onclick=()=>{filters.quick=b.dataset.quick;currentPage=1;renderList()});
  document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{currentPage+=Number(b.dataset.page);renderList()});
  const jump=()=>{const inp=document.getElementById("pageJumpInput");if(!inp)return;const max=Number(inp.max)||1;const n=Math.max(1,Math.min(max,Number(inp.value)||1));currentPage=n;renderList()};

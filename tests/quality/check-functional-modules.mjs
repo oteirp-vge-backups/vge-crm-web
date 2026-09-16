@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 const contracts = {
   "centers.js": {
-    declarations: 37,
+    declarations: 39,
     markers: ["renderArchivedCenters", "renderList", "createNewCenter", "openCenter", "saveProfile", "bindCenterDialog"],
   },
   "contacts.js": {
