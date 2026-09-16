@@ -1,0 +1,64 @@
+name: R10 - normalización de provincias
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/20260916101500_normalize_center_provinces.sql"
+      - "supabase/tests/database/r10_province_normalization.test.sql"
+      - ".github/workflows/r10-province-normalization.yml"
+  push:
+    branches:
+      - "hotfix/r10-province-normalization"
+
+permissions:
+  contents: read
+
+jobs:
+  province-normalization:
+    name: Provincias canónicas y coherentes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v5
+
+      - name: Instalar Supabase CLI fijada
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.115.0
+
+      - name: Verificar la línea base
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          (cd supabase/baseline && sha256sum --check current-schema.sql.sha256)
+
+      - name: Iniciar Supabase local efímero
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mv supabase/migrations "${RUNNER_TEMP}/r10-production-migrations"
+          mkdir -p supabase/migrations
+          supabase start
+
+      - name: Aplicar línea base y dependencias previas
+        env:
+          PGPASSWORD: postgres
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file supabase/baseline/current-schema.sql
+          psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260826061114_reduce_security_definer_surface.sql"
+          psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260828072643_normalize_center_communities.sql"
+
+      - name: Aplicar el hotfix de provincias
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260916101500_normalize_center_provinces.sql"
+
+      - name: Ejecutar las 12 pruebas específicas
+        run: supabase test db supabase/tests/database/r10_province_normalization.test.sql
+
+      - name: Detener el entorno efímero
+        if: always()
+        run: supabase stop --no-backup
