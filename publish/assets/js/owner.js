@@ -179,8 +179,8 @@ async function exportJSON(){
    const backup=Array.isArray(data)&&data.length===1&&data[0]?.schema_version?data[0]:data;
    if(!backup||!Array.isArray(backup.centers)||!Array.isArray(backup.contact_events))throw new Error("BACKUP_PAYLOAD_INVALID");
    const activeCount=backup.centers.filter(c=>c.active).length,archivedCount=backup.centers.length-activeCount;
-   await logExport("json","owner-full-v15",backup.centers.length,{events:backup.contact_events.length,travel_opportunities:(backup.travel_opportunities||[]).length,center_contacts:(backup.center_contacts||[]).length,active_centers:activeCount,archived_centers:archivedCount,schema_version:backup.schema_version});
-   download(`crm-vge-copia-completa-v15-${localISO()}.json`,JSON.stringify(backup,null,2));
+   await logExport("json","owner-full-v16",backup.centers.length,{events:backup.contact_events.length,internal_notes:(backup.center_internal_notes||[]).length,travel_opportunities:(backup.travel_opportunities||[]).length,center_contacts:(backup.center_contacts||[]).length,active_centers:activeCount,archived_centers:archivedCount,schema_version:backup.schema_version});
+   download(`crm-vge-copia-completa-v16-${localISO()}.json`,JSON.stringify(backup,null,2));
    toast("Copia completa generada");
  }catch(e){alert(friendlyError(e,"No se ha podido realizar la copia completa."))}
 }

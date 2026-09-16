@@ -8,8 +8,8 @@ select is(
    from pg_proc p
    join pg_namespace n on n.oid = p.pronamespace
    where n.nspname in ('public', 'private') and p.prosecdef),
-  54::bigint,
-  'la superficie SECURITY DEFINER baja de 68 a 54 funciones'
+  55::bigint,
+  'la superficie SECURITY DEFINER queda en 55 funciones tras añadir la RPC de anotaciones'
 );
 
 select is(
@@ -99,12 +99,13 @@ select is(
     'owner_export_full_backup_v3', 'owner_list_operators',
     'owner_list_role_audit', 'owner_permanently_delete_center',
     'owner_set_operator_access_role', 'register_contact_multi_v1',
+    'register_internal_note_v1',
     'restore_center', 'restore_travel_opportunity_v1',
     'search_center_duplicates', 'touch_operator_presence',
     'update_center_contact_v1', 'update_center_profile_v2',
     'update_travel_opportunity_v1'
   ]::name[],
-  'authenticated sólo ejecuta las 36 RPC privilegiadas vigentes y justificadas'
+  'authenticated sólo ejecuta las 37 RPC privilegiadas vigentes y justificadas'
 );
 
 select is(

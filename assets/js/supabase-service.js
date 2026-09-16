@@ -80,7 +80,7 @@ async function refreshCenterSnapshot(id){
 }
 async function loadHistory(c){
  const data=await rpcJson("get_center_history_v2",{p_center_id:c.id});
- c.history=(data||[]).map(r=>{const n=splitISO(r.next_contact_at);return {id:r.id,date:localISO(new Date(r.contacted_at)),contactedAt:r.contacted_at,channel:r.channel,result:r.result,note:r.notes||"",nextContact:n.date,nextContactTime:n.time,author:r.operator_name||r.operator_code,createdAt:r.created_at,contactName:r.contact_name||"",contactRole:r.contact_role||"",opportunities:r.opportunities||[],alsoResolvedGeneralFollowup:!!r.also_resolved_general_followup}});
+ c.history=(data||[]).map(r=>{const n=splitISO(r.next_contact_at);return {id:r.id,entryType:r.entry_type||"contact",date:localISO(new Date(r.contacted_at)),contactedAt:r.contacted_at,channel:r.channel||"",result:r.result||"",note:r.notes||"",nextContact:n.date,nextContactTime:n.time,author:r.operator_name||r.operator_code,createdAt:r.created_at,contactName:r.contact_name||"",contactRole:r.contact_role||"",opportunities:r.opportunities||[],alsoResolvedGeneralFollowup:!!r.also_resolved_general_followup}});
 }
 async function loadWorkspace(c){c.workspace=await rpcJson("get_center_workspace_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null});return c.workspace}
 async function saveCenter(c){

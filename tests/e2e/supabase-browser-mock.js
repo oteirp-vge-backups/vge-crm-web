@@ -23,6 +23,7 @@
     state_updated_at: "2000-01-01T09:00:00Z",
     row_updated_at: "2000-01-01T09:00:00Z",
   };
+  const internalNotes = [];
 
   function rpcData(name) {
     const values = {
@@ -65,7 +66,7 @@
         contact_mobile: "",
         contact_email: agendaCenter.school_email,
       }] },
-      get_center_history_v2: [],
+      get_center_history_v2: internalNotes,
       get_center_workspace_v1: {
         campaign: { code: "R10", label: "Campaña de prueba" },
         contacts: [],
@@ -161,6 +162,28 @@
         },
         async rpc(name, args = {}) {
           window.__r10RpcCalls.push({ name, args });
+          if (name === "register_internal_note_v1") {
+            const createdAt = new Date().toISOString();
+            const note = {
+              id: `note-${internalNotes.length + 1}`,
+              entry_type: "internal_note",
+              center_id: args.p_center_id,
+              operator_code: "OP-SELLER",
+              operator_name: "Comercial de prueba",
+              contacted_at: createdAt,
+              created_at: createdAt,
+              channel: null,
+              result: null,
+              notes: args.p_notes,
+              next_contact_at: null,
+              contact_name: null,
+              contact_role: null,
+              opportunities: [],
+              also_resolved_general_followup: false,
+            };
+            internalNotes.unshift(note);
+            return { data: note, error: null };
+          }
           return { data: rpcData(name), error: null };
         },
         from(table) { return queryBuilder(table); },

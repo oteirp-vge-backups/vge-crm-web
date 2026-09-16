@@ -110,13 +110,13 @@ jobs:
 
       - name: Validar el contrato de publicación y retorno
         env:
-          R10_ROLLBACK_REF: 67949891bf93387cde377d1dea6e9f0df392e7be
+          R10_ROLLBACK_REF: fc688f5c29434309000f69afdaeab31390b4485f
         run: |
           npm run check:release -- --base-ref "$R10_ROLLBACK_REF"
           npm run test:release
 
   database-roles:
-    name: Supabase local, permisos, estadísticas y agenda (95 pruebas)
+    name: Supabase local, permisos y contratos funcionales
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -177,8 +177,18 @@ jobs:
           PGPASSWORD: postgres
         run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260915113006_resolve_general_followup_from_linked_contact.sql"
 
-      - name: Probar roles, seguridad, comunidades, estadísticas, avisos y agenda
-        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql supabase/tests/r10_statistics_portfolio_alignment_test.sql supabase/tests/database/r10_disable_agenda_email_notifications.test.sql supabase/tests/database/r10_agenda_scope_resolution.test.sql
+      - name: Aplicar la normalización de provincias
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260916101500_normalize_center_provinces.sql"
+
+      - name: Aplicar las anotaciones internas
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260916193916_add_internal_notes_history.sql"
+
+      - name: Probar roles, seguridad y contratos funcionales
+        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql supabase/tests/r10_statistics_portfolio_alignment_test.sql supabase/tests/database/r10_disable_agenda_email_notifications.test.sql supabase/tests/database/r10_agenda_scope_resolution.test.sql supabase/tests/database/r10_province_normalization.test.sql supabase/tests/database/r10_internal_notes.test.sql
 
       - name: Detener el entorno efímero
         if: always()
@@ -204,7 +214,7 @@ jobs:
       - name: Instalar Chromium aislado
         run: npx playwright install --with-deps chromium
 
-      - name: Ejecutar siete recorridos críticos con Supabase simulado
+      - name: Ejecutar los recorridos críticos con Supabase simulado
         run: npm run test:browser
 
       - name: Conservar evidencia sólo si falla
@@ -256,7 +266,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      R10_ROLLBACK_REF: 67949891bf93387cde377d1dea6e9f0df392e7be
+      R10_ROLLBACK_REF: fc688f5c29434309000f69afdaeab31390b4485f
     steps:
       - name: Obtener el repositorio y el punto de retorno
         uses: actions/checkout@v5

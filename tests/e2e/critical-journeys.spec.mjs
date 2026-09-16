@@ -80,6 +80,40 @@ test("estadísticas distingue centros efectivos y viajes a cotización", async (
   await expect(travelQuote.locator(".value")).toHaveText("4");
 });
 
+test("la anotación interna usa solo texto y no se convierte en contacto", async ({ page }) => {
+  await page.goto("/?r10-auth=1");
+  await page.locator('[data-view="overdue"]').click();
+  await page.getByRole("button", { name: "Abrir ficha" }).click();
+
+  await expect(page.locator("#cChannel")).toHaveAttribute("required", "");
+  await expect(page.locator("#cResult")).toHaveAttribute("required", "");
+  await expect(page.locator("#cChannel")).toHaveValue("");
+  await expect(page.locator("#cResult")).toHaveValue("");
+
+  await page.locator("#cNote").fill("Pendiente de revisión interna; todavía no se ha contactado con el centro.");
+  await page.getByRole("button", { name: "Guardar anotación interna" }).click();
+
+  await expect.poll(async () => page.evaluate(() => {
+    const noteCall = window.__r10RpcCalls.findLast(item => item.name === "register_internal_note_v1");
+    const contactCalls = window.__r10RpcCalls.filter(item => item.name === "register_contact_multi_v1").length;
+    return noteCall ? {
+      centerId: noteCall.args.p_center_id,
+      notes: noteCall.args.p_notes,
+      contactCalls,
+    } : null;
+  })).toEqual({
+    centerId: "R10-MOCK-AGENDA",
+    notes: "Pendiente de revisión interna; todavía no se ha contactado con el centro.",
+    contactCalls: 0,
+  });
+
+  await expect(page.getByRole("heading", { name: /Historial de actividad \(0 contactos · 1 anotación interna\)/ })).toBeVisible();
+  await expect(page.locator(".event.internal-note")).toContainText("Anotación interna");
+  await expect(page.locator(".event.internal-note")).toContainText("No cuenta como contacto");
+  await expect(page.locator(".event.internal-note")).toContainText("Pendiente de revisión interna");
+  await expect.poll(() => page.evaluate(() => centers.find(c => c.id === "R10-MOCK-AGENDA")?.contactCount)).toBe(0);
+});
+
 test("el contacto explica la fecha cerrada y permite atender viaje y agenda general una sola vez", async ({ page }) => {
   await page.goto("/?r10-auth=1");
   await page.locator('[data-view="overdue"]').click();
