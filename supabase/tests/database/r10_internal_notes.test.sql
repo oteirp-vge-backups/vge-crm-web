@@ -38,6 +38,7 @@ insert into r10_note_state_snapshot(payload)
 select to_jsonb(s)
 from public.center_state s
 where s.center_id = 'R10-NOTES-001';
+grant select on r10_note_state_snapshot to authenticated;
 
 select has_table(
   'public', 'center_internal_notes',
