@@ -24,6 +24,11 @@ values
   ('R10-NOTES-B', 'Segundo comercial notas', 'notes-seller-b@example.invalid',
    '93000000-0000-4000-8000-000000000003', 'seller', 'seller', true);
 
+insert into public.campaigns
+  (code, label, starts_on, ends_on, active, is_default)
+values
+  ('R10NOTES26', 'Campaña pruebas anotaciones', '2026-09-01', '2027-08-31', true, true);
+
 insert into public.centers(id, school, city, province, community)
 values ('R10-NOTES-001', 'Centro notas internas', 'León', 'León', 'Castilla y León');
 
@@ -148,7 +153,7 @@ select is(
 );
 
 select is(
-  (public.get_statistics_dashboard_v2(30, null, null, null)
+  (public.get_statistics_dashboard_v2(30, null, null, 'R10NOTES26')
     -> 'kpis' ->> 'contacts_period')::bigint,
   0::bigint,
   'la anotación no suma en los contactos del periodo'
@@ -210,7 +215,7 @@ select is(
 );
 
 select is(
-  (public.get_statistics_dashboard_v2(30, null, null, null)
+  (public.get_statistics_dashboard_v2(30, null, null, 'R10NOTES26')
     -> 'kpis' ->> 'contacts_period')::bigint,
   1::bigint,
   'las estadísticas contabilizan el contacto real y excluyen la anotación'
