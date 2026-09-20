@@ -61,6 +61,36 @@ jobs:
           }
           NODE
 
+      - name: Verificar el inventario productivo actual
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto');
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const ledger = JSON.parse(fs.readFileSync('supabase/baseline/production-ledger-current.json', 'utf8'));
+          if (ledger.applied_count !== ledger.migrations.length || ledger.applied_count !== 49) {
+            throw new Error('El inventario productivo debe contener las 49 migraciones observadas.');
+          }
+          const versions = ledger.migrations.map((migration) => migration.version);
+          if (new Set(versions).size !== versions.length) {
+            throw new Error('El inventario productivo contiene versiones duplicadas.');
+          }
+          const tracked = fs.readdirSync('supabase/migrations').filter((name) => name.endsWith('.sql')).sort();
+          const mapped = ledger.source_mappings.map((item) => item.repository_file).sort();
+          if (JSON.stringify(tracked) !== JSON.stringify(mapped)) {
+            throw new Error('La correspondencia productiva no cubre exactamente las fuentes SQL presentes.');
+          }
+          for (const item of ledger.source_mappings) {
+            const bytes = fs.readFileSync(path.join('supabase/migrations', item.repository_file));
+            const digest = crypto.createHash('sha256').update(bytes).digest('hex');
+            if (digest !== item.sha256) throw new Error(`SHA-256 distinto para ${item.repository_file}`);
+            const applied = ledger.migrations.find((migration) => migration.version === item.production_version);
+            if (!applied || applied.name !== item.name) throw new Error(`Versión productiva no reconciliada para ${item.repository_file}`);
+          }
+          NODE
+
   static-analysis:
     name: Sintaxis y compilación
     runs-on: ubuntu-24.04
@@ -225,7 +255,7 @@ jobs:
           path: |
             playwright-report/
             test-results/
-          retention-days: 1
+          retention-days: 30
           if-no-files-found: ignore
 
   immutable-release-artifact:
@@ -256,7 +286,7 @@ jobs:
         with:
           name: r10-release-${{ github.sha }}
           path: dist/r10-release/
-          retention-days: 1
+          retention-days: 90
           if-no-files-found: error
 
   staging-and-rollback-simulation:
@@ -324,7 +354,7 @@ jobs:
         with:
           name: r10-rollback-evidence-${{ github.run_id }}
           path: ${{ runner.temp }}/r10-rollback-evidence.json
-          retention-days: 1
+          retention-days: 90
           if-no-files-found: error
 
   quality-gate:
