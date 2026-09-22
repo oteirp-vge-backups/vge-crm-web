@@ -1,13 +1,14 @@
 # R10 — puerta de cierre de estabilización
 
-Estado: `PREPARADA — DECISIÓN PENDIENTE`.
+Estado: `CERRADA — GO`.
 
-Fecha de preparación: 20 de septiembre de 2026.  
+Fecha de preparación: 20 de septiembre de 2026.
 Fecha de decisión: 22 de septiembre de 2026.
+Hora del corte final: 19:34 CEST.
 
-## Veredicto provisional
+## Veredicto final
 
-R10 dispone de evidencia suficiente para preparar su cierre, pero no se declara estable de forma definitiva antes de completar el último día de uso intensivo y confirmar que no existe una incidencia bloqueante abierta. Durante esta preparación no se modifica producción ni se añade funcionalidad.
+Fernando confirma que no existe ninguna incidencia bloqueante abierta tras el periodo de uso intensivo. La comprobación final de GitHub, Supabase y la web pública cumple todas las condiciones GO. R10 queda declarada estable sobre `r10-phase10.0.4` al fusionarse este cierre y fijarse la etiqueta homónima. Este cierre no modifica la base de datos ni añade funcionalidad.
 
 ## Evidencia operativa
 
@@ -23,11 +24,12 @@ R10 dispone de evidencia suficiente para preparar su cierre, pero no se declara 
 | RLS | 21 de 21 tablas públicas |
 | Acceso anónimo privilegiado | 0 funciones `SECURITY DEFINER` ejecutables |
 | Usuarios reales | 4 usuarios observados desde el 14 de septiembre |
-| Contactos desde el 27 de agosto | 353 |
-| Contactos desde el 14 de septiembre | 262 |
-| Contactos desde `10.0.4` | 60 |
-| Anotaciones internas reales | 13 |
-| Viajes registrados | 15 |
+| Contactos totales | 389 |
+| Contactos registrados desde el 27 de agosto | 387 |
+| Contactos registrados desde el 14 de septiembre | 296 |
+| Contactos registrados desde `10.0.4` | 94 |
+| Anotaciones internas reales | 15 |
+| Viajes registrados | 16 |
 | Cola de email | 49 enviados, 1 cancelado, 0 pendientes y 0 fallidos |
 
 Los recuentos son agregados y no contienen datos personales.
@@ -41,14 +43,14 @@ Los recuentos son agregados y no contienen datos personales.
 - RLS, permisos directos, RPC, historial y backup V16 verificados.
 - Asesores sin nuevas alertas críticas: 3 INFO conocidas por tablas internas y 37 WARN de RPC privilegiadas revisadas.
 
-## Condiciones GO del 22 de septiembre
+## Resultado de las condiciones GO
 
-1. Fernando, Leticia, Elena y Silvia confirman que no existe una incidencia bloqueante abierta.
-2. Supabase continúa `ACTIVE_HEALTHY` y el frontend sirve la versión esperada.
-3. La barrera del PR de cierre está completamente verde.
-4. El inventario productivo, el mapa Git-producción y los procedimientos de retorno son coherentes.
-5. El nuevo artefacto de cierre y su evidencia de retorno quedan retenidos durante 90 días.
-6. Se dispone de una referencia estable de Git que permite reconstruir y verificar exactamente el paquete.
+1. Cumplida: Fernando confirma que no existe una incidencia bloqueante abierta para ninguno de los cuatro usuarios.
+2. Cumplida: Supabase continúa `ACTIVE_HEALTHY` y el frontend sirve `r10-phase10.0.4`.
+3. Cumplida: la barrera integral del PR de cierre está completamente verde.
+4. Cumplida: el inventario productivo, el mapa Git-producción y los procedimientos de retorno son coherentes.
+5. Cumplida: el artefacto de cierre y su evidencia de retorno se conservan durante 90 días.
+6. Cumplida con la fusión: la etiqueta estable `r10-phase10.0.4` permite reconstruir y verificar exactamente el paquete.
 
 ## Condiciones NO-GO
 
@@ -58,11 +60,11 @@ Los recuentos son agregados y no contienen datos personales.
 - Error recurrente que impida el trabajo diario de cualquiera de los cuatro usuarios.
 - Barrera de calidad, publicación o retorno sin evidencia verde.
 
-## Acciones tras GO
+## Acciones de cierre autorizadas
 
 - Declarar `r10-phase10.0.4` referencia estable de R10.
-- Fusionar únicamente el PR documental de cierre tras autorización.
-- Crear la etiqueta estable y conservar las huellas de artefacto y retorno.
+- Fusionar únicamente el PR documental de cierre autorizado.
+- Crear la etiqueta estable homónima y conservar las huellas de artefacto y retorno.
 - Cerrar los PR históricos ya superados sin borrar sus ramas.
 - Abrir la planificación de la siguiente etapa sin congelar futuras mejoras del CRM.
 
