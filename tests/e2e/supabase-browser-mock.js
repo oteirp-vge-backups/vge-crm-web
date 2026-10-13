@@ -14,7 +14,7 @@
     province: "León",
     community: "Castilla y León",
     school_phone: legacyDetails ? "987000000 ext antigua" : "987000000",
-    school_email: legacyDetails ? "email historico sin formato" : "centro@example.invalid",
+    school_email: legacyDetails ? "  email historico sin formato  " : "centro@example.invalid",
     assigned_to: "OP-SELLER",
     status: "Pendiente",
     next_contact_at: "2000-01-15T09:00:00Z",

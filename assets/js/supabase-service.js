@@ -86,9 +86,10 @@ async function loadHistory(c){
 async function loadWorkspace(c){c.workspace=await rpcJson("get_center_workspace_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null});return c.workspace}
 function centerDetailsPatch(c){
  const loaded=c._loadedCenterDetails,patch={};if(!loaded)return patch;
- if(c.school!==loaded.school)patch.school=String(c.school||"").trim();
- if(c.schoolPhone!==loaded.schoolPhone)patch.school_phone=String(c.schoolPhone||"").trim()||null;
- if(c.schoolEmail!==loaded.schoolEmail)patch.school_email=String(c.schoolEmail||"").trim().toLowerCase()||null;
+ const school=String(c.school||"").trim(),phone=String(c.schoolPhone||"").trim(),email=String(c.schoolEmail||"").trim().toLowerCase();
+ if(school!==String(loaded.school||"").trim())patch.school=school;
+ if(phone!==String(loaded.schoolPhone||"").trim())patch.school_phone=phone||null;
+ if(email!==String(loaded.schoolEmail||"").trim().toLowerCase())patch.school_email=email||null;
  return patch;
 }
 async function saveCenter(c){

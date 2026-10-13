@@ -31,14 +31,14 @@ test('un comercial corrige nombre, teléfono y email en su cartera y conserva el
  await expect(page.locator('#fProvince')).toBeDisabled();
  await page.locator('#fSchool').fill(' Colegio Corregido ');
  await page.locator('#fSchoolPhone').fill('+34 987 123 456');
- await page.locator('#fSchoolEmail').fill(' CENTRO@EXAMPLE.INVALID ');
+ await page.locator('#fSchoolEmail').fill(' NUEVO@EXAMPLE.INVALID ');
  await page.locator('#saveProfile').click();
  await expect(page.locator('#centerDialog .modal-head h2')).toHaveText('Colegio Corregido');
- await expect(page.locator('#fSchoolEmail')).toHaveValue('centro@example.invalid');
+ await expect(page.locator('#fSchoolEmail')).toHaveValue('nuevo@example.invalid');
  const call=await profileCall(page);
  expect(call.args.p_center_id).toBe('R10-MOCK-AGENDA');
  expect(call.args.p_expected_version).toBe(7);
- expect(call.args.p_patch).toMatchObject({school:'Colegio Corregido',school_phone:'+34 987 123 456',school_email:'centro@example.invalid'});
+ expect(call.args.p_patch).toMatchObject({school:'Colegio Corregido',school_phone:'+34 987 123 456',school_email:'nuevo@example.invalid'});
  expect(call.args.p_patch).not.toHaveProperty('city');
  expect(call.args.p_patch).not.toHaveProperty('province');
  await expect(page.locator('#fMobile')).toHaveValue('');
