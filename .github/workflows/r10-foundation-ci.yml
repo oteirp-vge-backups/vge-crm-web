@@ -150,7 +150,7 @@ jobs:
 
       - name: Validar el contrato de publicación y retorno
         env:
-          R10_ROLLBACK_REF: fc688f5c29434309000f69afdaeab31390b4485f
+          R10_ROLLBACK_REF: d0ff651e716bcbd3cb5416b1bf0f1132f89a3a3c
         run: |
           npm run check:release -- --base-ref "$R10_ROLLBACK_REF"
           npm run test:release
@@ -311,7 +311,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      R10_ROLLBACK_REF: fc688f5c29434309000f69afdaeab31390b4485f
+      R10_ROLLBACK_REF: d0ff651e716bcbd3cb5416b1bf0f1132f89a3a3c
     steps:
       - name: Obtener el repositorio y el punto de retorno
         uses: actions/checkout@v5

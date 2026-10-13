@@ -89,8 +89,8 @@ select throws_ok($$select public.update_center_profile_v2('R10-DETAILS-001','{"a
 select throws_ok($$select public.update_center_profile_v2('R10-DETAILS-002','{"school":"Cartera ajena"}',1)$$,'P0001','ACCESS_DENIED','el comercial no puede modificar una cartera ajena');
 select throws_ok($$select public.update_center_profile_v2('R10-DETAILS-ARCH','{"school":"Archivado"}',1)$$,'P0001','ACCESS_DENIED','no se modifica un centro archivado');
 select lives_ok($$select public.update_center_profile_v2('R10-DETAILS-001','{"school_phone":null,"school_email":"  "}',8)$$,'se pueden retirar datos generales incorrectos');
-select results_eq($$select school_phone,school_email,contact_mobile,contact_email from public.crm_centers where id='R10-DETAILS-001'$$,
- $$values(null::text,null::text,'600111222'::text,'directo@example.invalid'::text)$$,'vaciar datos generales conserva los del contacto');
+select is((select jsonb_build_array(c.school_phone,c.school_email,s.contact_mobile,s.contact_email) from public.centers c join public.center_state s on s.center_id=c.id where c.id='R10-DETAILS-001'),
+ jsonb_build_array(null::text,null::text,'600111222'::text,'directo@example.invalid'::text),'vaciar datos generales conserva los del contacto');
 select lives_ok($$select public.update_center_profile_v2('R10-DETAILS-OLD','{"contact_name":"Contacto nuevo"}',(select state_version from public.center_state where center_id='R10-DETAILS-OLD'))$$,'los datos históricos sin formato no bloquean otros cambios');
 select is((select school_email from public.centers where id='R10-DETAILS-OLD'),'email historico sin formato','el email histórico no se transforma si no se modifica');
 select lives_ok($$select public.update_center_profile_v2('R10-DETAILS-H1','{"school":"CENTRO HOMÓNIMO"}',(select state_version from public.center_state where center_id='R10-DETAILS-H1'))$$,'se conserva un homónimo al corregir sólo mayúsculas');
