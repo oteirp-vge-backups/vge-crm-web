@@ -41,6 +41,7 @@ function centerFromRow(r,travel={},task=null){
  return {
   id:r.id,school:r.school||"",city:r.city||"",province:r.province||"",community:r.community||"",
   schoolPhone:r.school_phone||"",schoolEmail:r.school_email||"",assignedTo:r.assigned_to||"Sin asignar",_loadedAssignedTo:r.assigned_to||"Sin asignar",
+  _loadedCenterDetails:{school:r.school||"",schoolPhone:r.school_phone||"",schoolEmail:r.school_email||""},
   status:normalizeStatusValue(r.status),nextContact:next.date,nextContactTime:next.time,
   contactName:r.contact_name||"",role:r.contact_role||"",mobile:r.contact_mobile||"",directEmail:r.contact_email||"",contactBlocked:!!r.contact_blocked,contactBlockReason:r.contact_block_reason||"",
   lastContactAt:last,lastResult:r.last_result||"",lastOperator:r.last_operator_code||"",contactCount:r.contact_count||0,stateVersion:Number(r.state_version||1),_updatedAt:r.state_updated_at||null,rowUpdatedAt:r.row_updated_at||r.state_updated_at||null,
@@ -83,6 +84,13 @@ async function loadHistory(c){
  c.history=(data||[]).map(r=>{const n=splitISO(r.next_contact_at);return {id:r.id,entryType:r.entry_type||"contact",date:localISO(new Date(r.contacted_at)),contactedAt:r.contacted_at,channel:r.channel||"",result:r.result||"",note:r.notes||"",nextContact:n.date,nextContactTime:n.time,author:r.operator_name||r.operator_code,createdAt:r.created_at,contactName:r.contact_name||"",contactRole:r.contact_role||"",opportunities:r.opportunities||[],alsoResolvedGeneralFollowup:!!r.also_resolved_general_followup}});
 }
 async function loadWorkspace(c){c.workspace=await rpcJson("get_center_workspace_v1",{p_center_id:c.id,p_campaign_code:currentCampaign?.code||null});return c.workspace}
+function centerDetailsPatch(c){
+ const loaded=c._loadedCenterDetails,patch={};if(!loaded)return patch;
+ if(c.school!==loaded.school)patch.school=String(c.school||"").trim();
+ if(c.schoolPhone!==loaded.schoolPhone)patch.school_phone=String(c.schoolPhone||"").trim()||null;
+ if(c.schoolEmail!==loaded.schoolEmail)patch.school_email=String(c.schoolEmail||"").trim().toLowerCase()||null;
+ return patch;
+}
 async function saveCenter(c){
  const patch={
    status:c.status,
@@ -94,6 +102,7 @@ async function saveCenter(c){
    contact_block_reason:c.contactBlockReason||null
  };
  if(isAdmin){patch.city=c.city;patch.province=c.province;}
+ Object.assign(patch,centerDetailsPatch(c));
  const {data,error}=await supabaseRpc("update_center_profile_v2",{
    p_center_id:c.id,
    p_patch:patch,
