@@ -3,7 +3,7 @@
 begin;
 
 CREATE OR REPLACE FUNCTION public.update_center_profile_v2(p_center_id text, p_patch jsonb, p_expected_version bigint)
- RETURNS center_state
+ RETURNS public.center_state
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
@@ -185,7 +185,7 @@ begin
 
   return v_result;
 end;
-$function$
+$function$;
 
 REVOKE ALL ON FUNCTION public.update_center_profile_v2(text,jsonb,bigint) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.update_center_profile_v2(text,jsonb,bigint) TO authenticated;
