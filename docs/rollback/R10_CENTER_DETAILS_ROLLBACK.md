@@ -1,6 +1,6 @@
 # R10 — retorno de edición de centros
 
-La candidata es `r10-phase10.0.5`. Producción continúa en `r10-phase10.0.4` hasta autorización separada de migración y publicación.
+La candidata es `r10-phase10.0.5`. La migración de backend está aplicada y verificada desde el 13 de octubre de 2026. La web continúa en `r10-phase10.0.4`; fusión y publicación siguen pendientes de autorización separada.
 
 ## Retorno web
 

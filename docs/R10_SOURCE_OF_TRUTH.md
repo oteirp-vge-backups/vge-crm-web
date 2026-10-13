@@ -1,6 +1,6 @@
 # R10 — fuente de verdad operativa
 
-Fecha de revisión: 20 de septiembre de 2026.
+Fecha de revisión: 13 de octubre de 2026.
 
 Este documento describe el estado operativo actual. Los documentos `R10_PHASE*.md` y `R10_CONSOLIDATION.md` conservan la evidencia histórica de cada fase y no se reescriben retroactivamente.
 
@@ -20,10 +20,12 @@ Este documento describe el estado operativo actual. Los documentos `R10_PHASE*.m
 
 - Inventario aplicado actual: `supabase/baseline/production-ledger-current.json`.
 - Evidencia histórica del 25 de agosto: `supabase/baseline/applied-migrations.json`; permanece inmutable con 42 registros.
-- Producción registra 49 migraciones y Git conserva diez fuentes SQL verificadas.
+- Producción registra 50 migraciones y Git conserva once fuentes SQL verificadas.
 - Las 39 fuentes históricas anteriores al control de Git siguen ausentes y no se recrean ni se renombran de forma especulativa.
-- Siete despliegues gestionados recibieron en producción un timestamp distinto al nombre local. La equivalencia explícita, el nombre y el SHA-256 están en `R10_PRODUCTION_MIGRATION_MAP.md` y en el inventario JSON actual.
+- Ocho despliegues gestionados recibieron en producción un timestamp distinto al nombre local. La equivalencia explícita, el nombre y el SHA-256 están en `R10_PRODUCTION_MIGRATION_MAP.md` y en el inventario JSON actual.
 - Cada cambio futuro debe ser una migración nueva, probada fuera de producción y acompañada por un retorno revisable. Nunca se modifica retroactivamente una migración aplicada.
+- La migración `enable_center_details_editing` se aplicó y verificó el 13 de octubre como `20261013112310`. La base acepta las correcciones de datos generales; la publicación de `r10-phase10.0.5` y la fusión del PR #20 siguen pendientes de autorización. La web continúa en `r10-phase10.0.4`.
+- Evidencia de integridad y alcance autorizado: `docs/audit/R10_CENTER_DETAILS_DEPLOYMENT_2026-10-13.json`.
 
 ## Edge Functions
 

@@ -1,13 +1,6 @@
 {
   "schema_version": 1,
   "production_project_ref": "sjraugywirjohrqmacvb",
-  "production_applied_count": 49,
-  "migrations": [
-    {
-      "repository_file": "20261013102327_enable_center_details_editing.sql",
-      "name": "enable_center_details_editing",
-      "sha256": "3a94ec77209c7924703a834286eb8bf560fce1f2389132ae7f4556935bc0b595",
-      "status": "pending_authorization"
-    }
-  ]
+  "production_applied_count": 50,
+  "migrations": []
 }

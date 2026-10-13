@@ -12,7 +12,7 @@ La copia pública tiene 236.998 bytes y SHA-256 `6dc0ca0103fcba8cfe8a880af0fcd4c
 
 La auditoría preventiva encontró un único correo operativo, repetido dos veces como valor estructural por defecto. La copia pública sustituye exclusivamente ese literal por `r10-staging-recipient@example.invalid`; el original exacto quedó limitado al artefacto privado efímero. Antes de probar envíos en STAGING debe configurarse un destinatario no productivo mediante una migración específica.
 
-No se inventan las 39 fuentes históricas que no están en Git. Las diez fuentes existentes en `supabase/migrations/` conservan su identidad original. Las siete posteriores al inventario inicial fueron aplicadas por el servicio gestionado con otro timestamp; la equivalencia se conserva en el inventario productivo actual y en `docs/R10_PRODUCTION_MIGRATION_MAP.md`.
+No se inventan las 39 fuentes históricas que no están en Git. Las once fuentes existentes en `supabase/migrations/` conservan su identidad original. Las siete posteriores al inventario inicial fueron aplicadas por el servicio gestionado con otro timestamp; la equivalencia se conserva en el inventario productivo actual y en `docs/R10_PRODUCTION_MIGRATION_MAP.md`.
 
 ## Reglas
 
