@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-10-13",
+  "project_ref": "sjraugywirjohrqmacvb",
+  "authorization": {
+    "user_text": "autorizo aplicar la migracion",
+    "database_migration": true,
+    "merge_main": false,
+    "publish_web": false
+  },
+  "migration": {
+    "repository_file": "20261013102327_enable_center_details_editing.sql",
+    "production_version": "20261013112310",
+    "name": "enable_center_details_editing",
+    "sha256": "3a94ec77209c7924703a834286eb8bf560fce1f2389132ae7f4556935bc0b595",
+    "validated_source_commit": "3857c9bd37db262766ec40a8621fb85c762c8315",
+    "validation_run": 38385810732
+  },
+  "backup": {
+    "run_id": 38378009163,
+    "conclusion": "success"
+  },
+  "verification": {
+    "applied_migrations_before": 49,
+    "applied_migrations_after": 50,
+    "function_body_matches_validated_sql": true,
+    "table_data_unchanged": true,
+    "tables": {
+      "centers": {
+        "count": 8619,
+        "fingerprint": "870e4fd71de4bb82972057686fa4a623"
+      },
+      "center_state": {
+        "count": 8619,
+        "fingerprint": "fcfcd163f55f2ba0e8cc89734ad43e66"
+      },
+      "contact_events": {
+        "count": 797,
+        "fingerprint": "bd40801a016b4d662f3b2e34ca0d7442"
+      },
+      "center_contacts": {
+        "count": 288,
+        "fingerprint": "0a6e400e998009cb5957d37df549af0a"
+      },
+      "center_campaigns": {
+        "count": 8619,
+        "fingerprint": "fdaddc701ddefa698936cba3c5aa204a"
+      },
+      "center_state_audit": {
+        "count": 19091,
+        "fingerprint": "5052d9cbaa13637ea9a5b28bffbe356c"
+      },
+      "travel_opportunities": {
+        "count": 29,
+        "fingerprint": "3aae8101273294386c898db36d9607e1"
+      },
+      "center_internal_notes": {
+        "count": 61,
+        "fingerprint": "f834cd93c28460eb6c3e6765322a4fce"
+      }
+    },
+    "privileges_unchanged": true,
+    "rls_unchanged": true,
+    "policies_unchanged": true,
+    "security_advisories_unchanged": true,
+    "read_only_rpc_probes": {
+      "anonymous": "permission denied",
+      "missing_session": "AUTH_REQUIRED",
+      "unlinked_identity": "ACCESS_DENIED"
+    }
+  },
+  "deployment": {
+    "database": "applied_and_verified",
+    "web_version": "r10-phase10.0.4",
+    "web_candidate": "r10-phase10.0.5",
+    "pr_number": 20,
+    "merge_main": "pending_authorization",
+    "publish_web": "pending_authorization"
+  }
+}

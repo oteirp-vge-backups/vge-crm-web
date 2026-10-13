@@ -366,7 +366,7 @@ async function openCenter(id){
 }
 function workspaceSummaryHtml(c){const active=(c.workspace?.opportunities||[]).filter(o=>o.active),contacts=(c.workspace?.contacts||[]).filter(x=>x.active);return `<div class="workspace-summary"><span class="workspace-pill"><strong>${active.length}</strong> viaje${active.length===1?"":"s"} · campaña ${esc(c.workspace?.campaign?.label||currentCampaign?.label||"")}</span><span class="workspace-pill"><strong>${contacts.length}</strong> persona${contacts.length===1?"":"s"} de contacto</span>${active.filter(o=>o.status==="Interesado").length?`<span class="workspace-pill"><strong>${active.filter(o=>o.status==="Interesado").length}</strong> interesado${active.filter(o=>o.status==="Interesado").length===1?"":"s"}</span>`:""}${active.filter(o=>o.status==="Trasladado a cotización").length?`<span class="workspace-pill"><strong>${active.filter(o=>o.status==="Trasladado a cotización").length}</strong> a cotización</span>`:""}</div>`}
 function dialogHtml(c){
- const canAssign=isAdmin,canEditLocation=isAdmin;
+ const canAssign=isAdmin,canEditLocation=isAdmin,canEditCenterDetails=isAdmin||c.assignedTo===currentUser;
  const events=(c.history||[]).slice().sort((a,b)=>(b.createdAt||"").localeCompare(a.createdAt||""));
  const contactEventsCount=events.filter(e=>e.entryType!=="internal_note").length,internalNotesCount=events.length-contactEventsCount;
  const activeOpportunities=(c.workspace?.opportunities||[]).filter(o=>o.active),generalFollowupKey=c.nextContact?`${c.nextContact}T${c.nextContactTime||"09:00"}`:"",hasOverdueGeneralFollowup=!!(generalFollowupKey&&generalFollowupKey<=nowKey()&&!isClosedStatus(c));
@@ -381,7 +381,7 @@ function dialogHtml(c){
   <div class="form-grid" data-dirty-scope="profile">
    <div class="field"><label>Estado general</label><select id="fStatus">${options(STATUSES,c.status)}</select><span class="field-help">Mantiene la compatibilidad de la ficha; cada viaje tiene su propio estado.</span></div>
    <div class="field"><label>Responsable VGE</label><select id="fAssigned" ${canAssign?"":"disabled"}>${operatorOptions(c.assignedTo,true)}</select></div>
-   <div class="field"><label>Centro</label><input class="readonly" value="${esc(c.school)}" readonly></div>
+   <div class="field"><label for="fSchool">Centro *</label><input id="fSchool" minlength="3" maxlength="240" value="${esc(c.school)}" ${canEditCenterDetails?"":'class="readonly" readonly'}></div>
    <div class="field"><label>Localidad *</label><input id="fCity" value="${esc(c.city)}" ${canEditLocation?"":'class="readonly" readonly'}></div>
    <div class="field"><label>Provincia *</label><select id="fProvince" ${canEditLocation?"":"disabled"}>${provinceOptions(c.province)}</select></div>
    <div class="field"><label>Comunidad autónoma</label><input id="fCommunity" class="readonly" value="${esc(communityForProvince(c.province)||c.community)}" readonly><span class="field-help">Se calcula automáticamente a partir de la provincia.</span></div>
@@ -389,8 +389,8 @@ function dialogHtml(c){
    <div class="field"><label>Cargo</label><select id="fRole"><option value=""></option>${options(ROLES,c.role)}</select></div>
    <div class="field"><label>Móvil / directo</label><input id="fMobile" value="${esc(c.mobile)}"></div>
    <div class="field"><label>Email directo</label><input id="fDirectEmail" type="email" value="${esc(c.directEmail)}"></div>
-   <div class="field span2"><label>Teléfono general</label><input class="readonly" value="${esc(c.schoolPhone)}" readonly></div>
-   <div class="field span2"><label>Email general</label><input class="readonly" value="${esc(c.schoolEmail)}" readonly></div>
+   <div class="field span2"><label for="fSchoolPhone">Teléfono general</label><input id="fSchoolPhone" type="tel" maxlength="60" value="${esc(c.schoolPhone)}" ${canEditCenterDetails?"":'class="readonly" readonly'}></div>
+   <div class="field span2"><label for="fSchoolEmail">Email general</label><input id="fSchoolEmail" type="email" maxlength="254" value="${esc(c.schoolEmail)}" ${canEditCenterDetails?"":'class="readonly" readonly'}></div>
    <div class="field span2 privacy-field"><label><input id="fContactBlocked" type="checkbox" ${c.contactBlocked?"checked":""}> No volver a contactar</label><small>Bloquea llamadas/emails rápidos y elimina la agenda futura.</small></div>
    <div class="field span2"><label>Motivo del bloqueo</label><input id="fBlockReason" value="${esc(c.contactBlockReason||"")}" placeholder="Ej.: solicita no recibir más comunicaciones"></div>
   </div>
@@ -430,10 +430,23 @@ async function archiveCurrentCenter(){
  }catch(e){alert(friendlyError(e,"No se ha podido archivar el centro."));if(btn){btn.disabled=false;btn.textContent="Archivar centro"}}
 }
 async function saveProfile(){
- const c=centers.find(x=>x.id===currentCenterId);if(!c)return;
+ const saved=centers.find(x=>x.id===currentCenterId);if(!saved)return;
  if(profileSaveInFlight){showDialogActionStatus("La ficha se está guardando. Espera un momento…","info");return}
  const btn=document.getElementById("saveProfile"),statusBox=document.getElementById("profileSaveStatus");
  const showSaveStatus=(msg,type="info")=>{if(!statusBox)return;statusBox.textContent=msg;statusBox.className=`save-feedback show ${type}`};
+ // Keep the visible record intact until the server accepts the draft.
+ const c={...saved};
+ if(isAdmin||c.assignedTo===currentUser){
+   c.school=document.getElementById("fSchool").value;
+   c.schoolPhone=document.getElementById("fSchoolPhone").value;
+   c.schoolEmail=document.getElementById("fSchoolEmail").value;
+   const changes=centerDetailsPatch(c);
+   let invalid=null;
+   if(Object.hasOwn(changes,"school")&&(changes.school.length<3||changes.school.length>240))invalid=["fSchool","Indica el nombre del centro (entre 3 y 240 caracteres)."];
+   else if(changes.school_phone&&(!/^[+0-9().\s/-]+$/.test(changes.school_phone)||changes.school_phone.replace(/\D/g,"").length<6||changes.school_phone.replace(/\D/g,"").length>15))invalid=["fSchoolPhone","Indica un teléfono general válido (entre 6 y 15 cifras)."];
+   else if(changes.school_email&&(changes.school_email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(changes.school_email)))invalid=["fSchoolEmail","Indica un email general válido."];
+   if(invalid){showSaveStatus(invalid[1],"error");document.getElementById(invalid[0])?.focus();return}
+ }
  if(isAdmin){
    const city=document.getElementById("fCity")?.value.trim()||"",province=document.getElementById("fProvince")?.value||"";
    if(!city){alert("Indica la localidad del centro.");document.getElementById("fCity")?.focus();return}

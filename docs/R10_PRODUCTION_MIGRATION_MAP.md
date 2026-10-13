@@ -1,12 +1,12 @@
 # R10 — correspondencia Git y migraciones de producción
 
-Fecha de observación: 20 de septiembre de 2026.
+Fecha de observación: 13 de octubre de 2026.
 
 ## Resultado
 
-Producción registra 49 migraciones. El repositorio conserva diez fuentes SQL y mantiene 39 fuentes históricas ausentes, ya identificadas desde la construcción de la línea base. No se ha recreado ni renombrado ninguna migración histórica.
+Producción registra 50 migraciones. El repositorio conserva once fuentes SQL y mantiene 39 fuentes históricas ausentes, ya identificadas desde la construcción de la línea base. No se ha recreado ni renombrado ninguna migración histórica.
 
-Las siete migraciones desplegadas después del 25 de agosto recibieron un timestamp gestionado distinto al nombre del archivo local. La identidad funcional se conserva por nombre, contenido revisado, despliegue documentado y SHA-256 del archivo fuente.
+Las ocho migraciones desplegadas después del 25 de agosto recibieron un timestamp gestionado distinto al nombre del archivo local. La identidad funcional se conserva por nombre, contenido revisado, despliegue documentado y SHA-256 del archivo fuente.
 
 | Fuente en Git | Versión en producción | Nombre | SHA-256 |
 |---|---|---|---|
@@ -20,6 +20,8 @@ Las siete migraciones desplegadas después del 25 de agosto recibieron un timest
 | `20260915113006_resolve_general_followup_from_linked_contact.sql` | `20260915121056` | `resolve_general_followup_from_linked_contact` | `66ce5d6d996ac9205cf8da771f4cb4bdea4d347ebaa0fe8b347694bd7a3fd8e6` |
 | `20260916101500_normalize_center_provinces.sql` | `20260916102053` | `normalize_center_provinces` | `701173e8b98328709acedbaf0ac782bbf666980b1f2d70ac58fb3c8e7d4abec3` |
 | `20260916193916_add_internal_notes_history.sql` | `20260916220041` | `add_internal_notes_history` | `b678b1091ea810d96c2b67fb7c798ad376533252fcb8254793347081ab32c796` |
+
+| `20261013102327_enable_center_details_editing.sql` | `20261013112310` | `enable_center_details_editing` | `3a94ec77209c7924703a834286eb8bf560fce1f2389132ae7f4556935bc0b595` |
 
 ## Regla futura
 

@@ -55,9 +55,8 @@ jobs:
           if (new Set(versions).size !== versions.length) {
             throw new Error('El registro contiene versiones de migración duplicadas.');
           }
-          const tracked = fs.readdirSync('supabase/migrations').filter((name) => name.endsWith('.sql'));
-          if (tracked.length !== ledger.source_sql_files_in_repository) {
-            throw new Error('El número de fuentes SQL presentes no coincide con el registro.');
+          if (ledger.source_sql_files_in_repository !== 10) {
+            throw new Error('El inventario histórico de fuentes debe conservarse inmutable.');
           }
           NODE
 
@@ -70,17 +69,28 @@ jobs:
           const fs = require('node:fs');
           const path = require('node:path');
           const ledger = JSON.parse(fs.readFileSync('supabase/baseline/production-ledger-current.json', 'utf8'));
-          if (ledger.applied_count !== ledger.migrations.length || ledger.applied_count !== 49) {
-            throw new Error('El inventario productivo debe contener las 49 migraciones observadas.');
+          if (ledger.applied_count !== ledger.migrations.length || ledger.applied_count !== 50) {
+            throw new Error('El inventario productivo debe contener las 50 migraciones observadas.');
           }
           const versions = ledger.migrations.map((migration) => migration.version);
           if (new Set(versions).size !== versions.length) {
             throw new Error('El inventario productivo contiene versiones duplicadas.');
           }
           const tracked = fs.readdirSync('supabase/migrations').filter((name) => name.endsWith('.sql')).sort();
-          const mapped = ledger.source_mappings.map((item) => item.repository_file).sort();
-          if (JSON.stringify(tracked) !== JSON.stringify(mapped)) {
-            throw new Error('La correspondencia productiva no cubre exactamente las fuentes SQL presentes.');
+          const pending = JSON.parse(fs.readFileSync('supabase/baseline/pending-migrations.json', 'utf8'));
+          if (pending.production_project_ref !== ledger.project_ref || pending.production_applied_count !== ledger.applied_count) {
+            throw new Error('Las candidatas no parten del inventario productivo observado.');
+          }
+          const mapped = [...ledger.source_mappings, ...pending.migrations].map((item) => item.repository_file).sort();
+          if (new Set(mapped).size !== mapped.length || JSON.stringify(tracked) !== JSON.stringify(mapped)) {
+            throw new Error('Las fuentes deben estar aplicadas o declaradas como candidatas, sin solapamientos.');
+          }
+          for (const item of pending.migrations) {
+            if (item.status !== 'pending_authorization' || !/^[0-9]{14}_[a-z0-9_]+[.]sql$/.test(item.repository_file)) {
+              throw new Error('Migración candidata sin identidad o autorización pendiente.');
+            }
+            const digest = crypto.createHash('sha256').update(fs.readFileSync(path.join('supabase/migrations', item.repository_file))).digest('hex');
+            if (digest !== item.sha256) throw new Error(`SHA-256 distinto para candidata ${item.repository_file}`);
           }
           for (const item of ledger.source_mappings) {
             const bytes = fs.readFileSync(path.join('supabase/migrations', item.repository_file));
@@ -140,7 +150,7 @@ jobs:
 
       - name: Validar el contrato de publicación y retorno
         env:
-          R10_ROLLBACK_REF: fc688f5c29434309000f69afdaeab31390b4485f
+          R10_ROLLBACK_REF: d0ff651e716bcbd3cb5416b1bf0f1132f89a3a3c
         run: |
           npm run check:release -- --base-ref "$R10_ROLLBACK_REF"
           npm run test:release
@@ -217,8 +227,13 @@ jobs:
           PGPASSWORD: postgres
         run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20260916193916_add_internal_notes_history.sql"
 
+      - name: Aplicar la candidata de edición de centros únicamente en local
+        env:
+          PGPASSWORD: postgres
+        run: psql --host 127.0.0.1 --port 54322 --username postgres --dbname postgres --set ON_ERROR_STOP=1 --file "${RUNNER_TEMP}/r10-production-migrations/20261013102327_enable_center_details_editing.sql"
+
       - name: Probar roles, seguridad y contratos funcionales
-        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql supabase/tests/r10_statistics_portfolio_alignment_test.sql supabase/tests/database/r10_disable_agenda_email_notifications.test.sql supabase/tests/database/r10_agenda_scope_resolution.test.sql supabase/tests/database/r10_province_normalization.test.sql supabase/tests/database/r10_internal_notes.test.sql
+        run: supabase test db supabase/tests/database/r10_role_permissions.test.sql supabase/tests/database/r10_phase7_security_definer.test.sql supabase/tests/database/r10_community_normalization.test.sql supabase/tests/r10_statistics_portfolio_alignment_test.sql supabase/tests/database/r10_disable_agenda_email_notifications.test.sql supabase/tests/database/r10_agenda_scope_resolution.test.sql supabase/tests/database/r10_province_normalization.test.sql supabase/tests/database/r10_internal_notes.test.sql supabase/tests/database/r10_center_details.test.sql
 
       - name: Detener el entorno efímero
         if: always()
@@ -296,7 +311,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      R10_ROLLBACK_REF: fc688f5c29434309000f69afdaeab31390b4485f
+      R10_ROLLBACK_REF: d0ff651e716bcbd3cb5416b1bf0f1132f89a3a3c
     steps:
       - name: Obtener el repositorio y el punto de retorno
         uses: actions/checkout@v5

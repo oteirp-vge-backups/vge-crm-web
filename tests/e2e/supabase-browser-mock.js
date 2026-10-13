@@ -1,6 +1,9 @@
 (function installSupabaseMock() {
   window.__r10TechnicalIncidents = [];
   window.__r10RpcCalls = [];
+  const profileRole = new URLSearchParams(location.search).get("r10-role") || "seller";
+  const profileAdmin = profileRole === "owner" || profileRole === "manager";
+  const legacyDetails = new URLSearchParams(location.search).has("r10-legacy-details");
   const session = {
     user: { id: "10000000-0000-4000-8000-000000000003", email: "seller@example.invalid" },
   };
@@ -10,8 +13,8 @@
     city: "León",
     province: "León",
     community: "Castilla y León",
-    school_phone: "987000000",
-    school_email: "centro@example.invalid",
+    school_phone: legacyDetails ? "987000000 ext antigua" : "987000000",
+    school_email: legacyDetails ? "  email historico sin formato  " : "centro@example.invalid",
     assigned_to: "OP-SELLER",
     status: "Pendiente",
     next_contact_at: "2000-01-15T09:00:00Z",
@@ -27,11 +30,11 @@
 
   function rpcData(name) {
     const values = {
-      get_my_operator: [{ code: "OP-SELLER", display_name: "Comercial de prueba", role: "seller", email: "seller@example.invalid" }],
+      get_my_operator: [{ code: "OP-SELLER", display_name: "Comercial de prueba", role: profileAdmin ? "admin" : "seller", email: "seller@example.invalid" }],
       get_my_permissions_v2: [{
-        access_role: "seller",
-        can_view_global: false,
-        can_assign_centers: false,
+        access_role: profileRole,
+        can_view_global: profileAdmin,
+        can_assign_centers: profileAdmin,
         can_archive_centers: false,
         can_restore_centers: false,
         can_view_team: false,
@@ -162,6 +165,17 @@
         },
         async rpc(name, args = {}) {
           window.__r10RpcCalls.push({ name, args });
+          if (name === "update_center_profile_v2") {
+            const error = window.__r10ProfileError || (args.p_expected_version !== agendaCenter.state_version ? "CONCURRENT_UPDATE" : null);
+            if (error) return { data: null, error: { code: "P0001", message: error } };
+            if (!profileAdmin && (Object.hasOwn(args.p_patch, "city") || Object.hasOwn(args.p_patch, "province"))) {
+              return { data: null, error: { code: "P0001", message: "ADMIN_REQUIRED" } };
+            }
+            Object.assign(agendaCenter, args.p_patch);
+            agendaCenter.state_version++;
+            agendaCenter.state_updated_at = new Date().toISOString();
+            return { data: { state_version: agendaCenter.state_version, updated_at: agendaCenter.state_updated_at }, error: null };
+          }
           if (name === "register_internal_note_v1") {
             const createdAt = new Date().toISOString();
             const note = {

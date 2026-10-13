@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "observed_at_utc": "2026-09-20",
+  "observed_at_utc": "2026-10-13",
   "source": "Supabase production migration ledger",
   "project_ref": "sjraugywirjohrqmacvb",
-  "applied_count": 49,
-  "source_sql_files_in_repository": 10,
+  "applied_count": 50,
+  "source_sql_files_in_repository": 11,
   "missing_historical_source_files": 39,
   "migrations": [
     { "version": "20260817150635", "name": "vge_step_1a_base_schema" },
@@ -55,7 +55,8 @@
     { "version": "20260915104505", "name": "disable_agenda_email_notifications" },
     { "version": "20260915121056", "name": "resolve_general_followup_from_linked_contact" },
     { "version": "20260916102053", "name": "normalize_center_provinces" },
-    { "version": "20260916220041", "name": "add_internal_notes_history" }
+    { "version": "20260916220041", "name": "add_internal_notes_history" },
+    { "version": "20261013112310", "name": "enable_center_details_editing" }
   ],
   "source_mappings": [
     { "repository_file": "20260824144908_owner_invite_operator.sql", "production_version": "20260824144908", "name": "owner_invite_operator", "sha256": "90194c685f4c57de79172b546d4e08e2cd66d6b4f29c1cef0edfc23a4937472e" },
@@ -67,6 +68,7 @@
     { "repository_file": "20260915103838_disable_agenda_email_notifications.sql", "production_version": "20260915104505", "name": "disable_agenda_email_notifications", "sha256": "3977200294a125ffc57232feaa8f6a7a00d721a5ff5467561a25b000d7d14731" },
     { "repository_file": "20260915113006_resolve_general_followup_from_linked_contact.sql", "production_version": "20260915121056", "name": "resolve_general_followup_from_linked_contact", "sha256": "66ce5d6d996ac9205cf8da771f4cb4bdea4d347ebaa0fe8b347694bd7a3fd8e6" },
     { "repository_file": "20260916101500_normalize_center_provinces.sql", "production_version": "20260916102053", "name": "normalize_center_provinces", "sha256": "701173e8b98328709acedbaf0ac782bbf666980b1f2d70ac58fb3c8e7d4abec3" },
-    { "repository_file": "20260916193916_add_internal_notes_history.sql", "production_version": "20260916220041", "name": "add_internal_notes_history", "sha256": "b678b1091ea810d96c2b67fb7c798ad376533252fcb8254793347081ab32c796" }
+    { "repository_file": "20260916193916_add_internal_notes_history.sql", "production_version": "20260916220041", "name": "add_internal_notes_history", "sha256": "b678b1091ea810d96c2b67fb7c798ad376533252fcb8254793347081ab32c796" },
+    { "repository_file": "20261013102327_enable_center_details_editing.sql", "production_version": "20261013112310", "name": "enable_center_details_editing", "sha256": "3a94ec77209c7924703a834286eb8bf560fce1f2389132ae7f4556935bc0b595" }
   ]
 }
