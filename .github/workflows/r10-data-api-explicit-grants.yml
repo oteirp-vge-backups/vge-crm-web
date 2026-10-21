@@ -1,0 +1,45 @@
+name: R10 - Data API sin permisos automaticos
+
+# No path filter: SQL-only PRs and future test changes cannot silently skip the gate.
+# Never use pull_request_target, push-to-main, remote secrets or deployment here.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r10-data-api-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  explicit-grants:
+    name: Reconstruccion y API local sin grants implicitos
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Probar descubrimiento y bloqueos sin base de datos
+        run: python3 -m unittest discover -s tests -p 'test_data_api_plan.py' -v
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.115.0
+      - name: Ejecutar solo sobre Supabase local desechable
+        env:
+          R10_ISOLATED_CI: 'YES'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash scripts/r10-data-api-isolated.sh 2>&1 | tee "${RUNNER_TEMP}/r10-data-api-results.log"
+      - name: Conservar exclusivamente resultados sin credenciales
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-data-api-results-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/r10-data-api-results.log
+          retention-days: 30
+          if-no-files-found: ignore
