@@ -1,14 +1,10 @@
 name: R10 - Data API sin permisos automaticos
 
+# No path filter: SQL-only PRs and future test changes cannot silently skip the gate.
+# Never use pull_request_target, push-to-main, remote secrets or deployment here.
 on:
   pull_request:
     branches: [main]
-    paths:
-      - '.github/workflows/r10-data-api-explicit-grants.yml'
-      - 'scripts/r10-data-api-isolated.sh'
-      - 'scripts/r10-data-api-smoke.py'
-      - 'supabase/tests/database/r10_data_api_explicit_grants.test.sql'
-      - 'docs/R10_DATA_API_20261030.md'
 
 permissions:
   contents: read
@@ -27,6 +23,8 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Probar descubrimiento y bloqueos sin base de datos
+        run: python3 -m unittest discover -s tests -p 'test_data_api_plan.py' -v
       - uses: supabase/setup-cli@v1
         with:
           version: 2.115.0
