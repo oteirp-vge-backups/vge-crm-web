@@ -1,0 +1,47 @@
+name: R10 - Data API sin permisos automaticos
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/r10-data-api-explicit-grants.yml'
+      - 'scripts/r10-data-api-isolated.sh'
+      - 'scripts/r10-data-api-smoke.py'
+      - 'supabase/tests/database/r10_data_api_explicit_grants.test.sql'
+      - 'docs/R10_DATA_API_20261030.md'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r10-data-api-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  explicit-grants:
+    name: Reconstruccion y API local sin grants implicitos
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.115.0
+      - name: Ejecutar solo sobre Supabase local desechable
+        env:
+          R10_ISOLATED_CI: 'YES'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash scripts/r10-data-api-isolated.sh 2>&1 | tee "${RUNNER_TEMP}/r10-data-api-results.log"
+      - name: Conservar exclusivamente resultados sin credenciales
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-data-api-results-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/r10-data-api-results.log
+          retention-days: 30
+          if-no-files-found: ignore
