@@ -58,8 +58,15 @@ DO $$ BEGIN
        OR has_sequence_privilege(role_name,'public.r10_pre_restore_probe_id_seq','USAGE,SELECT'))
   THEN RAISE EXCEPTION 'DEFAULT_GRANTS_STILL_ACTIVE'; END IF;
 END $$;
+SELECT 'INFO: legacy admin defaults before restore preparation=' ||
+  has_table_privilege('anon','public.r10_pre_restore_probe','TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')::text;
 ROLLBACK;
 SQL
+# Mirror the existing restore_from_local.sh preparation, not a new CRM migration.
+# Source: backup-automation@95838ed7411ecbc14d2e4e8d6e480b34adae8761.
+# The official change removes CRUD defaults, not inherited administrative defaults.
+# Without the existing preparation a dump can inherit extra target privileges.
+local_psql --command='ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated'
 local_psql --file=supabase/baseline/current-schema.sql >/dev/null
 for migration in \
   20260826061114_reduce_security_definer_surface.sql \
