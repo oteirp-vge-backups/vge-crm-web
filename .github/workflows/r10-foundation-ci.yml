@@ -69,8 +69,8 @@ jobs:
           const fs = require('node:fs');
           const path = require('node:path');
           const ledger = JSON.parse(fs.readFileSync('supabase/baseline/production-ledger-current.json', 'utf8'));
-          if (ledger.applied_count !== ledger.migrations.length || ledger.applied_count !== 50) {
-            throw new Error('El inventario productivo debe contener las 50 migraciones observadas.');
+          if (ledger.applied_count !== ledger.migrations.length || ledger.applied_count !== 51) {
+            throw new Error('El inventario productivo debe contener las 51 migraciones observadas.');
           }
           const versions = ledger.migrations.map((migration) => migration.version);
           if (new Set(versions).size !== versions.length) {
@@ -257,6 +257,7 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Instalar Chromium aislado
+        timeout-minutes: 7
         run: npx playwright install --with-deps chromium
 
       - name: Ejecutar los recorridos críticos con Supabase simulado
@@ -349,6 +350,7 @@ jobs:
           node scripts/r10-release.mjs verify --input "${RUNNER_TEMP}/r10-previous"
 
       - name: Instalar Chromium aislado
+        timeout-minutes: 7
         run: npx playwright install --with-deps chromium
 
       - name: Probar el artefacto candidato sin conexión a producción
