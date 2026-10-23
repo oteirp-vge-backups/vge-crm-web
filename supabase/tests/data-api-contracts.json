@@ -1,4 +1,20 @@
 {
   "schema_version": 1,
-  "migrations": []
+  "migrations": [
+    {
+      "file": "20261023144210_reduce_operator_presence_admin_privileges.sql",
+      "tests": [
+        "supabase/tests/database/r10_presence_minimal_permissions.test.sql"
+      ],
+      "tables": {
+        "public.operator_presence": {
+          "anon": [],
+          "authenticated": [
+            "SELECT"
+          ],
+          "service_role": []
+        }
+      }
+    }
+  ]
 }

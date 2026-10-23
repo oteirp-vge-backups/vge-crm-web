@@ -1,14 +1,9 @@
 name: R10 - revision aislada de permisos de presencia
 
+# Runs on PRs only. No production secrets, deployments or remote database actions.
 on:
   pull_request:
     branches: [main]
-    paths:
-      - '.github/workflows/r10-presence-review.yml'
-      - 'scripts/r10-data-api-isolated.sh'
-      - 'supabase/tests/fixtures/r10_presence_minimal_revoke.sql'
-      - 'supabase/tests/database/r10_presence_minimal_permissions.test.sql'
-      - 'docs/R10_PRESENCE_REVIEW_20261023.md'
 
 permissions:
   contents: read
@@ -18,27 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  migration-scaffold:
-    name: Generar nombre de migracion sin conectar bases de datos
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - uses: supabase/setup-cli@v1
-        with:
-          version: 2.115.0
-      - name: Crear unicamente archivo vacio local con CLI
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          scratch="$(mktemp -d "${RUNNER_TEMP}/presence-scaffold.XXXXXX")"
-          trap 'rm -rf -- "$scratch"' EXIT
-          cd "$scratch"
-          supabase --version
-          supabase migration new --help >/dev/null
-          supabase migration new reduce_operator_presence_admin_privileges
-          find supabase/migrations -maxdepth 1 -type f -name '*_reduce_operator_presence_admin_privileges.sql' -printf 'GENERATED_MIGRATION_FILE=%f\n'
   presence-review:
-    name: Permisos minimos de presencia sin acceso a produccion
+    name: Migracion de presencia y reversion sin acceso a produccion
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -49,7 +25,7 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.115.0
-      - name: Probar retirada minima y todas las regresiones en local
+      - name: Probar archivos exactos, fallos controlados y regresiones en local
         env:
           R10_ISOLATED_CI: 'YES'
           R10_PRESENCE_REVIEW: 'YES'

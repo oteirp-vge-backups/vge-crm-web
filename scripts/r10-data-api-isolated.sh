@@ -10,6 +10,10 @@ BASE=871051cdf68178c349b3b490ed2727f38ad540e2
 for name in SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD SUPABASE_DB_URL TARGET_DB_URL DATABASE_URL AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY RESEND_API_KEY SUPABASE_SERVICE_ROLE_KEY; do
   [[ ! -v "$name" ]] || { echo "REFUSED: unexpected credential variable $name" >&2; exit 1; }
 done
+case "${R10_PRESENCE_REVIEW:-}" in
+  ''|YES) ;;
+  *) echo 'REFUSED: invalid presence-review mode' >&2; exit 1 ;;
+esac
 cd "$(git rev-parse --show-toplevel)"
 ROOT="$PWD"
 [[ ! -e supabase/.temp/project-ref ]] || { echo 'REFUSED: linked project'; exit 1; }
@@ -19,7 +23,7 @@ git merge-base --is-ancestor "$BASE" HEAD
 # The planner seals historical SQL/config by exact hash; new SQL must be registered.
 # The old five-file whitelist is deliberately not used: it blocked all future PRs.
 (cd supabase/baseline && sha256sum --check current-schema.sql.sha256)
-python3 -m py_compile scripts/r10-data-api-smoke.py scripts/r10-data-api-plan.py scripts/r10-data-api-candidate-controls.py
+python3 -m py_compile scripts/r10-data-api-smoke.py scripts/r10-data-api-plan.py scripts/r10-data-api-candidate-controls.py scripts/r10-presence-lifecycle.py
 for cmd in start status test stop; do supabase "$cmd" --help >/dev/null; done
 supabase test db --help >/dev/null
 MIGRATIONS_DIR="$(mktemp -d "${RUNNER_TEMP}/r10-data-api-migrations.XXXXXX")"
@@ -98,16 +102,6 @@ assert_inert_cron() {
   local_psql --command="DO \$\$ BEGIN IF EXISTS (SELECT 1 FROM cron.job WHERE active AND command NOT IN ('select 1','select 2','select 3')) THEN RAISE EXCEPTION 'NON_INERT_CRON_IN_TEST'; END IF; END \$\$;"
 }
 assert_inert_cron
-# Optional, explicitly labelled review. Standard Data API CI does NOT apply this.
-case "${R10_PRESENCE_REVIEW:-}" in
-  '') ;;
-  YES)
-    local_psql --command="SET r10.isolated_presence_review = 'YES'" \
-      --file=supabase/tests/fixtures/r10_presence_minimal_revoke.sql
-    supabase test db supabase/tests/database/r10_presence_minimal_permissions.test.sql
-    ;;
-  *) echo 'REFUSED: invalid presence-review mode' >&2; exit 1 ;;
-esac
 REGRESSION=(
   supabase/tests/database/r10_role_permissions.test.sql
   supabase/tests/database/r10_phase7_security_definer.test.sql
@@ -124,6 +118,11 @@ supabase test db "${REGRESSION[@]}" supabase/tests/database/r10_data_api_explici
 # Then prove that the SAME discovery/execution path detects real bad candidate SQL.
 disable_automatic_crud
 python3 scripts/r10-data-api-candidate-controls.py
+# The optional lifecycle review exercises the EXACT registered migration/rollback,
+# then restores the original local baseline BEFORE the normal candidate pipeline.
+if [[ "${R10_PRESENCE_REVIEW:-}" == YES ]]; then
+  python3 scripts/r10-presence-lifecycle.py "$MIGRATIONS_DIR/source"
+fi
 # All post-anchor files are discovered from the directory, not a hardcoded list.
 python3 scripts/r10-data-api-plan.py apply "$ROOT" "$PLAN_FILE" "$MIGRATIONS_DIR/source" "$TESTS_FILE"
 assert_inert_cron

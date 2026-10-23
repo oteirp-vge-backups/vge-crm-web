@@ -2,5 +2,12 @@
   "schema_version": 1,
   "production_project_ref": "sjraugywirjohrqmacvb",
   "production_applied_count": 50,
-  "migrations": []
+  "migrations": [
+    {
+      "repository_file": "20261023144210_reduce_operator_presence_admin_privileges.sql",
+      "name": "reduce_operator_presence_admin_privileges",
+      "status": "pending_authorization",
+      "sha256": "145d8e1d22903b87c6e26503cf9edb0d75eca39d078a5a6392a14cdb99b161b3"
+    }
+  ]
 }
