@@ -98,6 +98,16 @@ assert_inert_cron() {
   local_psql --command="DO \$\$ BEGIN IF EXISTS (SELECT 1 FROM cron.job WHERE active AND command NOT IN ('select 1','select 2','select 3')) THEN RAISE EXCEPTION 'NON_INERT_CRON_IN_TEST'; END IF; END \$\$;"
 }
 assert_inert_cron
+# Optional, explicitly labelled review. Standard Data API CI does NOT apply this.
+case "${R10_PRESENCE_REVIEW:-}" in
+  '') ;;
+  YES)
+    local_psql --command="SET r10.isolated_presence_review = 'YES'" \
+      --file=supabase/tests/fixtures/r10_presence_minimal_revoke.sql
+    supabase test db supabase/tests/database/r10_presence_minimal_permissions.test.sql
+    ;;
+  *) echo 'REFUSED: invalid presence-review mode' >&2; exit 1 ;;
+esac
 REGRESSION=(
   supabase/tests/database/r10_role_permissions.test.sql
   supabase/tests/database/r10_phase7_security_definer.test.sql

@@ -1,0 +1,49 @@
+name: R10 - revision aislada de permisos de presencia
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/r10-presence-review.yml'
+      - 'scripts/r10-data-api-isolated.sh'
+      - 'supabase/tests/fixtures/r10_presence_minimal_revoke.sql'
+      - 'supabase/tests/database/r10_presence_minimal_permissions.test.sql'
+      - 'docs/R10_PRESENCE_REVIEW_20261023.md'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r10-presence-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  presence-review:
+    name: Permisos minimos de presencia sin acceso a produccion
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.115.0
+      - name: Probar retirada minima y todas las regresiones en local
+        env:
+          R10_ISOLATED_CI: 'YES'
+          R10_PRESENCE_REVIEW: 'YES'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash -n scripts/r10-data-api-isolated.sh
+          bash scripts/r10-data-api-isolated.sh 2>&1 | tee "${RUNNER_TEMP}/r10-presence-review.log"
+      - name: Conservar evidencia sin claves ni datos reales
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r10-presence-review-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/r10-presence-review.log
+          retention-days: 30
+          if-no-files-found: ignore
