@@ -257,6 +257,7 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Instalar Chromium aislado
+        timeout-minutes: 7
         run: npx playwright install --with-deps chromium
 
       - name: Ejecutar los recorridos críticos con Supabase simulado
@@ -349,6 +350,7 @@ jobs:
           node scripts/r10-release.mjs verify --input "${RUNNER_TEMP}/r10-previous"
 
       - name: Instalar Chromium aislado
+        timeout-minutes: 7
         run: npx playwright install --with-deps chromium
 
       - name: Probar el artefacto candidato sin conexión a producción
