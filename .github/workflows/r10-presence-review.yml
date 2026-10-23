@@ -18,6 +18,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  migration-scaffold:
+    name: Generar nombre de migracion sin conectar bases de datos
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.115.0
+      - name: Crear unicamente archivo vacio local con CLI
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          scratch="$(mktemp -d "${RUNNER_TEMP}/presence-scaffold.XXXXXX")"
+          trap 'rm -rf -- "$scratch"' EXIT
+          cd "$scratch"
+          supabase --version
+          supabase migration new --help >/dev/null
+          supabase migration new reduce_operator_presence_admin_privileges
+          find supabase/migrations -maxdepth 1 -type f -name '*_reduce_operator_presence_admin_privileges.sql' -printf 'GENERATED_MIGRATION_FILE=%f\n'
   presence-review:
     name: Permisos minimos de presencia sin acceso a produccion
     runs-on: ubuntu-24.04
