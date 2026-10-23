@@ -69,8 +69,8 @@ jobs:
           const fs = require('node:fs');
           const path = require('node:path');
           const ledger = JSON.parse(fs.readFileSync('supabase/baseline/production-ledger-current.json', 'utf8'));
-          if (ledger.applied_count !== ledger.migrations.length || ledger.applied_count !== 50) {
-            throw new Error('El inventario productivo debe contener las 50 migraciones observadas.');
+          if (ledger.applied_count !== ledger.migrations.length || ledger.applied_count !== 51) {
+            throw new Error('El inventario productivo debe contener las 51 migraciones observadas.');
           }
           const versions = ledger.migrations.map((migration) => migration.version);
           if (new Set(versions).size !== versions.length) {
