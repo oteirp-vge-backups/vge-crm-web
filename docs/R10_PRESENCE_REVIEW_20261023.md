@@ -28,11 +28,11 @@ El control estándar de Data API descubre, verifica hash y aplica la migración 
 
 Antes de la aplicación normal de candidatas, el ciclo adicional compara catálogos (ACL, RLS, funciones, políticas, defaults, columnas, restricciones y triggers), prueba repetición, reversión exacta, fallo forzado con rollback transaccional, rechazo de grants inesperados/parciales, RLS desactivado, permisos de RPC alterados, ejecutor indebido y reversión no confirmada. Incluye una fila de presencia ficticia no vacía para verificar que no cambia. Al terminar devuelve la base local al estado original y la vía normal del planificador aplica la candidata otra vez, con sus pruebas. El entorno se destruye al finalizar.
 
-Estado de este documento al preparar el commit: CI pendiente. La evidencia final debe estar en el PR y corresponder a su SHA exacto; no reutilizar resultados de la fixture anterior. Las 39 pruebas específicas son SQL con identidades ficticias. Las 18 HTTP existentes cubren permisos generales, carteras y edición de centros, no login real con contraseña.
+Estado de este documento al preparar el commit: CI pendiente para la revisión con rutas corregidas. La evidencia final debe estar en el PR y corresponder a su SHA exacto; no reutilizar resultados de la fixture anterior. Las 39 pruebas específicas son SQL con identidades ficticias. Las 18 HTTP existentes cubren permisos generales, carteras y edición de centros, no login real con contraseña.
 
 ## Comprobación previa y posterior (solo lectura)
 
-`supabase/verification/r10_presence_pre_post.sql` entrega ORIGINAL, HARDENED o DRIFT junto con ACL, permisos efectivos, definiciones/permisos de las cuatro funciones relacionadas, políticas y migraciones. No consulta filas comerciales ni llama a RPC funcionales. Un estado DRIFT, una tabla ausente o diferencias inesperadas obligan a detenerse.
+`supabase/tests/manual/r10_presence_pre_post.sql` entrega ORIGINAL, HARDENED o DRIFT junto con ACL, permisos efectivos, definiciones/permisos de las cuatro funciones relacionadas, políticas y migraciones. No consulta filas comerciales ni llama a RPC funcionales. Un estado DRIFT, una tabla ausente o diferencias inesperadas obligan a detenerse.
 
 ### Secuencia futura, solo con autorización
 
@@ -44,9 +44,15 @@ Estado de este documento al preparar el commit: CI pendiente. La evidencia final
 
 ## Reversión preparada, NO ejecutada en producción
 
-`supabase/rollback/r10_presence_restore_audited_acl.sql`, fuera del directorio de migraciones automáticas. SHA-256 `4b6e196f07ca4fb999939c53703e26dcbc23c91d31952ebee64c01e052bd0239`.
+`supabase/tests/manual/r10_presence_restore_audited_acl.sql`, fuera del directorio de migraciones automáticas. SHA-256 `4b6e196f07ca4fb999939c53703e26dcbc23c91d31952ebee64c01e052bd0239`.
 
 Solo permite volver desde la ACL mínima exacta, con ejecutor postgres y confirmación de sesión `r10.presence_rollback=RESTORE_AUDITED_ACL`. Restaura únicamente los ocho permisos que existían, no GRANT ALL. Esa vuelta reintroduce el exceso de permisos, por lo que es una contingencia, no el estado deseado. Exige autorización de reversión en producción; no se ejecuta por una alarma genérica ni elimina registros del historial. Si fuese necesaria, documentar una operación compensatoria y reconciliar el historial en vez de falsearlo.
+
+La carpeta `supabase/tests/manual/` respeta las rutas SQL permitidas por la barrera existente. Los workflows enumeran expresamente sus suites pgTAP: estos dos archivos manuales NO se incluyen como suites ni se aplican por descubrimiento de migraciones. Solo el ciclo aislado lee el archivo de reversión y lo ejecuta con confirmación local. No ejecutar indiscriminadamente todos los SQL de tests.
+
+## Incidencias de preparación
+
+En la revisión `f7726517f7faa362d2fbedfa13570b8ad56646b8`, el ciclo aislado superó 14/14 controles, 217/217 pruebas SQL posteriores y 18/18 HTTP. La vía Data API falló inicialmente al arrancar Docker por puerto local 54322 ocupado, antes de aplicar SQL; se reintentó sin cambiar la migración. La barrera general detectó que los archivos manuales estaban en carpetas SQL no permitidas. Se trasladaron a `supabase/tests/manual/`, conservando sus bytes y hashes, sin modificar ni debilitar la regla de publicación. Esta revisión debe repetir las tres ejecuciones antes de cerrarse.
 
 ## Límites y asuntos separados
 

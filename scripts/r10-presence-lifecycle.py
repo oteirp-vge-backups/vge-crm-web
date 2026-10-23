@@ -11,7 +11,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parent.parent
 NAME = '20261023144210_reduce_operator_presence_admin_privileges.sql'
-ROLLBACK = 'supabase/rollback/r10_presence_restore_audited_acl.sql'
+ROLLBACK = 'supabase/tests/manual/r10_presence_restore_audited_acl.sql'
 spec = importlib.util.spec_from_file_location('r10_plan', ROOT / 'scripts/r10-data-api-plan.py')
 plan = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(plan)
