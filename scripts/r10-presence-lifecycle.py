@@ -81,7 +81,8 @@ def main() -> None:
     if not path.is_file() or path.is_symlink():
         raise ValueError('FORMAL_MIGRATION_REQUIRED')
     registry = json.loads((ROOT / 'supabase/baseline/pending-migrations.json').read_text())
-    entries = [m for m in registry['migrations'] if m['repository_file'] == NAME]
+    applied = json.loads((ROOT / 'supabase/baseline/production-ledger-current.json').read_text())
+    entries = [m for m in registry['migrations'] + applied['source_mappings'] if m['repository_file'] == NAME]
     if len(entries) != 1 or hashlib.sha256(path.read_bytes()).hexdigest() != entries[0]['sha256']:
         raise ValueError('FORMAL_MIGRATION_HASH_MISMATCH')
     forward = path.read_text()
