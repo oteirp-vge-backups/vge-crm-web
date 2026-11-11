@@ -2,7 +2,13 @@
 
 Fecha de revisión: 20 de septiembre de 2026.
 
-## Estado real
+> **Actualización operativa — 11 de noviembre de 2026:** la tabla inferior conserva el estado histórico del 20/09/2026; **no es un inventario actualizado**.
+> Actualmente la web publicada es `r10-phase10.0.5` (último despliegue GitHub Pages del commit `b311212729d19ff84a001eea2228cd274f217377`, 23/10/2026).
+> El backend operativo de **producción** es `sjraugywirjohrqmacvb` (51 migraciones, 3 Edge Functions, 21 tablas públicas con RLS), aunque en Supabase sigue mostrando el nombre heredado **`VGE CRM STAGING`**. **No debe tratarse como entorno de ensayo.**
+> No hay una rama de STAGING permanente independiente. El proyecto aislado de restauración `wmxvvjeyfkzingjogaln` estaba `INACTIVE` el 11/11/2026 y no corresponde a producción. Las pruebas habituales deben ser locales o aisladas, con autorización para cualquier entorno remoto nuevo.
+> Fuente vigente: [`R10_SOURCE_OF_TRUTH.md`](R10_SOURCE_OF_TRUTH.md). No se ha renombrado, movido ni reconfigurado ningún proyecto.
+
+## Fotografía histórica del 20 de septiembre de 2026
 
 | Capa | Producción | Preparación de cierre | STAGING |
 |---|---|---|---|
